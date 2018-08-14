@@ -1,0 +1,15 @@
+package com.payline.payment.paysafecard.utils;
+
+public class PaySafeCardConstants {
+    public static final String KYCLEVEL_SIMPLE = "SIMPLE";
+    public static final String KYCLEVEL_FULL = "FULL";
+    public static final String KYCLEVEL_KEY = "KYC_LEVEL";
+    public static final String MINAGE_KEY = "MIN_AGE";
+    public static final String COUNTRYRESTRICTION_KEY = "COUNTRY_RESTRICTION";
+    public static final String AUTHORISATIONKEY_KEY = "AUTHORISATION";
+
+    public static final String SANDBOX_URL = "apitest.paysafecard.com";
+    public static final String PRODUCTION_URL = "api.paysafecard.com";
+    public static final String PATH = "payments";
+
+}
