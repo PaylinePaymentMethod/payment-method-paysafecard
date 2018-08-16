@@ -2,6 +2,8 @@ package com.payline.payment.paysafecard.bean;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.net.URL;
+
 public class PaySafePaymentResponse {
     // fields used in payment response
     private String object;
@@ -107,5 +109,9 @@ public class PaySafePaymentResponse {
                 ", number='" + number + '\'' +
                 ", param='" + param + '\'' +
                 '}';
+    }
+
+    public String getRedirectURL() {
+        return this.getRedirect().getAuth_url();
     }
 }

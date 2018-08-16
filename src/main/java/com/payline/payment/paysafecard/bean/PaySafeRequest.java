@@ -1,9 +1,7 @@
 package com.payline.payment.paysafecard.bean;
 
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
-import com.payline.pmapi.bean.Request;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
-import com.payline.pmapi.bean.payment.request.PaymentRequest;
 
 public abstract class PaySafeRequest {
     private String authentHeader;
@@ -14,6 +12,6 @@ public abstract class PaySafeRequest {
     }
 
     public String getAuthentHeader() {
-        return "Basic "+ authentHeader;
+        return "Basic " + authentHeader;
     }
 }

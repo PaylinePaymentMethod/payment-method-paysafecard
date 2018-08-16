@@ -1,6 +1,6 @@
-package com.payline.payment.paysafecard;
+package com.payline.payment.paysafecard.services;
 
-import com.payline.payment.paysafecard.bean.PaySafeCheckRequest;
+import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
 import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
 import com.payline.payment.paysafecard.utils.LocalizationImpl;
 import com.payline.payment.paysafecard.utils.LocalizationService;
@@ -8,7 +8,6 @@ import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
 import com.payline.pmapi.bean.configuration.*;
 import com.payline.pmapi.service.ConfigurationService;
-import okhttp3.Response;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -81,7 +80,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         Map<String, String> errors = new HashMap<>();
 
         // create a CheckRequest
-        PaySafeCheckRequest checkRequest = new PaySafeCheckRequest(contractParametersCheckRequest);
+        PaySafePaymentRequest checkRequest = new PaySafePaymentRequest(contractParametersCheckRequest);
 
         // check connection with
         Boolean isSandbox = contractParametersCheckRequest.getPaylineEnvironment().isSandbox();
@@ -90,19 +89,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         try {
             // do the request
             PaySafePaymentResponse response = httpClient.doPost(url, PaySafeCardConstants.PATH, checkRequest);
-            System.out.println(response.toString());
 
             // check response object
             if (response.getCode() != null) {
                 findErrors(response, errors);
             }
 
-
         } catch (IOException e) {
             errors.put(ContractParametersCheckRequest.GENERIC_ERROR, e.getMessage());
-            e.printStackTrace();
         }
-
 
         return errors;
     }
@@ -119,23 +114,23 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     // todo remprendre avec toutes les erreurs possibles + gerer la traduction?
-    public void findErrors(PaySafePaymentResponse message, Map<String, String> errors){
+    private void findErrors(PaySafePaymentResponse message, Map<String, String> errors){
         switch (message.getCode()) {
             case "invalid_api_key":
-                // la clée dans le header est pas bonne
+                // bad authorisation key in header
                 errors.put(PaySafeCardConstants.AUTHORISATIONKEY_KEY, message.getMessage());
                 break;
             case "invalid_request_parameter":
-                // mauvais parametre, il faut trouver lequel avec le champs param
-                if (message.getParam() == "kyc_level") {
+                // bad parameter, check field "param" to find it
+                if ("kyc_level".equals(message.getParam())) {
                     errors.put(PaySafeCardConstants.KYCLEVEL_KEY, message.getMessage());
-                } else if (message.getParam() == "min_age"){
+                } else if ("min_age".equals(message.getParam())){
                     errors.put(PaySafeCardConstants.MINAGE_KEY, message.getMessage());
                 }
 
                 break;
             case "invalid_restriction":
-                // mauvaise restriction
+                // bad country restriction value
                 errors.put(PaySafeCardConstants.COUNTRYRESTRICTION_KEY, message.getMessage());
                 break;
             default:

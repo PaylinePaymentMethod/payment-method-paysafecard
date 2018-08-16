@@ -8,7 +8,7 @@ import okhttp3.*;
 
 import java.io.IOException;
 
-public class PaySafeHttpClient extends AbstractHttpClient {
+public class PaySafeHttpClient {
     private static final String CONTENT_TYPE_KEY = "Content-Type";
     private static final String AUTHENTICATION_KEY = "Authorization";
     private static final String CONTENT_TYPE = "application/json";
