@@ -38,7 +38,6 @@ public class PaymentServiceImpl implements PaymentService {
                 RedirectionRequest redirectionRequest = new RedirectionRequest(redirectURL);
 
                 return PaymentResponseRedirectBuilder.aPaymentResponseRedirect().withRedirectionRequest(redirectionRequest).build();
-
             }
 
         } catch (IOException e) {

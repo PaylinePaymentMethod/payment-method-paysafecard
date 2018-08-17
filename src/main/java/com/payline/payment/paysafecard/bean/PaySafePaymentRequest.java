@@ -42,10 +42,13 @@ public class PaySafePaymentRequest extends PaySafeRequest {
         this.notification_url = request.getPaylineEnvironment().getNotificationURL();
 
         ContractConfiguration configuration = request.getContractConfiguration();
-        this.customer = new Customer("dumbId",
-                configuration.getProperty(PaySafeCardConstants.MINAGE_KEY).getValue(),
-                configuration.getProperty(PaySafeCardConstants.KYCLEVEL_KEY).getValue(),
-                configuration.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY).getValue());
+
+        // get non mandatory object
+        String minAge = configuration.getProperty(PaySafeCardConstants.MINAGE_KEY) != null? configuration.getProperty(PaySafeCardConstants.MINAGE_KEY).getValue(): null;
+        String kycLevel = configuration.getProperty(PaySafeCardConstants.KYCLEVEL_KEY) != null? configuration.getProperty(PaySafeCardConstants.MINAGE_KEY).getValue(): null;
+        String countryRestriction = configuration.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY) != null? configuration.getProperty(PaySafeCardConstants.MINAGE_KEY).getValue(): null;
+
+        this.customer = new Customer(request.getBuyer().getCustomerIdentifier(),minAge, kycLevel, countryRestriction);
     }
 
     private String createAmount(int amount) {

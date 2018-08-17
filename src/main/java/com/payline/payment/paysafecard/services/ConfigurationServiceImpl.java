@@ -114,27 +114,29 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     // todo remprendre avec toutes les erreurs possibles + gerer la traduction?
-    private void findErrors(PaySafePaymentResponse message, Map<String, String> errors){
-        switch (message.getCode()) {
-            case "invalid_api_key":
-                // bad authorisation key in header
-                errors.put(PaySafeCardConstants.AUTHORISATIONKEY_KEY, message.getMessage());
-                break;
-            case "invalid_request_parameter":
-                // bad parameter, check field "param" to find it
-                if ("kyc_level".equals(message.getParam())) {
-                    errors.put(PaySafeCardConstants.KYCLEVEL_KEY, message.getMessage());
-                } else if ("min_age".equals(message.getParam())){
-                    errors.put(PaySafeCardConstants.MINAGE_KEY, message.getMessage());
-                }
+    public void findErrors(PaySafePaymentResponse message, Map<String, String> errors) {
+        if (message.getCode() != null) {
+            switch (message.getCode()) {
+                case "invalid_api_key":
+                    // bad authorisation key in header
+                    errors.put(PaySafeCardConstants.AUTHORISATIONKEY_KEY, message.getMessage());
+                    break;
+                case "invalid_request_parameter":
+                    // bad parameter, check field "param" to find it
+                    if ("kyc_level".equals(message.getParam())) {
+                        errors.put(PaySafeCardConstants.KYCLEVEL_KEY, message.getMessage());
+                    } else if ("min_age".equals(message.getParam())) {
+                        errors.put(PaySafeCardConstants.MINAGE_KEY, message.getMessage());
+                    }
 
-                break;
-            case "invalid_restriction":
-                // bad country restriction value
-                errors.put(PaySafeCardConstants.COUNTRYRESTRICTION_KEY, message.getMessage());
-                break;
-            default:
-                errors.put(ContractParametersCheckRequest.GENERIC_ERROR, message.getMessage());
+                    break;
+                case "invalid_restriction":
+                    // bad country restriction value
+                    errors.put(PaySafeCardConstants.COUNTRYRESTRICTION_KEY, message.getMessage());
+                    break;
+                default:
+                    errors.put(ContractParametersCheckRequest.GENERIC_ERROR, message.getMessage());
+            }
         }
     }
 }

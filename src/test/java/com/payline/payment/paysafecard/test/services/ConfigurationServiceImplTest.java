@@ -1,7 +1,9 @@
 package com.payline.payment.paysafecard.test.services;
 
+import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
 import com.payline.payment.paysafecard.services.ConfigurationServiceImpl;
 import com.payline.payment.paysafecard.test.Utils;
+import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
 import com.payline.pmapi.bean.configuration.AbstractParameter;
 import com.payline.pmapi.bean.configuration.ContractParametersCheckRequest;
@@ -13,9 +15,14 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -26,45 +33,133 @@ public class ConfigurationServiceImplTest {
     private String goodAuthorisation = "cHNjX1I3T1NQNmp2dUpZUmpKNUpIekdxdXVLbTlmOFBMSFo=";
 
     private Locale locale = Locale.FRENCH;
-    @InjectMocks private ConfigurationServiceImpl service = new ConfigurationServiceImpl();
-    @Mock private PaySafeHttpClient httpClient;
+    @InjectMocks
+    private ConfigurationServiceImpl service = new ConfigurationServiceImpl();
+    @Mock
+    private PaySafeHttpClient httpClient;
 
-    private final String goodPaySafeResponseMessage = "{\n" +
-            "    \"object\": \"PAYMENT\",\n" +
-            "    \"id\": \"pay_9743636706_A0HVHJaamc8EOz1FJVwUUBKgnK8KTCI9_EUR\",\n" +
-            "    \"created\": 1534259261554,\n" +
-            "    \"updated\": 1534259261554,\n" +
-            "    \"amount\": 0.01,\n" +
-            "    \"currency\": \"EUR\",\n" +
-            "    \"status\": \"INITIATED\",\n" +
-            "    \"type\": \"PAYSAFECARD\",\n" +
-            "    \"redirect\": {\n" +
-            "        \"success_url\": \"https://www.google.com\",\n" +
-            "        \"failure_url\": \"https://translate.google.fr\",\n" +
-            "        \"auth_url\": \"https://customer.test.at.paysafecard.com/psccustomer/GetCustomerPanelServlet?mid=9743636706&mtid=pay_9743636706_A0HVHJaamc8EOz1FJVwUUBKgnK8KTCI9_EUR&amount=0.01&currency=EUR\"\n" +
-            "    },\n" +
-            "    \"customer\": {\n" +
-            "        \"id\": \"toto\"\n" +
-            "    },\n" +
-            "    \"notification_url\": \"https://www.paysafecard.com/notification/pay_9743636706_A0HVHJaamc8EOz1FJVwUUBKgnK8KTCI9_EUR\",\n" +
-            "    \"submerchant_id\": \"1\"\n" +
-            "}";
 
     @Test
-    public void getParameters(){
+    public void getParameters() {
         List<AbstractParameter> parameters = service.getParameters(locale);
-        Assert.assertEquals(4,parameters.size());
+        Assert.assertEquals(4, parameters.size());
     }
 
     @Test
     public void checkGood() throws IOException {
-        //when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenReturn(goodPaySafeResponseMessage);
+        when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenReturn(Utils.createGoodPaySafeResponse());
 
-
-        Map<String, String> errors;
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(goodKycLevel, goodMinAge, goodCountryRestriction, goodAuthorisation);
-        errors = service.check(request);
+        Map<String, String> errors = service.check(request);
 
         Assert.assertEquals(0, errors.size());
+    }
+
+    @Test
+    public void checkBad() throws IOException {
+        when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenReturn(Utils.createBadPaySafeResponse());
+
+        ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(goodKycLevel, goodMinAge, goodCountryRestriction, goodAuthorisation);
+        Map<String, String> errors = service.check(request);
+
+        Assert.assertEquals(1, errors.size());
+    }
+
+    @Test
+    public void checkException() throws IOException {
+        when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenThrow(IOException.class);
+
+        ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(goodKycLevel, goodMinAge, goodCountryRestriction, goodAuthorisation);
+        Map<String, String> errors = service.check(request);
+
+        Assert.assertEquals(1, errors.size());
+    }
+
+    @Test
+    public void findErrorNoError() {
+        Map<String, String> errors = new HashMap<>();
+        service.findErrors(Utils.createGoodPaySafeResponse(), errors);
+
+        Assert.assertEquals(0, errors.size());
+    }
+
+    @Test
+    public void findErrorInvalidKey() {
+        Map<String, String> errors = new HashMap<>();
+        String json = "{" +
+                "    \"code\": \"invalid_api_key\"," +
+                "    \"message\": \"Authentication failed\"," +
+                "    \"number\": 10008" +
+                "}";
+        service.findErrors(Utils.createPaySafeResponse(json), errors);
+
+        Assert.assertEquals(1, errors.size());
+        Assert.assertTrue(errors.containsKey(PaySafeCardConstants.AUTHORISATIONKEY_KEY));
+    }
+
+    @Test
+    public void findErrorInvalidKycLevel() {
+        Map<String, String> errors = new HashMap<>();
+        String json = "{" +
+                "    \"code\": \"invalid_request_parameter\"," +
+                "    \"message\": \"Valid values are: SIMPLE, FULL\"," +
+                "    \"number\": 10028," +
+                "    \"param\": \"kyc_level\"" +
+                "}";
+        service.findErrors(Utils.createPaySafeResponse(json), errors);
+
+        Assert.assertEquals(1, errors.size());
+        Assert.assertTrue(errors.containsKey(PaySafeCardConstants.KYCLEVEL_KEY));
+    }
+
+    @Test
+    public void findErrorInvalidMinAge() {
+        Map<String, String> errors = new HashMap<>();
+        String json = "{" +
+                "    \"code\": \"invalid_request_parameter\"," +
+                "    \"message\": \"must be greater than or equal to 1\"," +
+                "    \"number\": 10028," +
+                "    \"param\": \"min_age\"" +
+                "}";
+        service.findErrors(Utils.createPaySafeResponse(json), errors);
+
+        Assert.assertEquals(1, errors.size());
+        Assert.assertTrue(errors.containsKey(PaySafeCardConstants.MINAGE_KEY));
+    }
+
+    @Test
+    public void findErrorInvalidRestriction() {
+        Map<String, String> errors = new HashMap<>();
+        String json = "{" +
+                "    \"code\": \"invalid_restriction\"," +
+                "    \"message\": \"Could not convert restriction value 'foo'!\"," +
+                "    \"number\": 2039" +
+                "}";
+        service.findErrors(Utils.createPaySafeResponse(json), errors);
+
+        Assert.assertEquals(1, errors.size());
+        Assert.assertTrue(errors.containsKey(PaySafeCardConstants.COUNTRYRESTRICTION_KEY));
+    }
+
+
+    @Test
+    public void findErrorUnknownError() {
+        Map<String, String> errors = new HashMap<>();
+        String json = "{" +
+                "    \"code\": \"dumb error\"," +
+                "    \"message\": \"I don't know what to write\"," +
+                "    \"number\": 0000" +
+                "}";
+        service.findErrors(Utils.createPaySafeResponse(json), errors);
+
+        Assert.assertEquals(1, errors.size());
+        Assert.assertTrue(errors.containsKey(ContractParametersCheckRequest.GENERIC_ERROR));
+    }
+
+    @Test
+    public void getName(){
+        String name = service.getName(locale);
+        Assert.assertNotNull(name);
+        Assert.assertNotEquals(0, name.length());
     }
 }
