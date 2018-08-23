@@ -1,17 +1,21 @@
 package com.payline.payment.paysafecard.bean;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Customer {
     private String id;
-    private String min_age;
-    private String kyc_level;
-    private String country_restriction;
-
+    @SerializedName("min_age")
+    private String minAge;
+    @SerializedName("kyc_level")
+    private String kycLevel;
+    @SerializedName("country_restriction")
+    private String countryRestriction;
 
     public Customer(String id, String minAge, String kycLevel, String countryRestriction) {
         this.id = id;
-        this.min_age = minAge;
-        this.kyc_level = kycLevel;
-        this.country_restriction = countryRestriction;
+        this.minAge = minAge;
+        this.kycLevel = kycLevel;
+        this.countryRestriction = countryRestriction;
     }
 
     public String getId() {
@@ -22,27 +26,27 @@ public class Customer {
         this.id = id;
     }
 
-    public String getMin_age() {
-        return min_age;
+    public String getMinAge() {
+        return minAge;
     }
 
-    public void setMin_age(String min_age) {
-        this.min_age = min_age;
+    public void setMinAge(String minAge) {
+        this.minAge = minAge;
     }
 
-    public String getKyc_level() {
-        return kyc_level;
+    public String getKycLevel() {
+        return kycLevel;
     }
 
-    public void setKyc_level(String kyc_level) {
-        this.kyc_level = kyc_level;
+    public void setKycLevel(String kycLevel) {
+        this.kycLevel = kycLevel;
     }
 
-    public String getCountry_restriction() {
-        return country_restriction;
+    public String getCountryRestriction() {
+        return countryRestriction;
     }
 
-    public void setCountry_restriction(String country_restriction) {
-        this.country_restriction = country_restriction;
+    public void setCountryRestriction(String countryRestriction) {
+        this.countryRestriction = countryRestriction;
     }
 }

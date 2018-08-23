@@ -21,7 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.when;
 
 
@@ -47,7 +47,7 @@ public class ConfigurationServiceImplTest {
 
     @Test
     public void checkGood() throws IOException {
-        when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenReturn(Utils.createGoodPaySafeResponse());
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createGoodPaySafeResponse());
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(goodKycLevel, goodMinAge, goodCountryRestriction, goodAuthorisation);
         Map<String, String> errors = service.check(request);
@@ -57,7 +57,7 @@ public class ConfigurationServiceImplTest {
 
     @Test
     public void checkBad() throws IOException {
-        when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenReturn(Utils.createBadPaySafeResponse());
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createBadPaySafeResponse());
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(goodKycLevel, goodMinAge, goodCountryRestriction, goodAuthorisation);
         Map<String, String> errors = service.check(request);
@@ -67,7 +67,7 @@ public class ConfigurationServiceImplTest {
 
     @Test
     public void checkException() throws IOException {
-        when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenThrow(IOException.class);
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenThrow(IOException.class);
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(goodKycLevel, goodMinAge, goodCountryRestriction, goodAuthorisation);
         Map<String, String> errors = service.check(request);

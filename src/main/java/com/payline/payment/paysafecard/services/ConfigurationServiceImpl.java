@@ -82,13 +82,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         // create a CheckRequest
         PaySafePaymentRequest checkRequest = new PaySafePaymentRequest(contractParametersCheckRequest);
 
-        // check connection with
-        Boolean isSandbox = contractParametersCheckRequest.getPaylineEnvironment().isSandbox();
-        String url = isSandbox ? PaySafeCardConstants.SANDBOX_URL : PaySafeCardConstants.PRODUCTION_URL;
-
         try {
             // do the request
-            PaySafePaymentResponse response = httpClient.doPost(url, PaySafeCardConstants.PATH, checkRequest);
+            Boolean isSandbox = contractParametersCheckRequest.getPaylineEnvironment().isSandbox();
+            PaySafePaymentResponse response = httpClient.initiate(checkRequest, isSandbox);
 
             // check response object
             if (response.getCode() != null) {

@@ -19,7 +19,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -32,7 +32,7 @@ public class PaymentServiceImplTest {
 
     @Test
     public void paymentRequest() throws IOException {
-        when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenReturn(Utils.createGoodPaySafeResponse());
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createGoodPaySafeResponse());
 
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
         PaymentResponse response = service.paymentRequest(request);
@@ -50,7 +50,7 @@ public class PaymentServiceImplTest {
                 "    \"number\": 10007" +
                 "}";
 
-        when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenReturn(Utils.createPaySafeResponse(json));
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
 
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
         PaymentResponse response = service.paymentRequest(request);
@@ -67,7 +67,7 @@ public class PaymentServiceImplTest {
                 "    \"number\": 10008" +
                 "}";
 
-        when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenReturn(Utils.createPaySafeResponse(json));
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
 
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
         PaymentResponse response = service.paymentRequest(request);
@@ -84,7 +84,7 @@ public class PaymentServiceImplTest {
                 "    \"number\": 10028" +
                 "}";
 
-        when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenReturn(Utils.createPaySafeResponse(json));
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
 
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
         PaymentResponse response = service.paymentRequest(request);
@@ -101,7 +101,7 @@ public class PaymentServiceImplTest {
                 "    \"number\": 2001" +
                 "}";
 
-        when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenReturn(Utils.createPaySafeResponse(json));
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
 
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
         PaymentResponse response = service.paymentRequest(request);
@@ -118,7 +118,7 @@ public class PaymentServiceImplTest {
                 "    \"number\": 2017" +
                 "}";
 
-        when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenReturn(Utils.createPaySafeResponse(json));
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
 
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
         PaymentResponse response = service.paymentRequest(request);
@@ -135,7 +135,7 @@ public class PaymentServiceImplTest {
                 "    \"number\": 3001" +
                 "}";
 
-        when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenReturn(Utils.createPaySafeResponse(json));
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
 
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
         PaymentResponse response = service.paymentRequest(request);
@@ -152,7 +152,7 @@ public class PaymentServiceImplTest {
                 "    \"number\": 3007" +
                 "}";
 
-        when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenReturn(Utils.createPaySafeResponse(json));
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
 
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
         PaymentResponse response = service.paymentRequest(request);
@@ -169,7 +169,7 @@ public class PaymentServiceImplTest {
                 "    \"number\": 3014" +
                 "}";
 
-        when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenReturn(Utils.createPaySafeResponse(json));
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
 
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
         PaymentResponse response = service.paymentRequest(request);
@@ -186,7 +186,7 @@ public class PaymentServiceImplTest {
                 "    \"number\": foo" +
                 "}";
 
-        when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenReturn(Utils.createPaySafeResponse(json));
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
 
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
         PaymentResponse response = service.paymentRequest(request);
@@ -200,7 +200,7 @@ public class PaymentServiceImplTest {
     public void paymentRequestWithErrorNull() throws IOException {
         String json = "{\"code\": \"this is a code\"}";
 
-        when(httpClient.doPost(anyString(), anyString(), any(PaySafePaymentRequest.class))).thenReturn(Utils.createPaySafeResponse(json));
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
 
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
         PaymentResponse response = service.paymentRequest(request);
@@ -208,5 +208,17 @@ public class PaymentServiceImplTest {
         PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
 
         Assert.assertEquals(FailureCause.PARTNER_UNKNOWN_ERROR, responseFailure.getFailureCause());
+    }
+
+    @Test
+    public void paymentRequestWithException() throws IOException {
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenThrow(IOException.class);
+
+        PaymentRequest request = Utils.createCompletePaymentBuilder().build();
+        PaymentResponse response = service.paymentRequest(request);
+
+        PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
+
+        Assert.assertEquals(FailureCause.INTERNAL_ERROR, responseFailure.getFailureCause());
     }
 }

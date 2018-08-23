@@ -146,7 +146,7 @@ public class Utils {
         return phoneNumbers;
     }
 
-    private static ContractConfiguration createContractConfiguration(String kycLevel, String minAge, String countryRestriction, String authorisation) {
+    public static ContractConfiguration createContractConfiguration(String kycLevel, String minAge, String countryRestriction, String authorisation) {
         final ContractConfiguration contractConfiguration = new ContractConfiguration("", new HashMap<>());
         contractConfiguration.getContractProperties().put(PaySafeCardConstants.KYCLEVEL_KEY, new ContractProperty(kycLevel));
         contractConfiguration.getContractProperties().put(PaySafeCardConstants.MINAGE_KEY, new ContractProperty(minAge));
@@ -162,7 +162,6 @@ public class Utils {
 
         return contractConfiguration;
     }
-
 
     private static Buyer.Address createAddress(String street, String city, String zip) {
         return Buyer.Address.AddressBuilder.anAddress()

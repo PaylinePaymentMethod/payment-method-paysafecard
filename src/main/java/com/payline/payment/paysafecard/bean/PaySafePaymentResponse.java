@@ -2,7 +2,7 @@ package com.payline.payment.paysafecard.bean;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.net.URL;
+import java.util.List;
 
 public class PaySafePaymentResponse {
     // fields used in payment response
@@ -16,8 +16,15 @@ public class PaySafePaymentResponse {
     private String type;
     private Redirect redirect;
     private Customer customer;
-    @SerializedName("notificationUrl") private String notificationUrl;
-    @SerializedName("subMerchantId") private String subMerchantId;
+    @SerializedName("notification_url")
+    private String notificationUrl;
+    @SerializedName("subMerchant_id")
+    private String subMerchantId;
+
+    // fields used in retrievePayment and capture
+    @SerializedName("card_details")
+    private List<CardDetail> cardDetails;
+
 
     // fields used in error response
     private String code;
@@ -73,6 +80,14 @@ public class PaySafePaymentResponse {
         return subMerchantId;
     }
 
+    public List<CardDetail> getCardDetails() {
+        return cardDetails;
+    }
+
+    public CardDetail getFirstCardDetails() {
+        return cardDetails.get(0);
+    }
+
     public String getCode() {
         return code;
     }
@@ -89,6 +104,11 @@ public class PaySafePaymentResponse {
         return param;
     }
 
+    public String getRedirectURL() {
+        return this.getRedirect().getAuth_url();
+    }
+
+
     @Override
     public String toString() {
         return "PaySafePaymentResponse{" +
@@ -104,14 +124,11 @@ public class PaySafePaymentResponse {
                 ", customer=" + customer +
                 ", notificationUrl='" + notificationUrl + '\'' +
                 ", subMerchantId='" + subMerchantId + '\'' +
+                ", cardDetails=" + cardDetails +
                 ", code='" + code + '\'' +
                 ", message='" + message + '\'' +
                 ", number='" + number + '\'' +
                 ", param='" + param + '\'' +
                 '}';
-    }
-
-    public String getRedirectURL() {
-        return this.getRedirect().getAuth_url();
     }
 }

@@ -11,5 +11,11 @@ public class PaySafeCardConstants {
     public static final String SANDBOX_URL = "apitest.paysafecard.com";
     public static final String PRODUCTION_URL = "api.paysafecard.com";
     public static final String PATH = "payments";
+    public static final String PATH_VERSION = "v1";
+    public static final String PATH_CAPTURE = "capture";
+
+    public static final String STATUS_AUTHORIZED = "AUTHORIZED";
+    public static final String STATUS_SUCCESS = "SUCCESS";
+
 
 }

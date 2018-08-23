@@ -1,5 +1,6 @@
 package com.payline.payment.paysafecard.bean;
 
+import com.google.gson.annotations.SerializedName;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.pmapi.bean.configuration.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
@@ -10,17 +11,20 @@ public class PaySafePaymentRequest extends PaySafeRequest {
     private String amount;
     private String currency;
     private Redirect redirect;
-    private String notification_url;
+    @SerializedName("notification_url")
+    private String notificationUrl;
     private Customer customer;
-    private String submerchant_id;
+    @SerializedName("submerchant_id")
+    private String submerchantId;
     private String shop_id;
+
 
     public PaySafePaymentRequest(ContractParametersCheckRequest request) {
         super(request.getContractConfiguration());
         this.amount = "0.01";
         this.currency = "EUR";
         this.redirect = new Redirect(request.getPaylineEnvironment());
-        this.notification_url = request.getPaylineEnvironment().getNotificationURL();
+        this.notificationUrl = request.getPaylineEnvironment().getNotificationURL();
 
         ContractConfiguration configuration = request.getContractConfiguration();
         this.customer = new Customer("dumbId",
@@ -36,22 +40,22 @@ public class PaySafePaymentRequest extends PaySafeRequest {
         this.currency = request.getAmount().getCurrency().getCurrencyCode();
 
         this.redirect = new Redirect(request.getPaylineEnvironment());
-        this.notification_url = request.getPaylineEnvironment().getNotificationURL();
+        this.notificationUrl = request.getPaylineEnvironment().getNotificationURL();
 
         this.redirect = new Redirect(request.getPaylineEnvironment());
-        this.notification_url = request.getPaylineEnvironment().getNotificationURL();
+        this.notificationUrl = request.getPaylineEnvironment().getNotificationURL();
 
         ContractConfiguration configuration = request.getContractConfiguration();
 
         // get non mandatory object
-        String minAge = configuration.getProperty(PaySafeCardConstants.MINAGE_KEY) != null? configuration.getProperty(PaySafeCardConstants.MINAGE_KEY).getValue(): null;
-        String kycLevel = configuration.getProperty(PaySafeCardConstants.KYCLEVEL_KEY) != null? configuration.getProperty(PaySafeCardConstants.MINAGE_KEY).getValue(): null;
-        String countryRestriction = configuration.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY) != null? configuration.getProperty(PaySafeCardConstants.MINAGE_KEY).getValue(): null;
+        String minAge = configuration.getProperty(PaySafeCardConstants.MINAGE_KEY) != null ? configuration.getProperty(PaySafeCardConstants.MINAGE_KEY).getValue() : null;
+        String kycLevel = configuration.getProperty(PaySafeCardConstants.KYCLEVEL_KEY) != null ? configuration.getProperty(PaySafeCardConstants.KYCLEVEL_KEY).getValue() : null;
+        String countryRestriction = configuration.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY) != null ? configuration.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY).getValue() : null;
 
-        this.customer = new Customer(request.getBuyer().getCustomerIdentifier(),minAge, kycLevel, countryRestriction);
+        this.customer = new Customer(request.getBuyer().getCustomerIdentifier(), minAge, kycLevel, countryRestriction);
     }
 
-    private String createAmount(int amount) {
+    public static String createAmount(int amount) {
         StringBuilder sb = new StringBuilder();
         sb.append(amount);
 

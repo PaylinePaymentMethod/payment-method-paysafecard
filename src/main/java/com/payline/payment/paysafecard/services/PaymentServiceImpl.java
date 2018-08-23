@@ -2,7 +2,6 @@ package com.payline.payment.paysafecard.services;
 
 import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
 import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
-import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
@@ -23,11 +22,9 @@ public class PaymentServiceImpl implements PaymentService {
         // create the PaySAfeCard payment request
         PaySafePaymentRequest request = new PaySafePaymentRequest(paymentRequest);
 
-        Boolean isSandbox = paymentRequest.getPaylineEnvironment().isSandbox();
-        String url = isSandbox ? PaySafeCardConstants.SANDBOX_URL : PaySafeCardConstants.PRODUCTION_URL;
-
         try {
-            PaySafePaymentResponse response = httpClient.doPost(url, PaySafeCardConstants.PATH, request);
+            Boolean isSandbox = paymentRequest.getPaylineEnvironment().isSandbox();
+            PaySafePaymentResponse response = httpClient.initiate(request, isSandbox);
 
             // check response object
             if (response.getCode() != null) {
@@ -37,7 +34,11 @@ public class PaymentServiceImpl implements PaymentService {
                 URL redirectURL = new URL(response.getRedirectURL());
                 RedirectionRequest redirectionRequest = new RedirectionRequest(redirectURL);
 
-                return PaymentResponseRedirectBuilder.aPaymentResponseRedirect().withRedirectionRequest(redirectionRequest).build();
+                return PaymentResponseRedirectBuilder.aPaymentResponseRedirect()
+                        .withRedirectionRequest(redirectionRequest)
+                        .withTransactionIdentifier(response.getId())
+                        .withStatusCode(response.getStatus())
+                        .build();
             }
 
         } catch (IOException e) {
