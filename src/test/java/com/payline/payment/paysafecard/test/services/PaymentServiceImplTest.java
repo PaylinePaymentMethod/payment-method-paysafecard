@@ -32,7 +32,7 @@ public class PaymentServiceImplTest {
 
     @Test
     public void paymentRequest() throws IOException {
-        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createGoodPaySafeResponse());
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createInitiatedPaySafeResponse());
 
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
         PaymentResponse response = service.paymentRequest(request);

@@ -47,7 +47,7 @@ public class ConfigurationServiceImplTest {
 
     @Test
     public void checkGood() throws IOException {
-        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createGoodPaySafeResponse());
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createInitiatedPaySafeResponse());
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(goodKycLevel, goodMinAge, goodCountryRestriction, goodAuthorisation);
         Map<String, String> errors = service.check(request);
@@ -78,7 +78,7 @@ public class ConfigurationServiceImplTest {
     @Test
     public void findErrorNoError() {
         Map<String, String> errors = new HashMap<>();
-        service.findErrors(Utils.createGoodPaySafeResponse(), errors);
+        service.findErrors(Utils.createInitiatedPaySafeResponse(), errors);
 
         Assert.assertEquals(0, errors.size());
     }

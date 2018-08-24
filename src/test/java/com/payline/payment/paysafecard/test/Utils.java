@@ -19,11 +19,14 @@ public class Utils {
     public static final String FAILURE_URL = "http://cancelurl.com/";
     public static final String NOTIFICATION_URL = "http://notificationurl.com/";
     public static final String AUTH_URL = "http://authenticationurl.com/";
-    public static final String AUTHORISATION_VAL = "dumbKey";
+
+    public static final String AUTHORISATION_VAL = "cHNjX1I3T1NQNmp2dUpZUmpKNUpIekdxdXVLbTlmOFBMSFo=";
+    public static final String PAYMENT_TOKEN = "10000009016901270";    // big token but not unlimited
+
 
     private static final Gson parser = new Gson();
 
-    public static PaySafePaymentResponse createGoodPaySafeResponse() {
+    public static PaySafePaymentResponse createInitiatedPaySafeResponse() {
         String json = "{" +
                 "    'object': 'PAYMENT'," +
                 "    'id': 'pay_9743636706_C4xKjolAPk439xoFnbvhZ9ckUq2aBCT4_EUR'," +
@@ -43,6 +46,60 @@ public class Utils {
                 "    }," +
                 "    'notification_url': '" + NOTIFICATION_URL + "'," +
                 "    'submerchant_id': '1'" +
+                "}";
+        return createPaySafeResponse(json);
+    }
+
+    public static PaySafePaymentResponse createAuthorizedPaySafeResponse() {
+        String json = "{" +
+                "    'object': 'PAYMENT'," +
+                "    'id': 'pay_9743636706_C4xKjolAPk439xoFnbvhZ9ckUq2aBCT4_EUR'," +
+                "    'created': 1534498236365," +
+                "    'updated': 1534498236365," +
+                "    'amount': 0.01," +
+                "    'currency': 'EUR'," +
+                "    'status': 'AUTHORIZED'," +
+                "    'type': 'PAYSAFECARD'," +
+                "    'redirect': {" +
+                "        'success_url': '" + SUCCESS_URL + "'," +
+                "        'failure_url': '" + FAILURE_URL + "'," +
+                "        'auth_url': '" + AUTH_URL + "'" +
+                "    }," +
+                "    'customer': {" +
+                "        'id': 'toto'" +
+                "    }," +
+                "    'notification_url': '" + NOTIFICATION_URL + "'," +
+                "    'submerchant_id': '1'," +
+                "    'card_details': [" +
+                "        { 'serial': '10000009094601270', 'type': '00028', 'country': 'DE', 'currency': 'EUR', 'amount': 2 }" +
+                "    ]" +
+                "}";
+        return createPaySafeResponse(json);
+    }
+
+    public static PaySafePaymentResponse createSuccessPaySafeResponse() {
+        String json = "{" +
+                "    'object': 'PAYMENT'," +
+                "    'id': 'pay_9743636706_C4xKjolAPk439xoFnbvhZ9ckUq2aBCT4_EUR'," +
+                "    'created': 1534498236365," +
+                "    'updated': 1534498236365," +
+                "    'amount': 0.01," +
+                "    'currency': 'EUR'," +
+                "    'status': 'SUCCESS'," +
+                "    'type': 'PAYSAFECARD'," +
+                "    'redirect': {" +
+                "        'success_url': '" + SUCCESS_URL + "'," +
+                "        'failure_url': '" + FAILURE_URL + "'," +
+                "        'auth_url': '" + AUTH_URL + "'" +
+                "    }," +
+                "    'customer': {" +
+                "        'id': 'toto'" +
+                "    }," +
+                "    'notification_url': '" + NOTIFICATION_URL + "'," +
+                "    'submerchant_id': '1'," +
+                "    'card_details': [" +
+                "        { 'serial': '10000009094601270', 'type': '00028', 'country': 'DE', 'currency': 'EUR', 'amount': 2 }" +
+                "    ]" +
                 "}";
         return createPaySafeResponse(json);
     }
@@ -156,7 +213,7 @@ public class Utils {
         return contractConfiguration;
     }
 
-    private static ContractConfiguration createDefaultContractConfiguration() {
+    public static ContractConfiguration createDefaultContractConfiguration() {
         final ContractConfiguration contractConfiguration = new ContractConfiguration("", new HashMap<>());
         contractConfiguration.getContractProperties().put(PaySafeCardConstants.AUTHORISATIONKEY_KEY, new ContractProperty(AUTHORISATION_VAL));
 

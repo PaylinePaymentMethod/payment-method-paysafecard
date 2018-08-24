@@ -1,10 +1,14 @@
 package com.payline.payment.paysafecard.test.bean;
 
 import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
+import com.payline.payment.paysafecard.test.Utils;
+import com.payline.pmapi.bean.configuration.ContractParametersCheckRequest;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class PaySafeRequestTest {
+//    ContractParametersCheckRequest checkRequest = Utils.createContractParametersCheckRequest();
+    // test ContractParametersCheckRequest
 
 
     @Test
