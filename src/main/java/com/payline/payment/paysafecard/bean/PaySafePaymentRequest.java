@@ -1,9 +1,12 @@
 package com.payline.payment.paysafecard.bean;
 
 import com.google.gson.annotations.SerializedName;
+import com.payline.payment.paysafecard.utils.InvalidRequestException;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
+import com.payline.pmapi.bean.common.Amount;
 import com.payline.pmapi.bean.configuration.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
+import com.payline.pmapi.bean.payment.PaylineEnvironment;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 
 public class PaySafePaymentRequest extends PaySafeRequest {
@@ -19,12 +22,12 @@ public class PaySafePaymentRequest extends PaySafeRequest {
     private String shop_id;
 
 
-    public PaySafePaymentRequest(ContractParametersCheckRequest request) {
+    public PaySafePaymentRequest(ContractParametersCheckRequest request) throws InvalidRequestException {
         super(request.getContractConfiguration());
         this.amount = "0.01";
         this.currency = "EUR";
-        this.redirect = new Redirect(request.getPaylineEnvironment());
-        this.notificationUrl = request.getPaylineEnvironment().getNotificationURL();
+
+        setUrls(request.getPaylineEnvironment());
 
         ContractConfiguration configuration = request.getContractConfiguration();
         this.customer = new Customer("dumbId",
@@ -33,26 +36,46 @@ public class PaySafePaymentRequest extends PaySafeRequest {
                 configuration.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY).getValue());
     }
 
-    public PaySafePaymentRequest(PaymentRequest request) {
+    public PaySafePaymentRequest(PaymentRequest request) throws InvalidRequestException {
         super(request.getContractConfiguration());
 
-        this.amount = createAmount(request.getAmount().getAmountInSmallestUnit().intValue());
-        this.currency = request.getAmount().getCurrency().getCurrencyCode();
 
-        this.redirect = new Redirect(request.getPaylineEnvironment());
-        this.notificationUrl = request.getPaylineEnvironment().getNotificationURL();
+        Amount requestAmount = request.getAmount();
+        if (requestAmount.getAmountInSmallestUnit() == null){
+            throw new InvalidRequestException("PaySafeRequest must have an amount when created");
+        } else {
+            this.amount = createAmount(requestAmount.getAmountInSmallestUnit().intValue());
+        }
 
-        this.redirect = new Redirect(request.getPaylineEnvironment());
-        this.notificationUrl = request.getPaylineEnvironment().getNotificationURL();
+        if (requestAmount.getCurrency() == null){
+            throw new InvalidRequestException("PaySafeRequest must have a currency when created");
+        } else {
+            this.currency = requestAmount.getCurrency().getCurrencyCode();
+        }
 
-        ContractConfiguration configuration = request.getContractConfiguration();
+        setUrls(request.getPaylineEnvironment());
 
-        // get non mandatory object
-        String minAge = configuration.getProperty(PaySafeCardConstants.MINAGE_KEY) != null ? configuration.getProperty(PaySafeCardConstants.MINAGE_KEY).getValue() : null;
-        String kycLevel = configuration.getProperty(PaySafeCardConstants.KYCLEVEL_KEY) != null ? configuration.getProperty(PaySafeCardConstants.KYCLEVEL_KEY).getValue() : null;
-        String countryRestriction = configuration.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY) != null ? configuration.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY).getValue() : null;
+        if (request.getBuyer().getCustomerIdentifier() == null) {
+            throw new InvalidRequestException("PaySafeRequest must have a customerId key when created");
+        } else {
+            ContractConfiguration configuration = request.getContractConfiguration();
 
-        this.customer = new Customer(request.getBuyer().getCustomerIdentifier(), minAge, kycLevel, countryRestriction);
+            // get non mandatory object
+            String minAge = configuration.getProperty(PaySafeCardConstants.MINAGE_KEY) != null ? configuration.getProperty(PaySafeCardConstants.MINAGE_KEY).getValue() : null;
+            String kycLevel = configuration.getProperty(PaySafeCardConstants.KYCLEVEL_KEY) != null ? configuration.getProperty(PaySafeCardConstants.KYCLEVEL_KEY).getValue() : null;
+            String countryRestriction = configuration.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY) != null ? configuration.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY).getValue() : null;
+
+            this.customer = new Customer(request.getBuyer().getCustomerIdentifier(), minAge, kycLevel, countryRestriction);
+        }
+    }
+
+    private void setUrls(PaylineEnvironment environment) throws InvalidRequestException {
+        if (environment == null) {
+            throw new InvalidRequestException("PaySafeRequest must have a redirect key when created");
+        } else {
+            this.redirect = new Redirect(environment);
+            this.notificationUrl = environment.getNotificationURL();
+        }
     }
 
     public static String createAmount(int amount) {

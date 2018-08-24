@@ -2,10 +2,7 @@ package com.payline.payment.paysafecard.services;
 
 import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
 import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
-import com.payline.payment.paysafecard.utils.LocalizationImpl;
-import com.payline.payment.paysafecard.utils.LocalizationService;
-import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
-import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
+import com.payline.payment.paysafecard.utils.*;
 import com.payline.pmapi.bean.configuration.*;
 import com.payline.pmapi.service.ConfigurationService;
 
@@ -79,10 +76,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     public Map<String, String> check(ContractParametersCheckRequest contractParametersCheckRequest) {
         Map<String, String> errors = new HashMap<>();
 
-        // create a CheckRequest
-        PaySafePaymentRequest checkRequest = new PaySafePaymentRequest(contractParametersCheckRequest);
-
         try {
+            // create a CheckRequest
+            PaySafePaymentRequest checkRequest = new PaySafePaymentRequest(contractParametersCheckRequest);
+
             // do the request
             Boolean isSandbox = contractParametersCheckRequest.getPaylineEnvironment().isSandbox();
             PaySafePaymentResponse response = httpClient.initiate(checkRequest, isSandbox);
@@ -92,7 +89,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 findErrors(response, errors);
             }
 
-        } catch (IOException e) {
+        } catch (IOException | InvalidRequestException e) {
             errors.put(ContractParametersCheckRequest.GENERIC_ERROR, e.getMessage());
         }
 

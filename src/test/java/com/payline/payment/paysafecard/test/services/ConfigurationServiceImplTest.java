@@ -87,9 +87,9 @@ public class ConfigurationServiceImplTest {
     public void findErrorInvalidKey() {
         Map<String, String> errors = new HashMap<>();
         String json = "{" +
-                "    \"code\": \"invalid_api_key\"," +
-                "    \"message\": \"Authentication failed\"," +
-                "    \"number\": 10008" +
+                "    'code': 'invalid_api_key'," +
+                "    'message': 'Authentication failed'," +
+                "    'number': 10008" +
                 "}";
         service.findErrors(Utils.createPaySafeResponse(json), errors);
 
@@ -101,10 +101,10 @@ public class ConfigurationServiceImplTest {
     public void findErrorInvalidKycLevel() {
         Map<String, String> errors = new HashMap<>();
         String json = "{" +
-                "    \"code\": \"invalid_request_parameter\"," +
-                "    \"message\": \"Valid values are: SIMPLE, FULL\"," +
-                "    \"number\": 10028," +
-                "    \"param\": \"kyc_level\"" +
+                "    'code': 'invalid_request_parameter'," +
+                "    'message': 'Valid values are: SIMPLE, FULL'," +
+                "    'number': 10028," +
+                "    'param': 'kyc_level'" +
                 "}";
         service.findErrors(Utils.createPaySafeResponse(json), errors);
 
@@ -116,10 +116,10 @@ public class ConfigurationServiceImplTest {
     public void findErrorInvalidMinAge() {
         Map<String, String> errors = new HashMap<>();
         String json = "{" +
-                "    \"code\": \"invalid_request_parameter\"," +
-                "    \"message\": \"must be greater than or equal to 1\"," +
-                "    \"number\": 10028," +
-                "    \"param\": \"min_age\"" +
+                "    'code': 'invalid_request_parameter'," +
+                "    'message': 'must be greater than or equal to 1'," +
+                "    'number': 10028," +
+                "    'param': 'min_age'" +
                 "}";
         service.findErrors(Utils.createPaySafeResponse(json), errors);
 
@@ -131,9 +131,9 @@ public class ConfigurationServiceImplTest {
     public void findErrorInvalidRestriction() {
         Map<String, String> errors = new HashMap<>();
         String json = "{" +
-                "    \"code\": \"invalid_restriction\"," +
-                "    \"message\": \"Could not convert restriction value 'foo'!\"," +
-                "    \"number\": 2039" +
+                "    'code': 'invalid_restriction'," +
+                "    'message': 'Could not convert restriction value foo!'," +
+                "    'number': 2039" +
                 "}";
         service.findErrors(Utils.createPaySafeResponse(json), errors);
 
@@ -146,9 +146,9 @@ public class ConfigurationServiceImplTest {
     public void findErrorUnknownError() {
         Map<String, String> errors = new HashMap<>();
         String json = "{" +
-                "    \"code\": \"dumb error\"," +
-                "    \"message\": \"I don't know what to write\"," +
-                "    \"number\": 0000" +
+                "    'code': 'dumb error'," +
+                "    'message': 'this is a message'," +
+                "    'number': 0000" +
                 "}";
         service.findErrors(Utils.createPaySafeResponse(json), errors);
 

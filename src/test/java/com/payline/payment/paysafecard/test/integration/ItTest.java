@@ -1,4 +1,4 @@
-package com.payline.payment.paysafecard.test;
+package com.payline.payment.paysafecard.test.integration;
 
 import com.payline.payment.paysafecard.services.ConfigurationServiceImpl;
 import com.payline.payment.paysafecard.services.PaymentServiceImpl;
@@ -79,7 +79,6 @@ public class ItTest extends AbstractPaymentIntegration {
     protected String cancelOnPartnerWebsite(String s) {
         return null;
     }
-
 
 
     @Test

@@ -25,34 +25,34 @@ public class Utils {
 
     public static PaySafePaymentResponse createGoodPaySafeResponse() {
         String json = "{" +
-                "    \"object\": \"PAYMENT\"," +
-                "    \"id\": \"pay_9743636706_C4xKjolAPk439xoFnbvhZ9ckUq2aBCT4_EUR\"," +
-                "    \"created\": 1534498236365," +
-                "    \"updated\": 1534498236365," +
-                "    \"amount\": 0.01," +
-                "    \"currency\": \"EUR\"," +
-                "    \"status\": \"INITIATED\"," +
-                "    \"type\": \"PAYSAFECARD\"," +
-                "    \"redirect\": {" +
-                "        \"success_url\": \"" + SUCCESS_URL + "\"," +
-                "        \"failure_url\": \"" + FAILURE_URL + "\"," +
-                "        \"auth_url\": \"" + AUTH_URL + "\"" +
+                "    'object': 'PAYMENT'," +
+                "    'id': 'pay_9743636706_C4xKjolAPk439xoFnbvhZ9ckUq2aBCT4_EUR'," +
+                "    'created': 1534498236365," +
+                "    'updated': 1534498236365," +
+                "    'amount': 0.01," +
+                "    'currency': 'EUR'," +
+                "    'status': 'INITIATED'," +
+                "    'type': 'PAYSAFECARD'," +
+                "    'redirect': {" +
+                "        'success_url': '" + SUCCESS_URL + "'," +
+                "        'failure_url': '" + FAILURE_URL + "'," +
+                "        'auth_url': '" + AUTH_URL + "'" +
                 "    }," +
-                "    \"customer\": {" +
-                "        \"id\": \"toto\"" +
+                "    'customer': {" +
+                "        'id': 'toto'" +
                 "    }," +
-                "    \"notification_url\": \"" + NOTIFICATION_URL + "\"," +
-                "    \"submerchant_id\": \"1\"" +
+                "    'notification_url': '" + NOTIFICATION_URL + "'," +
+                "    'submerchant_id': '1'" +
                 "}";
         return createPaySafeResponse(json);
     }
 
     public static PaySafePaymentResponse createBadPaySafeResponse() {
         String json = "{" +
-                "    \"code\": \"invalid_request_parameter\"," +
-                "    \"message\": \"must be greater than or equal to 1\"," +
-                "    \"number\": 10028," +
-                "    \"param\": \"min_age\"" +
+                "    'code': 'invalid_request_parameter'," +
+                "    'message': 'must be greater than or equal to 1'," +
+                "    'number': 10028," +
+                "    'param': 'min_age'" +
                 "}";
         return createPaySafeResponse(json);
     }
@@ -178,6 +178,7 @@ public class Utils {
 
     private static Buyer createBuyer(Map<Buyer.PhoneNumberType, String> phoneNumbers, Map<Buyer.AddressType, Buyer.Address> addresses, Buyer.FullName fullName) {
         return Buyer.BuyerBuilder.aBuyer()
+                .withCustomerIdentifier("customerId")
                 .withEmail("foo@bar.baz")
                 .withPhoneNumbers(phoneNumbers)
                 .withAddresses(addresses)
