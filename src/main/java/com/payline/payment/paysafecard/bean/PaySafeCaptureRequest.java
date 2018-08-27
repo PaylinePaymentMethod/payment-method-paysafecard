@@ -1,6 +1,7 @@
 package com.payline.payment.paysafecard.bean;
 
 import com.payline.payment.paysafecard.utils.InvalidRequestException;
+import com.payline.pmapi.bean.payment.ContractConfiguration;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 
 public class PaySafeCaptureRequest extends PaySafeRequest {
@@ -13,6 +14,11 @@ public class PaySafeCaptureRequest extends PaySafeRequest {
         } else {
             this.paymentId = request.getRedirectionContext().toString();
         }
+    }
+
+    public PaySafeCaptureRequest(String paymentId, ContractConfiguration configuration) throws InvalidRequestException {
+        super(configuration);
+        this.paymentId = paymentId;
     }
 
     public String getPaymentId() {

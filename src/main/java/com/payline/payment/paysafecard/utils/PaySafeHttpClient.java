@@ -24,11 +24,11 @@ public class PaySafeHttpClient {
         this.client = new OkHttpClient.Builder().build();
     }
 
-    private String getHost(boolean isSandbox) {
+    public String getHost(boolean isSandbox) {
         return isSandbox ? PaySafeCardConstants.SANDBOX_URL : PaySafeCardConstants.PRODUCTION_URL;
     }
 
-    private HttpUrl createUrl(String host, String... path) {
+    public HttpUrl createUrl(String host, String... path) {
         HttpUrl.Builder builder = new HttpUrl.Builder()
                 .scheme("https")
                 .host(host);

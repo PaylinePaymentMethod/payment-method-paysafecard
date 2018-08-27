@@ -10,7 +10,7 @@ public abstract class PaySafeRequest {
     private String authenticationHeader;
 
     PaySafeRequest(ContractConfiguration configuration) throws InvalidRequestException {
-        if (configuration == null || configuration.getProperty(PaySafeCardConstants.AUTHORISATIONKEY_KEY) == null){
+        if (configuration == null || configuration.getProperty(PaySafeCardConstants.AUTHORISATIONKEY_KEY).getValue() == null){
             throw new InvalidRequestException("PaySafeRequest must have an authorisation key when created");
         } else {
             this.authenticationHeader = "Basic " + configuration.getProperty(PaySafeCardConstants.AUTHORISATIONKEY_KEY).getValue();

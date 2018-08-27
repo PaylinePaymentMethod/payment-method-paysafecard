@@ -30,7 +30,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
     public PaymentResponse finalizeRedirectionPayment(RedirectionPaymentRequest redirectionPaymentRequest) {
 
         try {
-            PaySafeCaptureRequest request = new PaySafeCaptureRequest(redirectionPaymentRequest);
+            PaySafeCaptureRequest request = createRequest(redirectionPaymentRequest);
 
             boolean isSandbox = redirectionPaymentRequest.getPaylineEnvironment().isSandbox();
             PaySafePaymentResponse response = httpClient.retrievePaymentData(request, isSandbox);
@@ -76,5 +76,9 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
     @Override
     public PaymentResponse handleSessionExpired(TransactionStatusRequest transactionStatusRequest) {
         return PaySafeErrorHandler.getPaymentResponseFailure("timeout", FailureCause.SESSION_EXPIRED);
+    }
+
+    public PaySafeCaptureRequest createRequest(RedirectionPaymentRequest redirectionPaymentRequest) throws InvalidRequestException {
+        return new PaySafeCaptureRequest(redirectionPaymentRequest);
     }
 }

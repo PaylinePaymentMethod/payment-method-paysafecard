@@ -39,9 +39,8 @@ public class PaySafePaymentRequest extends PaySafeRequest {
     public PaySafePaymentRequest(PaymentRequest request) throws InvalidRequestException {
         super(request.getContractConfiguration());
 
-
         Amount requestAmount = request.getAmount();
-        if (requestAmount.getAmountInSmallestUnit() == null){
+        if (requestAmount == null || requestAmount.getAmountInSmallestUnit() == null){
             throw new InvalidRequestException("PaySafeRequest must have an amount when created");
         } else {
             this.amount = createAmount(requestAmount.getAmountInSmallestUnit().intValue());
@@ -55,7 +54,7 @@ public class PaySafePaymentRequest extends PaySafeRequest {
 
         setUrls(request.getPaylineEnvironment());
 
-        if (request.getBuyer().getCustomerIdentifier() == null) {
+        if (request.getBuyer() == null || request.getBuyer().getCustomerIdentifier() == null) {
             throw new InvalidRequestException("PaySafeRequest must have a customerId key when created");
         } else {
             ContractConfiguration configuration = request.getContractConfiguration();
