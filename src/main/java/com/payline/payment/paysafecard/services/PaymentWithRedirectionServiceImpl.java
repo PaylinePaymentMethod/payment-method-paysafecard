@@ -33,40 +33,42 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
             PaySafeCaptureRequest request = createRequest(redirectionPaymentRequest);
 
             boolean isSandbox = redirectionPaymentRequest.getPaylineEnvironment().isSandbox();
-            PaySafePaymentResponse response = httpClient.retrievePaymentData(request, isSandbox);
 
+
+            PaySafePaymentResponse response = httpClient.retrievePaymentData(request, isSandbox);
 
             if (response.getCode() != null) {
                 return PaySafeErrorHandler.findError(response);
-            } else {
-                // status must be "AUTHORIZED"
-
-                // capture payment
-                response = httpClient.capture(request, isSandbox);
-
-                // status must be success
-                if (PaySafeCardConstants.STATUS_SUCCESS.equals(response.getStatus())) {
-
-                    // return success response to payline
-                    Card card = Card.CardBuilder.aCard()
-                            .withPan(response.getFirstCardDetails().getSerial())
-                            .withExpirationDate(YearMonth.now())
-                            .build();
-
-                    CardPayment cardPayment = CardPayment.CardPaymentBuilder.aCardPayment()
-                            .withCard(card)
-//                            .withAuthorizationNumber()
-                            .build();
-
-                    return PaymentResponseSuccess.PaymentResponseSuccessBuilder.aPaymentResponseSuccess()
-                            .withStatusCode("0")
-                            .withTransactionIdentifier(response.getId())
-                            .withTransactionDetails(cardPayment)
-                            .build();
-                } else {
-                    return PaySafeErrorHandler.findError(response);
-                }
+            } else if (!PaySafeCardConstants.STATUS_AUTHORIZED.equals(response.getStatus())) {
+                return getErrorFromStatus(response.getStatus());
             }
+
+            response = httpClient.capture(request, isSandbox);
+            if(response.getCode() != null){
+                return PaySafeErrorHandler.findError(response);
+            }
+            else if (!PaySafeCardConstants.STATUS_SUCCESS.equals(response.getStatus())) {
+                return getErrorFromStatus(response.getStatus());
+            }
+
+            Card card = Card.CardBuilder.aCard()
+                    .withPan(response.getFirstCardDetails().getSerial())
+                    .withExpirationDate(YearMonth.now())
+                    .build();
+
+            CardPayment cardPayment = CardPayment.CardPaymentBuilder.aCardPayment()
+                    .withCard(card)
+                    .build();
+
+            return PaymentResponseSuccess.PaymentResponseSuccessBuilder.aPaymentResponseSuccess()
+                    .withStatusCode("0")
+                    .withTransactionIdentifier(response.getId())
+                    .withTransactionDetails(cardPayment)
+                    .build();
+
+
+
+
         } catch (IOException | InvalidRequestException e) {
             return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.INTERNAL_ERROR);
         }
@@ -80,5 +82,18 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
     public PaySafeCaptureRequest createRequest(RedirectionPaymentRequest redirectionPaymentRequest) throws InvalidRequestException {
         return new PaySafeCaptureRequest(redirectionPaymentRequest);
+    }
+
+    private PaymentResponse getErrorFromStatus(String status) {
+        switch (status) {
+            case PaySafeCardConstants.STATUS_CANCELED_CUSTOMER:
+                return PaySafeErrorHandler.getPaymentResponseFailure("canceledByCustomer", FailureCause.CANCEL);
+            case PaySafeCardConstants.STATUS_CANCELED_MERCHANT:
+                return PaySafeErrorHandler.getPaymentResponseFailure("canceledByMerchant", FailureCause.CANCEL);
+            case PaySafeCardConstants.STATUS_EXPIRED:
+                return PaySafeErrorHandler.getPaymentResponseFailure("sessionExpired", FailureCause.SESSION_EXPIRED);
+            default:
+                return PaySafeErrorHandler.getPaymentResponseFailure("unknown", FailureCause.PARTNER_UNKNOWN_ERROR);
+        }
     }
 }
