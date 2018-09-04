@@ -17,21 +17,4 @@ public class Customer {
         this.kycLevel = kycLevel;
         this.countryRestriction = countryRestriction;
     }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getMinAge() {
-        return minAge;
-    }
-
-    public String getKycLevel() {
-        return kycLevel;
-    }
-
-    public String getCountryRestriction() {
-        return countryRestriction;
-    }
-
 }

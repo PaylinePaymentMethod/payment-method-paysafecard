@@ -26,10 +26,7 @@ public class ItTest extends AbstractPaymentIntegration {
     @Override
     protected Map<String, ContractProperty> generateParameterContract() {
         Map<String, ContractProperty> propertyHashMap = new HashMap<>();
-        propertyHashMap.put(PaySafeCardConstants.KYCLEVEL_KEY, new ContractProperty(null));
-        propertyHashMap.put(PaySafeCardConstants.MINAGE_KEY, new ContractProperty(null));
-        propertyHashMap.put(PaySafeCardConstants.COUNTRYRESTRICTION_KEY, new ContractProperty(null));
-        propertyHashMap.put(PaySafeCardConstants.AUTHORISATIONKEY_KEY, new ContractProperty(null));
+        propertyHashMap.put(PaySafeCardConstants.AUTHORISATIONKEY_KEY, new ContractProperty(Utils.AUTHORISATION_VAL));
 
         return propertyHashMap;
     }

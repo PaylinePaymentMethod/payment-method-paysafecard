@@ -22,7 +22,8 @@ public class PaySafePaymentRequest extends PaySafeRequest {
     private Customer customer;
     @SerializedName("submerchant_id")
     private String submerchantId;
-    private String shop_id;
+    @SerializedName("shop_id")
+    private String shopId;
 
     @Expose(serialize = false, deserialize = false)
     private String paymentId;
@@ -117,7 +118,7 @@ public class PaySafePaymentRequest extends PaySafeRequest {
                 ", notificationUrl='" + notificationUrl + '\'' +
                 ", customer=" + customer +
                 ", submerchantId='" + submerchantId + '\'' +
-                ", shop_id='" + shop_id + '\'' +
+                ", shop_id='" + shopId + '\'' +
                 ", paymentId='" + paymentId + '\'' +
                 ", capture=" + capture +
                 '}';

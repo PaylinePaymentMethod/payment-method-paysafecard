@@ -10,21 +10,4 @@ public class CardDetail {
     public String getSerial() {
         return serial;
     }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public String getAmount() {
-        return amount;
-    }
-
 }
