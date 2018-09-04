@@ -1,13 +1,16 @@
 package com.payline.payment.paysafecard.bean;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.payline.payment.paysafecard.utils.InvalidRequestException;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.pmapi.bean.common.Amount;
+import com.payline.pmapi.bean.common.Buyer;
 import com.payline.pmapi.bean.configuration.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
 import com.payline.pmapi.bean.payment.PaylineEnvironment;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
+import com.payline.pmapi.bean.refund.request.RefundRequest;
 
 public class PaySafePaymentRequest extends PaySafeRequest {
     private final String type = "PAYSAFECARD";
@@ -20,6 +23,10 @@ public class PaySafePaymentRequest extends PaySafeRequest {
     @SerializedName("submerchant_id")
     private String submerchantId;
     private String shop_id;
+
+    @Expose(serialize = false, deserialize = false)
+    private String paymentId;
+    private boolean capture;
 
 
     public PaySafePaymentRequest(ContractParametersCheckRequest request) throws InvalidRequestException {
@@ -38,34 +45,41 @@ public class PaySafePaymentRequest extends PaySafeRequest {
 
     public PaySafePaymentRequest(PaymentRequest request) throws InvalidRequestException {
         super(request.getContractConfiguration());
+        build(request.getAmount(), request.getPaylineEnvironment(), request.getBuyer(), request.getContractConfiguration());
+    }
 
-        Amount requestAmount = request.getAmount();
-        if (requestAmount == null || requestAmount.getAmountInSmallestUnit() == null){
+    public PaySafePaymentRequest(RefundRequest request) throws InvalidRequestException {
+        super(request.getContractConfiguration());
+        build(request.getAmount(), request.getPaylineEnvironment(), request.getBuyer(), request.getContractConfiguration());
+        this.capture = false;
+    }
+
+    private void build(Amount amount, PaylineEnvironment environment, Buyer buyer, ContractConfiguration configuration) throws InvalidRequestException {
+        if (amount == null || amount.getAmountInSmallestUnit() == null) {
             throw new InvalidRequestException("PaySafeRequest must have an amount when created");
         } else {
-            this.amount = createAmount(requestAmount.getAmountInSmallestUnit().intValue());
+            this.amount = createAmount(amount.getAmountInSmallestUnit().intValue());
         }
 
-        if (requestAmount.getCurrency() == null){
+        if (amount.getCurrency() == null) {
             throw new InvalidRequestException("PaySafeRequest must have a currency when created");
         } else {
-            this.currency = requestAmount.getCurrency().getCurrencyCode();
+            this.currency = amount.getCurrency().getCurrencyCode();
         }
 
-        setUrls(request.getPaylineEnvironment());
+        setUrls(environment);
 
-        if (request.getBuyer() == null || request.getBuyer().getCustomerIdentifier() == null) {
+        if (buyer == null || buyer.getCustomerIdentifier() == null) {
             throw new InvalidRequestException("PaySafeRequest must have a customerId key when created");
         } else {
-            ContractConfiguration configuration = request.getContractConfiguration();
-
             // get non mandatory object
             String minAge = configuration.getProperty(PaySafeCardConstants.MINAGE_KEY) != null ? configuration.getProperty(PaySafeCardConstants.MINAGE_KEY).getValue() : null;
             String kycLevel = configuration.getProperty(PaySafeCardConstants.KYCLEVEL_KEY) != null ? configuration.getProperty(PaySafeCardConstants.KYCLEVEL_KEY).getValue() : null;
             String countryRestriction = configuration.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY) != null ? configuration.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY).getValue() : null;
 
-            this.customer = new Customer(request.getBuyer().getCustomerIdentifier(), minAge, kycLevel, countryRestriction);
+            this.customer = new Customer(buyer.getCustomerIdentifier(), minAge, kycLevel, countryRestriction);
         }
+
     }
 
     private void setUrls(PaylineEnvironment environment) throws InvalidRequestException {
@@ -89,4 +103,23 @@ public class PaySafePaymentRequest extends PaySafeRequest {
         return sb.toString();
     }
 
+    public String getPaymentId() {
+        return paymentId;
+    }
+
+    @Override
+    public String toString() {
+        return "PaySafePaymentRequest{" +
+                "type='" + type + '\'' +
+                ", amount='" + amount + '\'' +
+                ", currency='" + currency + '\'' +
+                ", redirect=" + redirect +
+                ", notificationUrl='" + notificationUrl + '\'' +
+                ", customer=" + customer +
+                ", submerchantId='" + submerchantId + '\'' +
+                ", shop_id='" + shop_id + '\'' +
+                ", paymentId='" + paymentId + '\'' +
+                ", capture=" + capture +
+                '}';
+    }
 }

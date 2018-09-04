@@ -22,31 +22,16 @@ public class Customer {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getMinAge() {
         return minAge;
-    }
-
-    public void setMinAge(String minAge) {
-        this.minAge = minAge;
     }
 
     public String getKycLevel() {
         return kycLevel;
     }
 
-    public void setKycLevel(String kycLevel) {
-        this.kycLevel = kycLevel;
-    }
-
     public String getCountryRestriction() {
         return countryRestriction;
     }
 
-    public void setCountryRestriction(String countryRestriction) {
-        this.countryRestriction = countryRestriction;
-    }
 }

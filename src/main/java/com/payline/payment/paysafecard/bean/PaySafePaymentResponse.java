@@ -25,7 +25,6 @@ public class PaySafePaymentResponse {
     @SerializedName("card_details")
     private List<CardDetail> cardDetails;
 
-
     // fields used in error response
     private String code;
     private String message;
@@ -106,29 +105,5 @@ public class PaySafePaymentResponse {
 
     public String getRedirectURL() {
         return this.getRedirect().getAuth_url();
-    }
-
-
-    @Override
-    public String toString() {
-        return "PaySafePaymentResponse{" +
-                "object='" + object + '\'' +
-                ", id='" + id + '\'' +
-                ", created='" + created + '\'' +
-                ", updated='" + updated + '\'' +
-                ", amount='" + amount + '\'' +
-                ", currency='" + currency + '\'' +
-                ", status='" + status + '\'' +
-                ", type='" + type + '\'' +
-                ", redirect=" + redirect +
-                ", customer=" + customer +
-                ", notificationUrl='" + notificationUrl + '\'' +
-                ", subMerchantId='" + subMerchantId + '\'' +
-                ", cardDetails=" + cardDetails +
-                ", code='" + code + '\'' +
-                ", message='" + message + '\'' +
-                ", number='" + number + '\'' +
-                ", param='" + param + '\'' +
-                '}';
     }
 }

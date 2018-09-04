@@ -3,6 +3,7 @@ package com.payline.payment.paysafecard.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.payline.payment.paysafecard.bean.PaySafeCaptureRequest;
+import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
 import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
 import com.payline.payment.paysafecard.bean.PaySafeRequest;
 import okhttp3.*;
@@ -112,6 +113,22 @@ public class PaySafeHttpClient {
         HttpUrl url = createUrl(host, PaySafeCardConstants.PATH_VERSION, PaySafeCardConstants.PATH, request.getPaymentId(), PaySafeCardConstants.PATH_CAPTURE);
 
         RequestBody body = RequestBody.create(null, "");
+
+        Map<String, String> headers = createHeaders(request.getAuthenticationHeader());
+
+        // do the request
+        Response response = doPost(url, headers, body);
+
+        // create object from PaySafeCard response
+        return parser.fromJson(response.body().string(), PaySafePaymentResponse.class);
+    }
+
+    public PaySafePaymentResponse refund(PaySafePaymentRequest request, boolean isSandbox) throws IOException {
+        String host = getHost(isSandbox);
+        HttpUrl url = createUrl(host, PaySafeCardConstants.PATH_VERSION, PaySafeCardConstants.PATH, request.getPaymentId(), PaySafeCardConstants.PATH_REFUND);
+
+        String jsonBody = parser.toJson(request);
+        RequestBody body = RequestBody.create(MediaType.parse(CONTENT_TYPE), jsonBody);
 
         Map<String, String> headers = createHeaders(request.getAuthenticationHeader());
 

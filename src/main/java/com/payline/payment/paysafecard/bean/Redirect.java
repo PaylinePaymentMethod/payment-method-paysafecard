@@ -12,7 +12,7 @@ public class Redirect {
         if (environment.getRedirectionReturnURL() == null){
             throw new InvalidRequestException("PaySafeRequest must have a success url when created");
         }
-        if (environment.getRedirectionReturnURL() == null){
+        if (environment.getRedirectionCancelURL() == null){
             throw new InvalidRequestException("PaySafeRequest must have a failure url when created");
         }
         this.success_url = environment.getRedirectionReturnURL();
@@ -26,7 +26,6 @@ public class Redirect {
     public String getFailure_url() {
         return failure_url;
     }
-
 
     public String getAuth_url() {
         return auth_url;
