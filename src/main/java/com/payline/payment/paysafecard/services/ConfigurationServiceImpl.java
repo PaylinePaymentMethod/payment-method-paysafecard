@@ -29,7 +29,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         List<AbstractParameter> parameters = new ArrayList<>();
 
         // authorisation key
-        final InputParameter authorisationKey = new InputParameter();
+        final PasswordParameter authorisationKey = new PasswordParameter();
         authorisationKey.setKey(PaySafeCardConstants.AUTHORISATIONKEY_KEY);
         authorisationKey.setLabel(localization.getSafeLocalizedString("contract.authorisationKey.label", locale));
         authorisationKey.setDescription(localization.getSafeLocalizedString("contract.authorisationKey.description", locale));

@@ -85,4 +85,16 @@ public class PaySafeRequestTest {
         Assert.assertEquals("10.00", PaySafePaymentRequest.createAmount(1000));
         Assert.assertEquals("100.00", PaySafePaymentRequest.createAmount(10000));
     }
+
+    @Test
+    public void encode(){
+        String s = "hello world";
+        String s2 = "aGVsbG8gd29ybGQ=";
+        Assert.assertEquals(s2, PaySafePaymentRequest.encodeToBase64(s));
+        Assert.assertEquals("", PaySafePaymentRequest.encodeToBase64(""));
+        Assert.assertEquals("", PaySafePaymentRequest.encodeToBase64(null));
+
+
+
+    }
 }

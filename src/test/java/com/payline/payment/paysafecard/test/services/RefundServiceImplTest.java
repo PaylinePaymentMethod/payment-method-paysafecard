@@ -5,6 +5,7 @@ import com.payline.payment.paysafecard.services.RefundServiceImpl;
 import com.payline.payment.paysafecard.test.Utils;
 import com.payline.payment.paysafecard.utils.InvalidRequestException;
 import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
+import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 import com.payline.pmapi.bean.refund.response.RefundResponse;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;
@@ -62,7 +63,7 @@ public class RefundServiceImplTest {
     }
 
     @Test
-    public void refundRequestError() throws IOException {
+    public void refundRequestErrorINVALID_DATA() throws IOException {
         String json = "{" +
                 "    'code': 'merchant_refund_missing_transaction'," +
                 "    'message': 'No original Transaction found'," +
@@ -74,7 +75,71 @@ public class RefundServiceImplTest {
 
         Assert.assertNotNull(response);
         RefundResponseFailure responseFailure = (RefundResponseFailure) response;
-        Assert.assertNotNull(responseFailure);
+        Assert.assertEquals(FailureCause.INVALID_DATA, responseFailure.getFailureCause());
+    }
+
+    @Test
+    public void refundRequestErrorREFUSED() throws IOException {
+        String json = "{" +
+                "    'code': 'CUSTOMER_LIMIT_EXCEEDED'," +
+                "    'message': 'No original Transaction found'," +
+                "    'number': 3184" +
+                "}";
+        when(httpClient.refund(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
+
+        RefundResponse response = service.refundRequest(request);
+
+        Assert.assertNotNull(response);
+        RefundResponseFailure responseFailure = (RefundResponseFailure) response;
+        Assert.assertEquals(FailureCause.REFUSED, responseFailure.getFailureCause());
+    }
+
+    @Test
+    public void refundRequestErrorPAYMENT_PARTNER_ERROR() throws IOException {
+        String json = "{" +
+                "    'code': 'CUSTOMER_INACTIVE'," +
+                "    'message': 'No original Transaction found'," +
+                "    'number': 3184" +
+                "}";
+        when(httpClient.refund(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
+
+        RefundResponse response = service.refundRequest(request);
+
+        Assert.assertNotNull(response);
+        RefundResponseFailure responseFailure = (RefundResponseFailure) response;
+        Assert.assertEquals(FailureCause.PAYMENT_PARTNER_ERROR, responseFailure.getFailureCause());
+    }
+
+    @Test
+    public void refundRequestErrorFRAUD_DETECTED() throws IOException {
+        String json = "{" +
+                "    'code': 'PAYOUT_BLOCKED'," +
+                "    'message': 'No original Transaction found'," +
+                "    'number': 3184" +
+                "}";
+        when(httpClient.refund(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
+
+        RefundResponse response = service.refundRequest(request);
+
+        Assert.assertNotNull(response);
+        RefundResponseFailure responseFailure = (RefundResponseFailure) response;
+        Assert.assertEquals(FailureCause.FRAUD_DETECTED, responseFailure.getFailureCause());
+    }
+
+    @Test
+    public void refundRequestErrorUnknown() throws IOException {
+        String json = "{" +
+                "    'code': 'dumb_error_code'," +
+                "    'message': 'No original Transaction found'," +
+                "    'number': 3184" +
+                "}";
+        when(httpClient.refund(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
+
+        RefundResponse response = service.refundRequest(request);
+
+        Assert.assertNotNull(response);
+        RefundResponseFailure responseFailure = (RefundResponseFailure) response;
+        Assert.assertEquals(FailureCause.PARTNER_UNKNOWN_ERROR, responseFailure.getFailureCause());
     }
 
     @Test

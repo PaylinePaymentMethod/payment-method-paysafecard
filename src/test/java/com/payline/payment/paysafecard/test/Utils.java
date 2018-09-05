@@ -20,7 +20,8 @@ public class Utils {
     public static final String NOTIFICATION_URL = "http://notificationurl.com/";
     public static final String AUTH_URL = "http://authenticationurl.com/";
 
-    public static final String AUTHORISATION_VAL = "cHNjX1I3T1NQNmp2dUpZUmpKNUpIekdxdXVLbTlmOFBMSFo=";
+    public static final String AUTHORISATION_VAL = "psc_R7OSP6jvuJYRjJ5JHzGquuKm9f8PLHZ";
+//    public static final String AUTHORISATION_VAL = "cHNjX1I3T1NQNmp2dUpZUmpKNUpIekdxdXVLbTlmOFBMSFo=";
     public static final String PAYMENT_TOKEN = "10000009016901270";    // big token but not unlimited
 
 

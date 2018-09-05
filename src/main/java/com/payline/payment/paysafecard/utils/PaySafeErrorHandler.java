@@ -62,112 +62,46 @@ public class PaySafeErrorHandler {
 
     public static RefundResponse findRefundError(PaySafePaymentResponse response, String transactionId) {
         FailureCause cause;
-        if (response.getNumber() == null) {
+        if (response.getCode() == null) {
             cause = FailureCause.PARTNER_UNKNOWN_ERROR;
             // unknown error
         } else {
-            switch (response.getNumber()) {
-                case "3100":
-                    // Product not available.
-                    cause = FailureCause.PAYMENT_PARTNER_ERROR;
-                    break;
-                case "3103":
-                    // Duplicate order request.
-                    cause = FailureCause.INVALID_DATA;
-                    break;
-                case "3106":
-                    // Invalid facevalue format.
-                    cause = FailureCause.INVALID_DATA;
-                    break;
-                case "3150":
-                    // Missing paramenter.
-                    cause = FailureCause.INVALID_DATA;
-                    break;
-                case "3151":
-                    // Invalid currency.
-                    cause = FailureCause.INVALID_DATA;
-                    break;
-                case "3161":
-                    // Merchant not allowed to perform this Action.
-                    cause = FailureCause.REFUSED;
-                    break;
-                case "3162":
-                    // No customer account found by provided credentials.
-                    cause = FailureCause.INVALID_DATA;
-                    break;
-                case "3163":
-                    // Invalid paramater.
-                    cause = FailureCause.INVALID_DATA;
-                    break;
-                case "3164":
-                    // Transaction already exists.
-                    cause = FailureCause.INVALID_DATA;
-                    break;
-                case "3165":
+            switch (response.getCode().toUpperCase()) {
+                case "MERCHANT_REFUND_CLIENT_ID_NOT_MATCHING":
+                case "NO_UNLOAD_MERCHANT_CONFIGURED":
+                case "MERCHANT_REFUND_MISSING_TRANSACTION":
+                case "MERCHANT_REFUND_CUSTOMER_CREDENTIALS_MISSING":
+                case "DUPLICATE_ORDER_REQUEST":
+                case "FACEVALUE_FORMAT_ERROR":
+                case "MISSING_PARAMETER":
+                case "INVALID_CURRENCY":
+                case "CUSTOMER_NOT_FOUND":
+                case "INVALID_PARAMETER":
+                case "DUPLICATE_PAYOUT_REQUEST":
+                case "PAYOUT_ID_COLLISION":
+                case "CUSTOMER_DETAILS_MISMATCHD":
+                case "INVALID_AMOUNT":
                     // Invalid amount.
                     cause = FailureCause.INVALID_DATA;
                     break;
-                case "3167":
-                    // Customer limit exceeded.
-                    cause = FailureCause.REFUSED;
-                    break;
-                case "3168":
-                    // Feature not activated in this country for this kyc Level.
-                    cause = FailureCause.REFUSED;
-                    break;
-                case "3169":
-                    // Payout id collides with existing disposition id
-                    cause = FailureCause.INVALID_DATA;
-                    break;
-                case "3170":
-                    // Top-up limit exceeded.
-                    cause = FailureCause.REFUSED;
-                    break;
-                case "3171":
-                    // Payout amount is below minimum payout amount of the merchant.
-                    cause = FailureCause.REFUSED;
-                    break;
-                case "3179":
-                    // Merchant refund exceeds original transaction.
-                    cause = FailureCause.REFUSED;
-                    break;
-                case "3180":
-                    // Original Transaction of Merchant Refund is in invalid state.
-                    cause = FailureCause.PAYMENT_PARTNER_ERROR;
-                    break;
-                case "3181":
-                    // Merchant Client Id not matching with original Payment.
-                    cause = FailureCause.INVALID_DATA;
-                    break;
-                case "3182":
-                    // merchant client Id missing.
-                    cause = FailureCause.INVALID_DATA;
-                    break;
-                case "3184":
-                    // No original Transaction found.
-                    cause = FailureCause.INVALID_DATA;
-                    break;
-                case "3185":
-                    // my paysafecard account not found on original transaction and no additional credentials provided.
-                    cause = FailureCause.INVALID_DATA;
-                    break;
-                case "3193":
-                    // Customer not active.
-                    cause = FailureCause.PAYMENT_PARTNER_ERROR;
-                    break;
-                case "3194":
-                    // Customer yearly payout limit exceeded.
-                    cause = FailureCause.REFUSED;
-                    break;
-                case "3195":
-                    // Customer details from request don't match with database.
-                    cause = FailureCause.INVALID_DATA;
-                    break;
-                case "3198":
+                case "CUSTOMER_LIMIT_EXCEEDED":
+                case "KYC_INVALID_FOR_PAYOUT_CUSTOMER":
+                case "TOPUP_LIMIT_EXCEEDED":
+                case "PAYOUT_AMOUNT_BELOW_MINIMUM":
+                case "MERCHANT_NOT_ALLOWED_FOR_PAYOUT":
+                case "MERCHANT_REFUND_EXCEEDS_ORIGINAL_TRANSACTION":
+                case "CUSTOMER_YEARLY_PAYOUT_LIMIT_REACHED":
+                case "MAX_AMOUNT_OF_PAYOUT_MERCHANTS_REACHED":
                     // There is already the maximum number of pay-out merchant clients assigned to this account.
                     cause = FailureCause.REFUSED;
                     break;
-                case "3199":
+                case "PRODUCT_NOT_AVAILABLE":
+                case "MERCHANT_REFUND_ORIGINAL_TRANSACTION_INVALID_STATE":
+                case "CUSTOMER_INACTIVE":
+                    // Customer not active.
+                    cause = FailureCause.PAYMENT_PARTNER_ERROR;
+                    break;
+                case "PAYOUT_BLOCKED":
                     // Payout blocked due to security reasons.
                     cause = FailureCause.FRAUD_DETECTED;
                     break;
