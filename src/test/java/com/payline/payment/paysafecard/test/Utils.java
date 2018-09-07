@@ -43,7 +43,7 @@ public class Utils {
                 "        'auth_url': '" + AUTH_URL + "'" +
                 "    }," +
                 "    'customer': {" +
-                "        'id': 'toto'" +
+                "        'id': 'updateRequest'" +
                 "    }," +
                 "    'notification_url': '" + NOTIFICATION_URL + "'," +
                 "    'submerchant_id': '1'" +
@@ -67,7 +67,7 @@ public class Utils {
                 "        'auth_url': '" + AUTH_URL + "'" +
                 "    }," +
                 "    'customer': {" +
-                "        'id': 'toto'" +
+                "        'id': 'updateRequest'" +
                 "    }," +
                 "    'notification_url': '" + NOTIFICATION_URL + "'," +
                 "    'submerchant_id': '1'," +
@@ -94,7 +94,7 @@ public class Utils {
                 "        'auth_url': '" + AUTH_URL + "'" +
                 "    }," +
                 "    'customer': {" +
-                "        'id': 'toto'" +
+                "        'id': 'updateRequest'" +
                 "    }," +
                 "    'notification_url': '" + NOTIFICATION_URL + "'," +
                 "    'submerchant_id': '1'," +

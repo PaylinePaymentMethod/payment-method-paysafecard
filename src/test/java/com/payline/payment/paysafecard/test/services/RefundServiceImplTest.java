@@ -38,6 +38,7 @@ public class RefundServiceImplTest {
     public void init() throws InvalidRequestException {
         PaySafePaymentRequest paymentRequest = null;
         doReturn(paymentRequest).when(service).createRequest(any(RefundRequest.class));
+        doNothing().when(service).updateRequest(any(PaySafePaymentRequest.class));
         request = Mockito.mock(RefundRequest.class, Mockito.RETURNS_DEEP_STUBS);
 
     }

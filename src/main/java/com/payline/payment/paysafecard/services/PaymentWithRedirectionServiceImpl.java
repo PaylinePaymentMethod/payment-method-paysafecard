@@ -1,10 +1,10 @@
 package com.payline.payment.paysafecard.services;
 
 import com.payline.payment.paysafecard.bean.PaySafeCaptureRequest;
-import com.payline.payment.paysafecard.utils.InvalidRequestException;
-import com.payline.payment.paysafecard.utils.PaySafeErrorHandler;
 import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
+import com.payline.payment.paysafecard.utils.InvalidRequestException;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
+import com.payline.payment.paysafecard.utils.PaySafeErrorHandler;
 import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
@@ -43,36 +43,38 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                 return getErrorFromStatus(response.getStatus());
             }
 
-            response = httpClient.capture(request, isSandbox);
-            if(response.getCode() != null){
-                return PaySafeErrorHandler.findError(response);
+            int i = 0;
+            while (i < 2) {
+                response = httpClient.capture(request, isSandbox);
+                if (response.getCode() != null) {
+                    return PaySafeErrorHandler.findError(response);
+                } else if (PaySafeCardConstants.STATUS_SUCCESS.equals(response.getStatus())) {
+                    // create successResponse object
+                    Card card = Card.CardBuilder.aCard()
+                            .withPan(response.getFirstCardDetails().getSerial())
+                            .withExpirationDate(YearMonth.now())
+                            .build();
+
+                    CardPayment cardPayment = CardPayment.CardPaymentBuilder.aCardPayment()
+                            .withCard(card)
+                            .build();
+
+                    return PaymentResponseSuccess.PaymentResponseSuccessBuilder.aPaymentResponseSuccess()
+                            .withStatusCode("0")
+                            .withTransactionIdentifier(response.getId())
+                            .withTransactionDetails(cardPayment)
+                            .build();
+                }
+
+                i++;
             }
-            else if (!PaySafeCardConstants.STATUS_SUCCESS.equals(response.getStatus())) {
-                return getErrorFromStatus(response.getStatus());
-            }
 
-            Card card = Card.CardBuilder.aCard()
-                    .withPan(response.getFirstCardDetails().getSerial())
-                    .withExpirationDate(YearMonth.now())
-                    .build();
-
-            CardPayment cardPayment = CardPayment.CardPaymentBuilder.aCardPayment()
-                    .withCard(card)
-                    .build();
-
-            return PaymentResponseSuccess.PaymentResponseSuccessBuilder.aPaymentResponseSuccess()
-                    .withStatusCode("0")
-                    .withTransactionIdentifier(response.getId())
-                    .withTransactionDetails(cardPayment)
-                    .build();
-
-
-
+            // 2 calls but no response with status = "SUCCESS"
+            return getErrorFromStatus(response.getStatus());
 
         } catch (IOException | InvalidRequestException e) {
             return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.INTERNAL_ERROR);
         }
-
     }
 
     @Override

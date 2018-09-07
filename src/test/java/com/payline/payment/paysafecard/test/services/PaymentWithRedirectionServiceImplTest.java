@@ -6,7 +6,6 @@ import com.payline.payment.paysafecard.test.Utils;
 import com.payline.payment.paysafecard.utils.InvalidRequestException;
 import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
-import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.PaymentResponseFailure;
@@ -134,7 +133,7 @@ public class PaymentWithRedirectionServiceImplTest {
     }
 
     @Test
-    public void handleSessionExpired(){
+    public void handleSessionExpired() {
         PaymentResponse response = service.handleSessionExpired(null);
         Assert.assertNotNull(response);
     }

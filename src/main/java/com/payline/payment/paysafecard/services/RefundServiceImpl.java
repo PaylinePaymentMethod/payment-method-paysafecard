@@ -25,15 +25,25 @@ public class RefundServiceImpl implements RefundService {
     public RefundResponse refundRequest(RefundRequest refundRequest) {
         String transactionId = refundRequest.getTransactionId();
         try {
-            PaySafePaymentRequest request = createRequest(refundRequest);
             boolean isSandbox = refundRequest.getPaylineEnvironment().isSandbox();
+            PaySafePaymentRequest request = createRequest(refundRequest);
 
             PaySafePaymentResponse response = client.refund(request, isSandbox);
 
             if (response.getCode() != null) {
                 return PaySafeErrorHandler.findRefundError(response, transactionId);
             } else if (!PaySafeCardConstants.STATUS_REFUND_SUCCESS.equals(response.getStatus())) {
-                return PaySafeErrorHandler.getRefundResponseFailure("unknown", FailureCause.PARTNER_UNKNOWN_ERROR, transactionId);            }
+                return PaySafeErrorHandler.getRefundResponseFailure("unknown", FailureCause.PARTNER_UNKNOWN_ERROR, transactionId);
+            }
+
+            updateRequest(request);
+            response = client.refund(request, isSandbox);
+
+            if (response.getCode() != null) {
+                return PaySafeErrorHandler.findRefundError(response, transactionId);
+            } else if (!PaySafeCardConstants.STATUS_REFUND_SUCCESS.equals(response.getStatus())) {
+                return PaySafeErrorHandler.getRefundResponseFailure("unknown", FailureCause.PARTNER_UNKNOWN_ERROR, transactionId);
+            }
 
             // refund Success
             return RefundResponseSuccess.RefundResponseSuccessBuilder.aRefundResponseSuccess()
@@ -49,6 +59,10 @@ public class RefundServiceImpl implements RefundService {
 
     public PaySafePaymentRequest createRequest(RefundRequest refundRequest) throws InvalidRequestException {
         return new PaySafePaymentRequest(refundRequest);
+    }
+
+    public void updateRequest(PaySafePaymentRequest request){
+        request.setCapture(true);
     }
 
 

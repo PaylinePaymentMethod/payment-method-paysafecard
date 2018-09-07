@@ -46,30 +46,13 @@ public class PaySafePaymentRequest extends PaySafeRequest {
 
     public PaySafePaymentRequest(PaymentRequest request) throws InvalidRequestException {
         super(request.getContractConfiguration());
-        build(request.getAmount(), request.getPaylineEnvironment(), request.getBuyer(), request.getContractConfiguration());
-    }
 
-    public PaySafePaymentRequest(RefundRequest request) throws InvalidRequestException {
-        super(request.getContractConfiguration());
-        build(request.getAmount(), request.getPaylineEnvironment(), request.getBuyer(), request.getContractConfiguration());
-        this.capture = false;
-    }
+        setAmount(request.getAmount());
+        setCurrency(request.getAmount());
+        setUrls(request.getPaylineEnvironment());
 
-    private void build(Amount amount, PaylineEnvironment environment, Buyer buyer, ContractConfiguration configuration) throws InvalidRequestException {
-        if (amount == null || amount.getAmountInSmallestUnit() == null) {
-            throw new InvalidRequestException("PaySafeRequest must have an amount when created");
-        } else {
-            this.amount = createAmount(amount.getAmountInSmallestUnit().intValue());
-        }
-
-        if (amount.getCurrency() == null) {
-            throw new InvalidRequestException("PaySafeRequest must have a currency when created");
-        } else {
-            this.currency = amount.getCurrency().getCurrencyCode();
-        }
-
-        setUrls(environment);
-
+        Buyer buyer = request.getBuyer();
+        ContractConfiguration configuration = request.getContractConfiguration();
         if (buyer == null || buyer.getCustomerIdentifier() == null) {
             throw new InvalidRequestException("PaySafeRequest must have a customerId key when created");
         } else {
@@ -80,7 +63,39 @@ public class PaySafePaymentRequest extends PaySafeRequest {
 
             this.customer = new Customer(buyer.getCustomerIdentifier(), minAge, kycLevel, countryRestriction);
         }
+    }
 
+    public PaySafePaymentRequest(RefundRequest request) throws InvalidRequestException {
+        super(request.getContractConfiguration());
+        this.capture = false;
+
+        setAmount(request.getAmount());
+        setCurrency(request.getAmount());
+        setUrls(request.getPaylineEnvironment());
+
+        Buyer buyer = request.getBuyer();
+        ContractConfiguration configuration = request.getContractConfiguration();
+        if (buyer == null || buyer.getCustomerIdentifier() == null) {
+            throw new InvalidRequestException("PaySafeRequest must have a customerId key when created");
+        } else {
+            this.customer = new Customer(buyer.getCustomerIdentifier(), buyer.getEmail());
+        }
+    }
+
+    private void setAmount(Amount amount) throws InvalidRequestException {
+        if (amount == null || amount.getAmountInSmallestUnit() == null) {
+            throw new InvalidRequestException("PaySafeRequest must have an amount when created");
+        } else {
+            this.amount = createAmount(amount.getAmountInSmallestUnit().intValue());
+        }
+    }
+
+    private void setCurrency(Amount amount) throws InvalidRequestException {
+        if (amount.getCurrency() == null) {
+            throw new InvalidRequestException("PaySafeRequest must have a currency when created");
+        } else {
+            this.currency = amount.getCurrency().getCurrencyCode();
+        }
     }
 
     private void setUrls(PaylineEnvironment environment) throws InvalidRequestException {
@@ -122,5 +137,9 @@ public class PaySafePaymentRequest extends PaySafeRequest {
                 ", paymentId='" + paymentId + '\'' +
                 ", capture=" + capture +
                 '}';
+    }
+
+    public void setCapture(boolean capture) {
+        this.capture = capture;
     }
 }
