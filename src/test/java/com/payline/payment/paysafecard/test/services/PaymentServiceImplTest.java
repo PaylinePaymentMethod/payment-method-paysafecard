@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -31,7 +32,7 @@ public class PaymentServiceImplTest {
     private PaySafeHttpClient httpClient;
 
     @Test
-    public void paymentRequest() throws IOException {
+    public void paymentRequest() throws IOException, URISyntaxException {
         when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createInitiatedPaySafeResponse());
 
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
@@ -44,7 +45,7 @@ public class PaymentServiceImplTest {
 
 
     @Test
-    public void paymentRequestWithError10007() throws IOException {
+    public void paymentRequestWithError10007() throws IOException, URISyntaxException  {
         String json = "{" +
                 "    \"code\": \"general_technical_error\"," +
                 "    \"number\": 10007" +
@@ -61,7 +62,7 @@ public class PaymentServiceImplTest {
     }
 
     @Test
-    public void paymentRequestWithError10008() throws IOException {
+    public void paymentRequestWithError10008() throws IOException, URISyntaxException  {
         String json = "{" +
                 "    \"code\": \"invalid_api_key\"," +
                 "    \"number\": 10008" +
@@ -78,7 +79,7 @@ public class PaymentServiceImplTest {
     }
 
     @Test
-    public void paymentRequestWithError10028() throws IOException {
+    public void paymentRequestWithError10028() throws IOException, URISyntaxException  {
         String json = "{" +
                 "    \"code\": \"invalid_request_parameter\"," +
                 "    \"number\": 10028" +
@@ -95,7 +96,7 @@ public class PaymentServiceImplTest {
     }
 
     @Test
-    public void paymentRequestWithError2001() throws IOException {
+    public void paymentRequestWithError2001() throws IOException, URISyntaxException  {
         String json = "{" +
                 "    \"code\": \"duplicate_transaction_id\"," +
                 "    \"number\": 2001" +
@@ -112,7 +113,7 @@ public class PaymentServiceImplTest {
     }
 
     @Test
-    public void paymentRequestWithError2017() throws IOException {
+    public void paymentRequestWithError2017() throws IOException, URISyntaxException  {
         String json = "{" +
                 "    \"code\": \"duplicate_transaction_id\"," +
                 "    \"number\": 2017" +
@@ -129,7 +130,7 @@ public class PaymentServiceImplTest {
     }
 
     @Test
-    public void paymentRequestWithError3001() throws IOException {
+    public void paymentRequestWithError3001() throws IOException, URISyntaxException  {
         String json = "{" +
                 "    \"code\": \"duplicate_transaction_id\"," +
                 "    \"number\": 3001" +
@@ -146,7 +147,7 @@ public class PaymentServiceImplTest {
     }
 
     @Test
-    public void paymentRequestWithError3007() throws IOException {
+    public void paymentRequestWithError3007() throws IOException, URISyntaxException  {
         String json = "{" +
                 "    \"code\": \"Merchant with Id dumbId is not allowed to perform this debit any more\"," +
                 "    \"number\": 3007" +
@@ -163,7 +164,7 @@ public class PaymentServiceImplTest {
     }
 
     @Test
-    public void paymentRequestWithError3014() throws IOException {
+    public void paymentRequestWithError3014() throws IOException, URISyntaxException  {
         String json = "{" +
                 "    \"code\": \"submerchant_not_found\"," +
                 "    \"number\": 3014" +
@@ -180,7 +181,7 @@ public class PaymentServiceImplTest {
     }
 
     @Test
-    public void paymentRequestWithErrorUnknown() throws IOException {
+    public void paymentRequestWithErrorUnknown() throws IOException, URISyntaxException  {
         String json = "{" +
                 "    \"code\": \"this is a code\"," +
                 "    \"number\": foo" +
@@ -197,7 +198,7 @@ public class PaymentServiceImplTest {
     }
 
     @Test
-    public void paymentRequestWithErrorNull() throws IOException {
+    public void paymentRequestWithErrorNull() throws IOException, URISyntaxException  {
         String json = "{\"code\": \"this is a code\"}";
 
         when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
@@ -211,7 +212,7 @@ public class PaymentServiceImplTest {
     }
 
     @Test
-    public void paymentRequestWithException() throws IOException {
+    public void paymentRequestWithException() throws IOException, URISyntaxException  {
         when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenThrow(IOException.class);
 
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();

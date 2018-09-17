@@ -7,6 +7,7 @@ import com.payline.pmapi.bean.configuration.*;
 import com.payline.pmapi.service.ConfigurationService;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -89,7 +90,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 findErrors(response, errors);
             }
 
-        } catch (IOException | InvalidRequestException e) {
+        } catch (IOException | URISyntaxException | InvalidRequestException e) {
             errors.put(ContractParametersCheckRequest.GENERIC_ERROR, e.getMessage());
         }
 

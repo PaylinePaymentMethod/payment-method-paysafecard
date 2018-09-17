@@ -20,6 +20,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -40,7 +41,7 @@ public class PaymentWithRedirectionServiceImplTest {
     }
 
     @Test
-    public void finalizeRedirectionPayment() throws IOException {
+    public void finalizeRedirectionPayment() throws IOException, URISyntaxException {
         RedirectionPaymentRequest redirectionPaymentRequest = Mockito.mock(RedirectionPaymentRequest.class, Mockito.RETURNS_DEEP_STUBS);
         when(httpClient.retrievePaymentData(any(PaySafeCaptureRequest.class), anyBoolean())).thenReturn(Utils.createAuthorizedPaySafeResponse());
         when(httpClient.capture(any(PaySafeCaptureRequest.class), anyBoolean())).thenReturn(Utils.createSuccessPaySafeResponse());
@@ -52,7 +53,7 @@ public class PaymentWithRedirectionServiceImplTest {
     }
 
     @Test
-    public void finalizeWithRetrievePaymentDataError() throws IOException {
+    public void finalizeWithRetrievePaymentDataError() throws IOException, URISyntaxException {
         RedirectionPaymentRequest redirectionPaymentRequest = Mockito.mock(RedirectionPaymentRequest.class, Mockito.RETURNS_DEEP_STUBS);
         when(httpClient.retrievePaymentData(any(PaySafeCaptureRequest.class), anyBoolean())).thenReturn(Utils.createBadPaySafeResponse());
 
@@ -62,7 +63,7 @@ public class PaymentWithRedirectionServiceImplTest {
     }
 
     @Test
-    public void finalizeWithRetrievePaymentWrongStatus() throws IOException {
+    public void finalizeWithRetrievePaymentWrongStatus() throws IOException, URISyntaxException {
         String json = "{" +
                 "    'object': 'PAYMENT'," +
                 "    'id': 'pay_9743636706_C4xKjolAPk439xoFnbvhZ9ckUq2aBCT4_EUR'," +
@@ -86,7 +87,7 @@ public class PaymentWithRedirectionServiceImplTest {
     }
 
     @Test
-    public void finalizeWithCaptureError() throws IOException {
+    public void finalizeWithCaptureError() throws IOException, URISyntaxException {
         RedirectionPaymentRequest redirectionPaymentRequest = Mockito.mock(RedirectionPaymentRequest.class, Mockito.RETURNS_DEEP_STUBS);
         when(httpClient.retrievePaymentData(any(PaySafeCaptureRequest.class), anyBoolean())).thenReturn(Utils.createAuthorizedPaySafeResponse());
         when(httpClient.capture(any(PaySafeCaptureRequest.class), anyBoolean())).thenReturn(Utils.createBadPaySafeResponse());
@@ -97,7 +98,7 @@ public class PaymentWithRedirectionServiceImplTest {
     }
 
     @Test
-    public void finalizeWithCaptureWrongStatus() throws IOException {
+    public void finalizeWithCaptureWrongStatus() throws IOException, URISyntaxException {
         String json = "{" +
                 "    'object': 'PAYMENT'," +
                 "    'id': 'pay_9743636706_C4xKjolAPk439xoFnbvhZ9ckUq2aBCT4_EUR'," +
@@ -122,7 +123,7 @@ public class PaymentWithRedirectionServiceImplTest {
     }
 
     @Test
-    public void finalizeWithHttpException() throws IOException {
+    public void finalizeWithHttpException() throws IOException, URISyntaxException {
         RedirectionPaymentRequest redirectionPaymentRequest = Mockito.mock(RedirectionPaymentRequest.class, Mockito.RETURNS_DEEP_STUBS);
         when(httpClient.retrievePaymentData(any(PaySafeCaptureRequest.class), anyBoolean())).thenThrow(IOException.class);
 

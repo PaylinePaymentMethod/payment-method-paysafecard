@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -46,7 +47,7 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
-    public void checkGood() throws IOException {
+    public void checkGood() throws IOException, URISyntaxException {
         when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createInitiatedPaySafeResponse());
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(goodKycLevel, goodMinAge, goodCountryRestriction, goodAuthorisation);
@@ -56,7 +57,7 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
-    public void checkBad() throws IOException {
+    public void checkBad() throws IOException, URISyntaxException  {
         when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createBadPaySafeResponse());
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(goodKycLevel, goodMinAge, goodCountryRestriction, goodAuthorisation);
@@ -66,7 +67,7 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
-    public void checkException() throws IOException {
+    public void checkException() throws IOException, URISyntaxException  {
         when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenThrow(IOException.class);
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(goodKycLevel, goodMinAge, goodCountryRestriction, goodAuthorisation);

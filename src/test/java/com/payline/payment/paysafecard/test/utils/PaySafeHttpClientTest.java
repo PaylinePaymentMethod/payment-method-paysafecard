@@ -15,7 +15,9 @@ public class PaySafeHttpClientTest {
 
     @Test
     public void createUrl(){
-        Assert.assertNotNull(client.createUrl("www.foo.bar", "foo", "bar"));
-        Assert.assertNotNull(client.createUrl("www.foo.bar"));
+        String path1 = "foo";
+        String path2 = "bar";
+        Assert.assertEquals("/foo/bar/", client.createPath( path1, path2));
+        Assert.assertEquals("/", client.createPath());
     }
 }

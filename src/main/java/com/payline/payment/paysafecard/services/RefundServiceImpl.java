@@ -13,6 +13,7 @@ import com.payline.pmapi.bean.refund.response.impl.RefundResponseSuccess;
 import com.payline.pmapi.service.RefundService;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class RefundServiceImpl implements RefundService {
     PaySafeHttpClient client;
@@ -52,7 +53,7 @@ public class RefundServiceImpl implements RefundService {
                     .build();
 
 
-        } catch (InvalidRequestException | IOException e) {
+        } catch (InvalidRequestException | URISyntaxException | IOException e) {
             return PaySafeErrorHandler.getRefundResponseFailure(e.getMessage(), FailureCause.CANCEL, transactionId);
         }
     }

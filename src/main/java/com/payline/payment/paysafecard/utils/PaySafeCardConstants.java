@@ -8,6 +8,7 @@ public class PaySafeCardConstants {
     public static final String COUNTRYRESTRICTION_KEY = "COUNTRY_RESTRICTION";
     public static final String AUTHORISATIONKEY_KEY = "AUTHORISATION";
 
+    public static final String SCHEME = "https";
     public static final String SANDBOX_URL = "apitest.paysafecard.com";
     public static final String PRODUCTION_URL = "api.paysafecard.com";
     public static final String PATH = "payments";
@@ -21,6 +22,4 @@ public class PaySafeCardConstants {
     public static final String STATUS_CANCELED_MERCHANT = "CANCELED_MERCHANT";
     public static final String STATUS_CANCELED_CUSTOMER = "CANCELED_CUSTOMER";
     public static final String STATUS_EXPIRED = "EXPIRED";
-
-
 }

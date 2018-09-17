@@ -20,6 +20,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -44,7 +45,7 @@ public class RefundServiceImplTest {
     }
 
     @Test
-    public void refundRequest() throws IOException {
+    public void refundRequest() throws IOException, URISyntaxException {
         String json = "{" +
                 "  'object': 'refund'," +
                 "  'id': 'ref_1000000007_2838fhsd6dashsdkfsd_EUR'," +
@@ -64,7 +65,7 @@ public class RefundServiceImplTest {
     }
 
     @Test
-    public void refundRequestErrorINVALID_DATA() throws IOException {
+    public void refundRequestErrorINVALID_DATA() throws IOException, URISyntaxException {
         String json = "{" +
                 "    'code': 'merchant_refund_missing_transaction'," +
                 "    'message': 'No original Transaction found'," +
@@ -80,7 +81,7 @@ public class RefundServiceImplTest {
     }
 
     @Test
-    public void refundRequestErrorREFUSED() throws IOException {
+    public void refundRequestErrorREFUSED() throws IOException, URISyntaxException {
         String json = "{" +
                 "    'code': 'CUSTOMER_LIMIT_EXCEEDED'," +
                 "    'message': 'No original Transaction found'," +
@@ -96,7 +97,7 @@ public class RefundServiceImplTest {
     }
 
     @Test
-    public void refundRequestErrorPAYMENT_PARTNER_ERROR() throws IOException {
+    public void refundRequestErrorPAYMENT_PARTNER_ERROR() throws IOException, URISyntaxException {
         String json = "{" +
                 "    'code': 'CUSTOMER_INACTIVE'," +
                 "    'message': 'No original Transaction found'," +
@@ -112,7 +113,7 @@ public class RefundServiceImplTest {
     }
 
     @Test
-    public void refundRequestErrorFRAUD_DETECTED() throws IOException {
+    public void refundRequestErrorFRAUD_DETECTED() throws IOException, URISyntaxException {
         String json = "{" +
                 "    'code': 'PAYOUT_BLOCKED'," +
                 "    'message': 'No original Transaction found'," +
@@ -128,7 +129,7 @@ public class RefundServiceImplTest {
     }
 
     @Test
-    public void refundRequestErrorUnknown() throws IOException {
+    public void refundRequestErrorUnknown() throws IOException, URISyntaxException {
         String json = "{" +
                 "    'code': 'dumb_error_code'," +
                 "    'message': 'No original Transaction found'," +
@@ -144,7 +145,7 @@ public class RefundServiceImplTest {
     }
 
     @Test
-    public void refundWithWrongStatus() throws IOException {
+    public void refundWithWrongStatus() throws IOException, URISyntaxException {
         String json = "{" +
                 "  'object': 'refund'," +
                 "  'id': 'ref_1000000007_2838fhsd6dashsdkfsd_EUR'," +
@@ -164,7 +165,7 @@ public class RefundServiceImplTest {
 
 
     @Test
-    public void refundWithException() throws IOException {
+    public void refundWithException() throws IOException, URISyntaxException {
         when(httpClient.refund(any(PaySafePaymentRequest.class), anyBoolean())).thenThrow(IOException.class);
 
         RefundResponse response = service.refundRequest(request);

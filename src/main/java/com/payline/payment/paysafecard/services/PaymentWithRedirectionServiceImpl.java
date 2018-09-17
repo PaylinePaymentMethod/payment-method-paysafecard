@@ -16,6 +16,7 @@ import com.payline.pmapi.bean.payment.response.buyerpaymentidentifier.impl.CardP
 import com.payline.pmapi.service.PaymentWithRedirectionService;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.YearMonth;
 
 public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirectionService {
@@ -72,7 +73,8 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
             // 2 calls but no response with status = "SUCCESS"
             return getErrorFromStatus(response.getStatus());
 
-        } catch (IOException | InvalidRequestException e) {
+        } catch (IOException | URISyntaxException | InvalidRequestException e) {
+            e.printStackTrace();
             return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.INTERNAL_ERROR);
         }
     }

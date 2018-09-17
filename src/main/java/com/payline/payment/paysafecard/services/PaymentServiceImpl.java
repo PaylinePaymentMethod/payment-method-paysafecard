@@ -13,6 +13,7 @@ import com.payline.pmapi.bean.payment.response.PaymentResponseRedirect.Redirecti
 import com.payline.pmapi.service.PaymentService;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 public class PaymentServiceImpl implements PaymentService {
@@ -43,7 +44,8 @@ public class PaymentServiceImpl implements PaymentService {
                         .build();
             }
 
-        } catch (IOException | InvalidRequestException e) {
+        } catch (IOException | URISyntaxException | InvalidRequestException e) {
+            e.printStackTrace();
             return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.INTERNAL_ERROR);
         }
     }
