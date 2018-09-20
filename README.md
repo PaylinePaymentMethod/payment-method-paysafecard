@@ -1,1 +1,1 @@
-# paysafecard
+# Payment method paysafecard
