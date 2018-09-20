@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class RefundServiceImpl implements RefundService {
-    PaySafeHttpClient client;
+    private PaySafeHttpClient client;
 
     public RefundServiceImpl() {
         this.client = new PaySafeHttpClient();

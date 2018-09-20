@@ -21,7 +21,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentResponse paymentRequest(PaymentRequest paymentRequest) {
-
         try {
             // create the PaySAfeCard payment request
             PaySafePaymentRequest request = new PaySafePaymentRequest(paymentRequest);
@@ -45,9 +44,7 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
         } catch (IOException | URISyntaxException | InvalidRequestException e) {
-            e.printStackTrace();
             return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.INTERNAL_ERROR);
         }
     }
-
 }

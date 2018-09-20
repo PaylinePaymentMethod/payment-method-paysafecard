@@ -74,7 +74,6 @@ public class PaySafePaymentRequest extends PaySafeRequest {
         setUrls(request.getPaylineEnvironment());
 
         Buyer buyer = request.getBuyer();
-        ContractConfiguration configuration = request.getContractConfiguration();
         if (buyer == null || buyer.getCustomerIdentifier() == null) {
             throw new InvalidRequestException("PaySafeRequest must have a customerId key when created");
         } else {
@@ -107,6 +106,11 @@ public class PaySafePaymentRequest extends PaySafeRequest {
         }
     }
 
+    /**
+     * create a String amount from a int amount
+     * @param amount
+     * @return a string under the form xx.xx
+     */
     public static String createAmount(int amount) {
         StringBuilder sb = new StringBuilder();
         sb.append(amount);
@@ -121,22 +125,6 @@ public class PaySafePaymentRequest extends PaySafeRequest {
 
     public String getPaymentId() {
         return paymentId;
-    }
-
-    @Override
-    public String toString() {
-        return "PaySafePaymentRequest{" +
-                "type='" + type + '\'' +
-                ", amount='" + amount + '\'' +
-                ", currency='" + currency + '\'' +
-                ", redirect=" + redirect +
-                ", notificationUrl='" + notificationUrl + '\'' +
-                ", customer=" + customer +
-                ", submerchantId='" + submerchantId + '\'' +
-                ", shop_id='" + shopId + '\'' +
-                ", paymentId='" + paymentId + '\'' +
-                ", capture=" + capture +
-                '}';
     }
 
     public void setCapture(boolean capture) {

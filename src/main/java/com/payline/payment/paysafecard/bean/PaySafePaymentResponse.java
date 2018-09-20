@@ -104,6 +104,6 @@ public class PaySafePaymentResponse {
     }
 
     public String getRedirectURL() {
-        return this.getRedirect().getAuth_url();
+        return this.getRedirect().getAuthUrl();
     }
 }

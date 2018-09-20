@@ -26,16 +26,12 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
         httpClient = new PaySafeHttpClient();
     }
 
-
     @Override
     public PaymentResponse finalizeRedirectionPayment(RedirectionPaymentRequest redirectionPaymentRequest) {
-
         try {
             PaySafeCaptureRequest request = createRequest(redirectionPaymentRequest);
 
             boolean isSandbox = redirectionPaymentRequest.getPaylineEnvironment().isSandbox();
-
-
             PaySafePaymentResponse response = httpClient.retrievePaymentData(request, isSandbox);
 
             if (response.getCode() != null) {
@@ -51,22 +47,8 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                     return PaySafeErrorHandler.findError(response);
                 } else if (PaySafeCardConstants.STATUS_SUCCESS.equals(response.getStatus())) {
                     // create successResponse object
-                    Card card = Card.CardBuilder.aCard()
-                            .withPan(response.getFirstCardDetails().getSerial())
-                            .withExpirationDate(YearMonth.now())
-                            .build();
-
-                    CardPayment cardPayment = CardPayment.CardPaymentBuilder.aCardPayment()
-                            .withCard(card)
-                            .build();
-
-                    return PaymentResponseSuccess.PaymentResponseSuccessBuilder.aPaymentResponseSuccess()
-                            .withStatusCode("0")
-                            .withTransactionIdentifier(response.getId())
-                            .withTransactionDetails(cardPayment)
-                            .build();
+                    return createResponseSuccess(response);
                 }
-
                 i++;
             }
 
@@ -74,7 +56,6 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
             return getErrorFromStatus(response.getStatus());
 
         } catch (IOException | URISyntaxException | InvalidRequestException e) {
-            e.printStackTrace();
             return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.INTERNAL_ERROR);
         }
     }
@@ -99,5 +80,22 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
             default:
                 return PaySafeErrorHandler.getPaymentResponseFailure("unknown", FailureCause.PARTNER_UNKNOWN_ERROR);
         }
+    }
+
+    private PaymentResponseSuccess createResponseSuccess(PaySafePaymentResponse response){
+        Card card = Card.CardBuilder.aCard()
+                .withPan(response.getFirstCardDetails().getSerial())
+                .withExpirationDate(YearMonth.now())
+                .build();
+
+        CardPayment cardPayment = CardPayment.CardPaymentBuilder.aCardPayment()
+                .withCard(card)
+                .build();
+
+        return PaymentResponseSuccess.PaymentResponseSuccessBuilder.aPaymentResponseSuccess()
+                .withStatusCode("0")
+                .withTransactionIdentifier(response.getId())
+                .withTransactionDetails(cardPayment)
+                .build();
     }
 }

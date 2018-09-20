@@ -7,7 +7,6 @@ import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
 import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
 import com.payline.payment.paysafecard.bean.PaySafeRequest;
 import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -17,9 +16,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 
@@ -29,10 +26,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class PaySafeHttpClient {
+    private static final String DEFAULT_CHARSET = "UTF-8";
     private static final String CONTENT_TYPE_KEY = "Content-Type";
     private static final String AUTHENTICATION_KEY = "Authorization";
     private static final String CONTENT_TYPE = "application/json";
-    HttpClient client;// = HttpClients.createDefault();
+    private HttpClient client;
     private Gson parser;
 
 
@@ -57,15 +55,14 @@ public class PaySafeHttpClient {
     }
 
     public String createPath(String... path) {
-        String url = "/";
-
+        StringBuilder sb = new StringBuilder("/");
         if (path != null && path.length > 0) {
             for (String aPath : path) {
-                url +=   aPath +"/";
+                sb.append(aPath).append("/");
             }
         }
 
-        return url;
+        return sb.toString();
     }
 
     //
@@ -113,7 +110,7 @@ public class PaySafeHttpClient {
 
         // do the request
         HttpResponse response = doPost(PaySafeCardConstants.SCHEME, host, path, headers, jsonBody);
-        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+        String responseString = EntityUtils.toString(response.getEntity(), DEFAULT_CHARSET);
 
         // create object from PaySafeCard response
         return parser.fromJson(responseString, PaySafePaymentResponse.class);
@@ -125,7 +122,7 @@ public class PaySafeHttpClient {
         Header[] headers = createHeaders(request.getAuthenticationHeader());
         // do the request
         HttpResponse response = doGet(PaySafeCardConstants.SCHEME, host, path, headers);
-        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+        String responseString = EntityUtils.toString(response.getEntity(), DEFAULT_CHARSET);
         return parser.fromJson(responseString, PaySafePaymentResponse.class);
     }
 
@@ -140,7 +137,7 @@ public class PaySafeHttpClient {
         HttpResponse response = doPost(PaySafeCardConstants.SCHEME, host, path, headers, body);
 
         // create object from PaySafeCard response
-        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+        String responseString = EntityUtils.toString(response.getEntity(), DEFAULT_CHARSET);
         return parser.fromJson(responseString, PaySafePaymentResponse.class);
     }
 

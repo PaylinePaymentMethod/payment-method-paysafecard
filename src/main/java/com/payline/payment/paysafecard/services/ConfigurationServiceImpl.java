@@ -13,12 +13,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class ConfigurationServiceImpl implements ConfigurationService {
-    private static final String VERSION = "1.0";
-    private static final String RELEASE_DATE = "12/12/2012";
+    private static final String VERSION = "1.1";
+    private static final String RELEASE_DATE = "20/09/2018";
 
     private PaySafeHttpClient httpClient = new PaySafeHttpClient();
-
-
     private final LocalizationService localization;
 
     public ConfigurationServiceImpl() {
@@ -108,7 +106,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         return localization.getSafeLocalizedString("project.name", locale);
     }
 
-    // todo remprendre avec toutes les erreurs possibles + gerer la traduction?
     public void findErrors(PaySafePaymentResponse message, Map<String, String> errors) {
         if (message.getCode() != null) {
             switch (message.getCode()) {
@@ -123,7 +120,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                     } else if ("min_age".equals(message.getParam())) {
                         errors.put(PaySafeCardConstants.MINAGE_KEY, message.getMessage());
                     }
-
                     break;
                 case "invalid_restriction":
                     // bad country restriction value

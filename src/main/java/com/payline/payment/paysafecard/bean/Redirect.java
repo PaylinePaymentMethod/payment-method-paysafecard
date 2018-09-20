@@ -23,7 +23,7 @@ public class Redirect {
         this.failureUrl = environment.getRedirectionCancelURL();
     }
 
-    public String getAuth_url() {
+    public String getAuthUrl() {
         return authUrl;
     }
 }
