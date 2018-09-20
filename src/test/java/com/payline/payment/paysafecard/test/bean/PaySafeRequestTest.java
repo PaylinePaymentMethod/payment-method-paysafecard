@@ -4,7 +4,7 @@ import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
 import com.payline.payment.paysafecard.test.Utils;
 import com.payline.payment.paysafecard.utils.InvalidRequestException;
 import com.payline.pmapi.bean.common.Amount;
-import com.payline.pmapi.bean.configuration.ContractParametersCheckRequest;
+import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
 import com.payline.pmapi.bean.payment.PaylineEnvironment;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;

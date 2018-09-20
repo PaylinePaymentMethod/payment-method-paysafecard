@@ -8,8 +8,7 @@ import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
-import com.payline.pmapi.bean.payment.response.PaymentResponseRedirect.PaymentResponseRedirectBuilder;
-import com.payline.pmapi.bean.payment.response.PaymentResponseRedirect.RedirectionRequest;
+import com.payline.pmapi.bean.payment.response.impl.PaymentResponseRedirect;
 import com.payline.pmapi.service.PaymentService;
 
 import java.io.IOException;
@@ -34,9 +33,9 @@ public class PaymentServiceImpl implements PaymentService {
             } else {
                 // get the url to get
                 URL redirectURL = new URL(response.getRedirectURL());
-                RedirectionRequest redirectionRequest = new RedirectionRequest(redirectURL);
+                PaymentResponseRedirect.RedirectionRequest redirectionRequest = new PaymentResponseRedirect.RedirectionRequest(redirectURL);
 
-                return PaymentResponseRedirectBuilder.aPaymentResponseRedirect()
+                return PaymentResponseRedirect.PaymentResponseRedirectBuilder.aPaymentResponseRedirect()
                         .withRedirectionRequest(redirectionRequest)
                         .withTransactionIdentifier(response.getId())
                         .withStatusCode(response.getStatus())

@@ -12,7 +12,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 ext {
-    paymentMethodVersion = '0.11-SNAPSHOT'
+    paymentMethodVersion = '1.0-SNAPSHOT'
     powerMockVersion = '1.7.0'
     releaseDirectoryPath = 'D:/build'
 }
@@ -65,7 +65,7 @@ dependencies {
     testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-server', version: '3.13.0'
     testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-support', version: '3.13.0'
     testImplementation "com.payline:payment-method-api:${paymentMethodVersion}"
-    testImplementation "com.payline:payment-method-integration:0.11.THALES-20180823.125208-3"
+    testImplementation "com.payline:payment-method-integration:${paymentMethodVersion}"
 
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.0.3'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.0.3'
@@ -108,7 +108,5 @@ sonarqube {
 
         property 'sonar.organization', 'thales-services-monext'
         property 'sonar.host.url', 'https://sonarcloud.io'
-//        property 'sonar.login', '3328fa6ef8339aa12012731765928def99c770d5'
-
     }
 }

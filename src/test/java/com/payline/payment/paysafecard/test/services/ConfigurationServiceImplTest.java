@@ -5,8 +5,8 @@ import com.payline.payment.paysafecard.services.ConfigurationServiceImpl;
 import com.payline.payment.paysafecard.test.Utils;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
-import com.payline.pmapi.bean.configuration.AbstractParameter;
-import com.payline.pmapi.bean.configuration.ContractParametersCheckRequest;
+import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
+import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,7 +57,7 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
-    public void checkBad() throws IOException, URISyntaxException  {
+    public void checkBad() throws IOException, URISyntaxException {
         when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createBadPaySafeResponse());
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(goodKycLevel, goodMinAge, goodCountryRestriction, goodAuthorisation);
@@ -67,7 +67,7 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
-    public void checkException() throws IOException, URISyntaxException  {
+    public void checkException() throws IOException, URISyntaxException {
         when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenThrow(IOException.class);
 
         ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(goodKycLevel, goodMinAge, goodCountryRestriction, goodAuthorisation);
@@ -158,7 +158,7 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
-    public void getName(){
+    public void getName() {
         String name = service.getName(locale);
         Assert.assertNotNull(name);
         Assert.assertNotEquals(0, name.length());

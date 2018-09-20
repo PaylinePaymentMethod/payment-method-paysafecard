@@ -5,8 +5,7 @@ import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.pmapi.bean.common.Amount;
 import com.payline.pmapi.bean.common.Buyer;
-import com.payline.pmapi.bean.configuration.ContractParametersCheckRequest;
-import com.payline.pmapi.bean.configuration.PartnerConfiguration;
+import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.*;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 
@@ -128,14 +127,14 @@ public class Utils {
 
         ContractConfiguration configuration = createContractConfiguration(kycLevel, minAge, countryRestriction, authorisation);
         PaylineEnvironment environment = new PaylineEnvironment("http://notificationURL.com", "http://redirectionURL.com", "http://redirectionCancelURL.com", true);
-        PartnerConfiguration partnerConfiguration = new PartnerConfiguration(new HashMap<>());
+//        PartnerConfiguration partnerConfiguration = new PartnerConfiguration(new HashMap<>());
 
         return ContractParametersCheckRequest.CheckRequestBuilder.aCheckRequest()
                 .withAccountInfo(accountInfo)
                 .withLocale(locale)
                 .withContractConfiguration(configuration)
                 .withPaylineEnvironment(environment)
-                .withPartnerConfiguration(partnerConfiguration)
+//                .withPartnerConfiguration(partnerConfiguration)
                 .build();
 
     }

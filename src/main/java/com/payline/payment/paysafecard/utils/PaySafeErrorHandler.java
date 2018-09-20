@@ -2,7 +2,7 @@ package com.payline.payment.paysafecard.utils;
 
 import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
 import com.payline.pmapi.bean.common.FailureCause;
-import com.payline.pmapi.bean.payment.response.PaymentResponseFailure;
+import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
 import com.payline.pmapi.bean.refund.response.RefundResponse;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;
 

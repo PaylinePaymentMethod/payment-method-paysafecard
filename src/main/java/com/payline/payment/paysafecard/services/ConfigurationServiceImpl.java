@@ -4,6 +4,11 @@ import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
 import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
 import com.payline.payment.paysafecard.utils.*;
 import com.payline.pmapi.bean.configuration.*;
+import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
+import com.payline.pmapi.bean.configuration.parameter.impl.InputParameter;
+import com.payline.pmapi.bean.configuration.parameter.impl.ListBoxParameter;
+import com.payline.pmapi.bean.configuration.parameter.impl.PasswordParameter;
+import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.service.ConfigurationService;
 
 import java.io.IOException;
