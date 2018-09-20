@@ -55,7 +55,7 @@ public class PaymentFormConfigurationServiceImplTest {
     @Test
     public void testGetPaymentFormLogo() throws IOException {
         // given: the logo image read from resources
-        String filename = "paysafe-logo.png";
+        String filename = "paysafecard.png";
         InputStream input = PaymentFormConfigurationServiceImpl.class.getClassLoader().getResourceAsStream(filename);
         BufferedImage image = ImageIO.read(input);
         String guessedContentType = Files.probeContentType(new File(filename).toPath());

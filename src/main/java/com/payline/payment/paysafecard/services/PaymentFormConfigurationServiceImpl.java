@@ -21,8 +21,8 @@ import java.util.Locale;
 
 public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigurationService {
     private static final String LOGO_CONTENT_TYPE = "image/png";
-    private static final int LOGO_HEIGHT = 256;
-    private static final int LOGO_WIDTH = 256;
+    private static final int LOGO_HEIGHT = 25;
+    private static final int LOGO_WIDTH = 141;
 
     private LocalizationService localization;
 
@@ -55,7 +55,7 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
     @Override
     public PaymentFormLogo getLogo(Locale locale) throws IOException {
         // Read logo file
-        InputStream input = PaymentFormConfigurationServiceImpl.class.getClassLoader().getResourceAsStream("paysafe-logo.png");
+        InputStream input = PaymentFormConfigurationServiceImpl.class.getClassLoader().getResourceAsStream("paysafecard.png");
         BufferedImage logo = ImageIO.read(input);
 
         // Recover byte array from image
