@@ -30,41 +30,50 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
     public PaymentResponse finalizeRedirectionPayment(RedirectionPaymentRequest redirectionPaymentRequest) {
         try {
             PaySafeCaptureRequest request = createRequest(redirectionPaymentRequest);
-
             boolean isSandbox = redirectionPaymentRequest.getPaylineEnvironment().isSandbox();
-            PaySafePaymentResponse response = httpClient.retrievePaymentData(request, isSandbox);
 
-            if (response.getCode() != null) {
-                return PaySafeErrorHandler.findError(response);
-            } else if (!PaySafeCardConstants.STATUS_AUTHORIZED.equals(response.getStatus())) {
-                return getErrorFromStatus(response.getStatus());
+            // first try
+            PaymentResponse response = validatePayment(request, isSandbox);
+            if (PaymentResponseSuccess.class.equals(response.getClass())){
+                return response;
+            }else{
+                // second try
+                return validatePayment(request, isSandbox);
             }
 
-            int i = 0;
-            while (i < 2) {
-                response = httpClient.capture(request, isSandbox);
-                if (response.getCode() != null) {
-                    return PaySafeErrorHandler.findError(response);
-                } else if (PaySafeCardConstants.STATUS_SUCCESS.equals(response.getStatus())) {
-                    // create successResponse object
-                    return createResponseSuccess(response);
-                }
-                i++;
-            }
-
-            // 2 calls but no response with status = "SUCCESS"
-            return getErrorFromStatus(response.getStatus());
-
-        } catch (IOException | URISyntaxException | InvalidRequestException e) {
+        } catch (InvalidRequestException e) {
             return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.INTERNAL_ERROR);
         }
     }
 
     @Override
     public PaymentResponse handleSessionExpired(TransactionStatusRequest transactionStatusRequest) {
-        return PaySafeErrorHandler.getPaymentResponseFailure("timeout", FailureCause.SESSION_EXPIRED);
+        try {
+            PaySafeCaptureRequest request = createRequest(transactionStatusRequest);
+            boolean isSandbox = transactionStatusRequest.getPaylineEnvironment().isSandbox();
+
+            return validatePayment(request, isSandbox);
+        } catch (InvalidRequestException e) {
+            return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.INVALID_DATA);
+        }
     }
 
+    /**
+     * Used for test (mocking)
+     * @param transactionStatusRequest
+     * @return
+     * @throws InvalidRequestException
+     */
+    public PaySafeCaptureRequest createRequest(TransactionStatusRequest transactionStatusRequest) throws InvalidRequestException {
+        return new PaySafeCaptureRequest(transactionStatusRequest);
+    }
+
+    /**
+     * Used for test (mocking)
+     * @param redirectionPaymentRequest
+     * @return
+     * @throws InvalidRequestException
+     */
     public PaySafeCaptureRequest createRequest(RedirectionPaymentRequest redirectionPaymentRequest) throws InvalidRequestException {
         return new PaySafeCaptureRequest(redirectionPaymentRequest);
     }
@@ -82,7 +91,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
         }
     }
 
-    private PaymentResponseSuccess createResponseSuccess(PaySafePaymentResponse response){
+    private PaymentResponseSuccess createResponseSuccess(PaySafePaymentResponse response) {
         Card card = Card.CardBuilder.aCard()
                 .withPan(response.getFirstCardDetails().getSerial())
                 .withExpirationDate(YearMonth.now())
@@ -97,5 +106,32 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                 .withTransactionIdentifier(response.getId())
                 .withTransactionDetails(cardPayment)
                 .build();
+    }
+
+    private PaymentResponse validatePayment(PaySafeCaptureRequest request, boolean isSandbox){
+        try {
+            // retrieve payment data
+            PaySafePaymentResponse response = httpClient.retrievePaymentData(request, isSandbox);
+            if (response.getCode() != null) {
+                return PaySafeErrorHandler.findError(response);
+            } else{
+                // check if the payment has to be captured
+                if (PaySafeCardConstants.STATUS_AUTHORIZED.equals(response.getStatus())){
+                    response = httpClient.capture(request, isSandbox);
+                }
+
+                if (response.getCode() != null) {
+                    return PaySafeErrorHandler.findError(response);
+                }
+                // check if the payment is well captured
+                if (PaySafeCardConstants.STATUS_SUCCESS.equals(response.getStatus())){
+                    return createResponseSuccess(response);
+                } else {
+                    return getErrorFromStatus(response.getStatus());
+                }
+            }
+        } catch (IOException | URISyntaxException e) {
+            return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.COMMUNICATION_ERROR);
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.payline.payment.paysafecard.utils.InvalidRequestException;
 import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
+import com.payline.pmapi.bean.payment.request.TransactionStatusRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseSuccess;
@@ -38,6 +39,7 @@ public class PaymentWithRedirectionServiceImplTest {
     public void init() throws InvalidRequestException {
         PaySafeCaptureRequest captureRequest = new PaySafeCaptureRequest("dumbId", Utils.createContractConfiguration(null, null, null, Utils.AUTHORISATION_VAL));
         doReturn(captureRequest).when(service).createRequest(any(RedirectionPaymentRequest.class));
+        doReturn(captureRequest).when(service).createRequest(any(TransactionStatusRequest.class));
     }
 
     @Test
@@ -129,14 +131,19 @@ public class PaymentWithRedirectionServiceImplTest {
 
         PaymentResponse response = service.finalizeRedirectionPayment(redirectionPaymentRequest);
         PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
-        Assert.assertEquals(FailureCause.INTERNAL_ERROR, responseFailure.getFailureCause());
+        Assert.assertEquals(FailureCause.COMMUNICATION_ERROR, responseFailure.getFailureCause());
 
     }
 
     @Test
-    public void handleSessionExpired() {
-        PaymentResponse response = service.handleSessionExpired(null);
-        Assert.assertNotNull(response);
+    public void handleSessionExpired() throws IOException, URISyntaxException {
+        TransactionStatusRequest request = Mockito.mock(TransactionStatusRequest.class, Mockito.RETURNS_DEEP_STUBS);
+        when(httpClient.retrievePaymentData(any(PaySafeCaptureRequest.class), anyBoolean())).thenReturn(Utils.createAuthorizedPaySafeResponse());
+        when(httpClient.capture(any(PaySafeCaptureRequest.class), anyBoolean())).thenReturn(Utils.createSuccessPaySafeResponse());
+
+        PaymentResponse response = service.handleSessionExpired(request);
+
+        Assert.assertEquals(PaymentResponseSuccess.class, response.getClass());
     }
 
 }
