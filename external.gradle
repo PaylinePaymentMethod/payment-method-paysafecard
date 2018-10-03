@@ -1,0 +1,26 @@
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+publishing {
+    publications {
+        shadow(MavenPublication) { publication ->
+            project.shadow.component(publication)
+        }
+    }
+    repositories {
+        mavenLocal()
+}
+
+sonarqube {
+    properties {
+	    property "sonar.jacoco.reportPaths", "${project.buildDir}/jacoco/test.exec"
+        property "sonar.dependencyCheck.reportPath", "${project.buildDir}/reports/dependency-check-report.xml"
+        property 'sonar.dependencyCheck.htmlReportPath', "${project.buildDir}/reports/dependency-check-report.html"
+		
+        property 'sonar.organization', 'thales-services-monext'
+        property 'sonar.host.url', 'https://sonarcloud.io'
+    }
+}

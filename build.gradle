@@ -1,5 +1,9 @@
-plugins { id "com.github.johnrengelman.shadow" version "2.0.1" }
-plugins { id "org.sonarqube" version "2.6.1" }
+plugins {
+    id "com.github.johnrengelman.shadow" version "2.0.1"
+    id "org.sonarqube" version "2.6.1"
+    id "org.owasp.dependencycheck" version "3.3.1"
+}
+
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'java-library'
@@ -11,56 +15,31 @@ version '1.0-SNAPSHOT'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+compileJava.options.encoding = 'UTF-8'
+
 ext {
     paymentMethodVersion = '1.0-SNAPSHOT'
     powerMockVersion = '1.7.0'
     releaseDirectoryPath = 'D:/build'
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-//    maven {
-//        url "https://nexus.intra.monext.fr:10130/nexus/content/groups/public"
-//        credentials {
-//            username mavenUser
-//            password mavenPassword
-//        }
-//    }
-//    maven {
-//        url "https://nexus.intra.monext.fr:10130/nexus/content/repositories/jindus-repo-pay-pay-snapshot/"
-//        credentials {
-//            username mavenUser
-//            password mavenPassword
-//        }
-//    }
-}
-
-publishing {
-    publications {
-        shadow(MavenPublication) { publication ->
-            project.shadow.component(publication)
-        }
-    }
-    repositories {
-        mavenLocal()
-    }
-}
+apply from: "monext.gradle"
+//apply from: "external.gradle"
 
 dependencies {
-    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
     compile "com.payline:payment-method-api:${paymentMethodVersion}"
 
     implementation group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.10'
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.6'
 
-    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.0'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
+
+    compileOnly group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.0'
+    compileOnly group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
 
     // JUnit and Mockito
-    testCompile "junit:junit:4.11"
-    testCompile "org.mockito:mockito-core:1.+"
+    testImplementation "junit:junit:4.11"
+    testImplementation "org.mockito:mockito-core:1.+"
 
     testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-server', version: '3.13.0'
     testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-support', version: '3.13.0'
@@ -79,6 +58,7 @@ shadowJar {
         exclude(dependency('com.payline:payment-method-api'))
         exclude(dependency('org.apache.logging.log4j:log4j-api:2.11.0'))
         exclude(dependency('org.apache.logging.log4j:log4j-core:2.11.0'))
+
         exclude(dependency('org.junit.jupiter:junit-jupiter-params:5.0.3'))
         exclude(dependency('org.junit.jupiter:junit-jupiter-api:5.0.3'))
         exclude(dependency('org.seleniumhq.selenium:selenium-server:3.13.0'))
@@ -99,14 +79,3 @@ task printVersion {
 }
 
 test.exclude '**/test/integration/*'
-
-sonarqube {
-    properties {
-        property "sonar.jacoco.reportPaths", "${project.buildDir}/jacoco/test.exec"
-        property "sonar.dependencyCheck.reportPath", "${project.buildDir}/reports/dependency-check-report.xml"
-        property 'sonar.dependencyCheck.htmlReportPath', "${project.buildDir}/reports/dependency-check-report.html"
-
-        property 'sonar.organization', 'thales-services-monext'
-        property 'sonar.host.url', 'https://sonarcloud.io'
-    }
-}
