@@ -1,0 +1,22 @@
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+publishing {
+    publications {
+        shadow(MavenPublication) { publication ->
+            project.shadow.component(publication)
+        }
+    }
+    repositories {
+        mavenLocal()
+}
+
+sonarqube {
+    properties {
+        property 'sonar.organization', 'thales-services-monext'
+        property 'sonar.host.url', 'https://sonarcloud.io'
+    }
+}
