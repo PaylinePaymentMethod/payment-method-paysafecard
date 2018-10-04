@@ -2,6 +2,7 @@ package com.payline.payment.paysafecard.test.services;
 
 
 import com.payline.payment.paysafecard.services.PaymentFormConfigurationServiceImpl;
+import com.payline.payment.paysafecard.test.Utils;
 import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
 import com.payline.pmapi.bean.payment.PaylineEnvironment;
@@ -10,6 +11,7 @@ import com.payline.pmapi.bean.paymentform.request.PaymentFormConfigurationReques
 import com.payline.pmapi.bean.paymentform.request.PaymentFormLogoRequest;
 import com.payline.pmapi.bean.paymentform.response.configuration.PaymentFormConfigurationResponse;
 import com.payline.pmapi.bean.paymentform.response.configuration.impl.PaymentFormConfigurationResponseProvided;
+import com.payline.pmapi.bean.paymentform.response.configuration.impl.PaymentFormConfigurationResponseSpecific;
 import com.payline.pmapi.bean.paymentform.response.logo.PaymentFormLogoResponse;
 import com.payline.pmapi.bean.paymentform.response.logo.impl.PaymentFormLogoResponseFile;
 import org.junit.Assert;
@@ -28,6 +30,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import static com.payline.payment.paysafecard.test.Utils.createDefaultContractConfiguration;
+import static com.payline.payment.paysafecard.test.Utils.createDefaultPaymentFormConfigurationRequest;
 import static org.mockito.Mockito.mock;
 
 
@@ -40,10 +43,10 @@ public class PaymentFormConfigurationServiceImplTest {
     @Test
     public void testGetPaymentFormConfiguration() {
         // when: getPaymentFormConfiguration is called
-        PaymentFormConfigurationResponse response = service.getPaymentFormConfiguration(mock(PaymentFormConfigurationRequest.class));
+         PaymentFormConfigurationResponse response = service.getPaymentFormConfiguration(createDefaultPaymentFormConfigurationRequest());
 
-        // then: returned object is an instance of PaymentFormConfigurationResponseProvided
-        Assert.assertTrue(response instanceof PaymentFormConfigurationResponseProvided);
+        // then: returned object is an instance of PaymentFormConfigurationResponseSpecific
+        Assert.assertTrue(response instanceof PaymentFormConfigurationResponseSpecific);
     }
 
     @Test

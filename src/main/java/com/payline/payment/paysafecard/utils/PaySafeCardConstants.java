@@ -15,6 +15,7 @@ public class PaySafeCardConstants {
     public static final String PATH_VERSION = "v1";
     public static final String PATH_CAPTURE = "capture";
     public static final String PATH_REFUND = "refunds";
+    public static final String PSC_ID = "psc_id";
 
     public static final String STATUS_AUTHORIZED = "AUTHORIZED";
     public static final String STATUS_SUCCESS = "SUCCESS";
