@@ -22,4 +22,6 @@ public class PaySafeCardConstants {
     public static final String STATUS_CANCELED_MERCHANT = "CANCELED_MERCHANT";
     public static final String STATUS_CANCELED_CUSTOMER = "CANCELED_CUSTOMER";
     public static final String STATUS_EXPIRED = "EXPIRED";
+
+    public static final String SETTLEMENT_KEY = "SETTLEMENT_KEY";
 }

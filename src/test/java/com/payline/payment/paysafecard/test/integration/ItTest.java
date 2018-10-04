@@ -5,6 +5,7 @@ import com.payline.payment.paysafecard.services.PaymentWithRedirectionServiceImp
 import com.payline.payment.paysafecard.test.Utils;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.pmapi.bean.payment.ContractProperty;
+import com.payline.pmapi.bean.payment.PaymentFormContext;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.integration.AbstractPaymentIntegration;
 import org.junit.Test;
@@ -32,7 +33,7 @@ public class ItTest extends AbstractPaymentIntegration {
     }
 
     @Override
-    protected Map<String, Serializable> generatePaymentFormData() {
+    protected PaymentFormContext generatePaymentFormContext() {
         return null;
     }
 

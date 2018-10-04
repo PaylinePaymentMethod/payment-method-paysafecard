@@ -10,11 +10,6 @@ public class PaySafeCaptureRequest extends PaySafeRequest {
 
     public PaySafeCaptureRequest(RedirectionPaymentRequest request) throws InvalidRequestException {
         super(request.getContractConfiguration());
-        if (request.getRedirectionContext() == null) {
-            throw new InvalidRequestException("PaySafeRequest must have a paymentId key when created");
-        } else {
-            this.paymentId = request.getRedirectionContext().toString();
-        }
     }
 
     public PaySafeCaptureRequest(String paymentId, ContractConfiguration configuration) throws InvalidRequestException {
