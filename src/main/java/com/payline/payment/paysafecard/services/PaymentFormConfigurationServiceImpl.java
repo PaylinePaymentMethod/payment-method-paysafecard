@@ -10,6 +10,8 @@ import com.payline.pmapi.bean.paymentform.response.configuration.impl.PaymentFor
 import com.payline.pmapi.bean.paymentform.response.logo.PaymentFormLogoResponse;
 import com.payline.pmapi.bean.paymentform.response.logo.impl.PaymentFormLogoResponseFile;
 import com.payline.pmapi.service.PaymentFormConfigurationService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -23,6 +25,8 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
     private static final String LOGO_CONTENT_TYPE = "image/png";
     private static final int LOGO_HEIGHT = 25;
     private static final int LOGO_WIDTH = 141;
+
+    private static final Logger logger = LogManager.getLogger( PaymentFormConfigurationServiceImpl.class );
 
     private LocalizationService localization;
 
@@ -44,7 +48,6 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
     @Override
     public PaymentFormLogoResponse getPaymentFormLogo(PaymentFormLogoRequest paymentFormLogoRequest) {
         return PaymentFormLogoResponseFile.PaymentFormLogoResponseFileBuilder.aPaymentFormLogoResponseFile()
-                .withContentType(LOGO_CONTENT_TYPE)
                 .withHeight(LOGO_HEIGHT)
                 .withWidth(LOGO_WIDTH)
                 .withTitle(localization.getSafeLocalizedString("project.name", paymentFormLogoRequest.getLocale()))
@@ -53,14 +56,27 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
     }
 
     @Override
-    public PaymentFormLogo getLogo(Locale locale) throws IOException {
+    public PaymentFormLogo getLogo(String paymentMethodIdentifier, Locale locale) {
         // Read logo file
         InputStream input = PaymentFormConfigurationServiceImpl.class.getClassLoader().getResourceAsStream("paysafecard.png");
-        BufferedImage logo = ImageIO.read(input);
+        BufferedImage logo = null;
+        try {
+            logo = ImageIO.read(input);
+        } catch (IOException e) {
+            logger.error(e.getMessage() );
+            throw new RuntimeException("Unable to read logo");
+        }
 
         // Recover byte array from image
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(logo, "png", baos);
+        try {
+            ImageIO.write(logo, "png", baos);
+        } catch (IOException e) {
+            logger.error( e.getMessage() );
+            throw new RuntimeException("Unable to recover logo");
+
+
+        }
 
         return PaymentFormLogo.PaymentFormLogoBuilder.aPaymentFormLogo()
                 .withFile(baos.toByteArray())

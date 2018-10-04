@@ -33,7 +33,11 @@ public class PaymentServiceImpl implements PaymentService {
             } else {
                 // get the url to get
                 URL redirectURL = new URL(response.getRedirectURL());
-                PaymentResponseRedirect.RedirectionRequest redirectionRequest = new PaymentResponseRedirect.RedirectionRequest(redirectURL);
+                //get a  object which contains the url to get redirection Builder
+                PaymentResponseRedirect.RedirectionRequest.RedirectionRequestBuilder responseRedirectURL = PaymentResponseRedirect.RedirectionRequest.RedirectionRequestBuilder.aRedirectionRequest()
+                        .withUrl(redirectURL);
+
+                PaymentResponseRedirect.RedirectionRequest redirectionRequest = new PaymentResponseRedirect.RedirectionRequest(responseRedirectURL);
 
                 return PaymentResponseRedirect.PaymentResponseRedirectBuilder.aPaymentResponseRedirect()
                         .withRedirectionRequest(redirectionRequest)

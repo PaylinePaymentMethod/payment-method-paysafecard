@@ -73,6 +73,17 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
         parameters.add(countryRestriction);
 
+        //settlement key
+        final PasswordParameter settlementKey = new PasswordParameter();
+        settlementKey.setKey(PaySafeCardConstants.SETTLEMENT_KEY);
+        settlementKey.setLabel(localization.getSafeLocalizedString("contract.settlementKey.label", locale));
+        settlementKey.setDescription(localization.getSafeLocalizedString("contract.settlementKey.description", locale));
+        settlementKey.setRequired(false);
+
+        parameters.add(settlementKey);
+
+
+
         return parameters;
     }
 
