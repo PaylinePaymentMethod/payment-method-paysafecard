@@ -5,9 +5,11 @@ import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.pmapi.bean.common.Amount;
 import com.payline.pmapi.bean.common.Buyer;
+import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.*;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
+import com.payline.pmapi.bean.paymentform.request.PaymentFormConfigurationRequest;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -19,7 +21,7 @@ public class Utils {
     public static final String NOTIFICATION_URL = "http://notificationurl.com/";
     public static final String AUTH_URL = "http://authenticationurl.com/";
 
-    public static final String AUTHORISATION_VAL = "psc_R7OSP6jvuJYRjJ5JHzGquuKm9f8PLHZ";
+    public static final String AUTHORISATION_VAL = "psc_lPfXVyiPh2YI8mhEPN9V9Y5uXWKEEmC";
 //    public static final String AUTHORISATION_VAL = "cHNjX1I3T1NQNmp2dUpZUmpKNUpIekdxdXVLbTlmOFBMSFo=";
     public static final String PAYMENT_TOKEN = "10000009016901270";    // big token but not unlimited
 
@@ -247,4 +249,23 @@ public class Utils {
         return createBuyer(createDefaultPhoneNumbers(), createDefaultAddresses(), createFullName());
     }
 
+    public  static PaylineEnvironment createDefaultPaylineEnvironment(){
+        return  new PaylineEnvironment("http://notificationURL.com", "http://redirectionURL.com", "http://redirectionCancelURL.com", true);
+    }
+
+    public static PartnerConfiguration createDefaultPartnerConfiguration(){
+        return  new PartnerConfiguration(new HashMap<>(),new HashMap<>());
+    }
+
+    public static PaymentFormConfigurationRequest createDefaultPaymentFormConfigurationRequest(){
+        return PaymentFormConfigurationRequest.PaymentFormConfigurationRequestBuilder.aPaymentFormConfigurationRequest()
+                .withLocale(Locale.FRANCE)
+                .withBuyer(createDefaultBuyer())
+                .withAmount(new Amount(null, Currency.getInstance("EUR")))
+                .withContractConfiguration(createDefaultContractConfiguration())
+                .withOrder(createOrder("007"))
+                .withPaylineEnvironment(createDefaultPaylineEnvironment())
+                .withPartnerConfiguration(createDefaultPartnerConfiguration())
+                .build();
+    }
 }
