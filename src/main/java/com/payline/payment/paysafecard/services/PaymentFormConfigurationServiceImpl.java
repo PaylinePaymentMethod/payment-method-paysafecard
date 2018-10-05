@@ -47,8 +47,8 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
     public PaymentFormConfigurationResponse getPaymentFormConfiguration(PaymentFormConfigurationRequest paymentFormConfigurationRequest) {
         NoFieldForm noFieldForm =  NoFieldForm.NoFieldFormBuilder.aNoFieldForm()
                        .withDisplayButton(DISPLAY_PAYMENT_BUTTON)
-                       .withButtonText(localization.getSafeLocalizedString("contract.settlementKey.label", paymentFormConfigurationRequest.getLocale()))
-                       .withDescription(localization.getSafeLocalizedString("contract.settlementKey.description", paymentFormConfigurationRequest.getLocale()))
+                       .withButtonText(localization.getSafeLocalizedString("form.button.paySafeCard.text", paymentFormConfigurationRequest.getLocale()))
+                       .withDescription(localization.getSafeLocalizedString("form.button.paySafeCard.description", paymentFormConfigurationRequest.getLocale()))
                        .build();
 
         return PaymentFormConfigurationResponseSpecific.PaymentFormConfigurationResponseSpecificBuilder.aPaymentFormConfigurationResponseSpecific()
@@ -88,7 +88,6 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
 
 
         }
-
         return PaymentFormLogo.PaymentFormLogoBuilder.aPaymentFormLogo()
                 .withFile(baos.toByteArray())
                 .withContentType(LOGO_CONTENT_TYPE)
