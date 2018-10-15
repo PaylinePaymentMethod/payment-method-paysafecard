@@ -49,7 +49,7 @@ public class RefundServiceImpl implements RefundService {
             // refund Success
             return RefundResponseSuccess.RefundResponseSuccessBuilder.aRefundResponseSuccess()
                     .withStatusCode("0")
-                    .withTransactionId(String.valueOf(transactionId))
+                    .withTransactionId(transactionId)
                     .build();
 
 
