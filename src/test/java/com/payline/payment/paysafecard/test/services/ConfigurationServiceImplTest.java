@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 public class ConfigurationServiceImplTest {
     private String goodKycLevel = "FULL";
     private String goodMinAge = "18";
-    private String goodCountryRestriction = "EU";
+    private String goodCountryRestriction = "FR";
     private String goodAuthorisation = "cHNjX1I3T1NQNmp2dUpZUmpKNUpIekdxdXVLbTlmOFBMSFo=";
 
     private Locale locale = Locale.FRENCH;
@@ -43,7 +43,7 @@ public class ConfigurationServiceImplTest {
     @Test
     public void getParameters() {
         List<AbstractParameter> parameters = service.getParameters(locale);
-        Assert.assertEquals(5, parameters.size());
+        Assert.assertEquals(7, parameters.size());
     }
 
     @Test

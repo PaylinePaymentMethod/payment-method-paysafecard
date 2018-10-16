@@ -8,6 +8,9 @@ public class PaySafeCardConstants {
     public static final String COUNTRYRESTRICTION_KEY = "COUNTRY_RESTRICTION";
     public static final String AUTHORISATIONKEY_KEY = "AUTHORISATION";
 
+    public static final String MERCHANT_NAME_KEY = "MERCHANT_NAME";
+    public static final String MERCHANT_ID_KEY = "MERCHANT_ID";
+
     public static final String SCHEME = "https";
     public static final String SANDBOX_URL = "apitest.paysafecard.com";
     public static final String PRODUCTION_URL = "api.paysafecard.com";

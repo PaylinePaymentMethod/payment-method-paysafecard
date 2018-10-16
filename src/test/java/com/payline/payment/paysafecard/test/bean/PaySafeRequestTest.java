@@ -77,6 +77,27 @@ public class PaySafeRequestTest {
         new PaySafePaymentRequest(paymentRequest);
     }
 
+    @Test(expected = InvalidRequestException.class)
+    public void createPaySafeRequestWithWrongCountryCode() throws InvalidRequestException {
+        ContractConfiguration configuration = Utils.createContractConfiguration(null, null, "foo", Utils.AUTHORISATION_VAL);
+        PaymentRequest paymentRequest = Utils.createCompletePaymentBuilder().withContractConfiguration(configuration).build();
+        new PaySafePaymentRequest(paymentRequest);
+    }
+
+    @Test(expected = InvalidRequestException.class)
+    public void createPaySafeRequestWithBadMinAge() throws InvalidRequestException {
+        ContractConfiguration configuration = Utils.createContractConfiguration(null, "a", null, Utils.AUTHORISATION_VAL);
+        PaymentRequest paymentRequest = Utils.createCompletePaymentBuilder().withContractConfiguration(configuration).build();
+        new PaySafePaymentRequest(paymentRequest);
+    }
+
+    @Test(expected = InvalidRequestException.class)
+    public void createPaySafeRequestWithOutOfRangeMinAge() throws InvalidRequestException {
+        ContractConfiguration configuration = Utils.createContractConfiguration(null, "10000", null, Utils.AUTHORISATION_VAL);
+        PaymentRequest paymentRequest = Utils.createCompletePaymentBuilder().withContractConfiguration(configuration).build();
+        new PaySafePaymentRequest(paymentRequest);
+    }
+
     @Test
     public void createAmount() {
         Assert.assertEquals("0.00", PaySafePaymentRequest.createAmount(0));
