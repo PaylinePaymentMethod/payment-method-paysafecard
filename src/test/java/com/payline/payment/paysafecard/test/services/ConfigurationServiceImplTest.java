@@ -67,6 +67,28 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
+    public void checkBadMinAge() throws IOException, URISyntaxException {
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createBadPaySafeResponse());
+
+        ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(goodKycLevel, "a", goodCountryRestriction, goodAuthorisation);
+        Map<String, String> errors = service.check(request);
+
+        Assert.assertEquals(1, errors.size());
+        Assert.assertTrue(errors.containsKey(PaySafeCardConstants.MINAGE_KEY));
+    }
+
+    @Test
+    public void checkBadCountryRestriction() throws IOException, URISyntaxException {
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createBadPaySafeResponse());
+
+        ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(goodKycLevel, goodMinAge, "foo", goodAuthorisation);
+        Map<String, String> errors = service.check(request);
+
+        Assert.assertEquals(1, errors.size());
+        Assert.assertTrue(errors.containsKey(PaySafeCardConstants.COUNTRYRESTRICTION_KEY));
+    }
+
+    @Test
     public void checkException() throws IOException, URISyntaxException {
         when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenThrow(IOException.class);
 

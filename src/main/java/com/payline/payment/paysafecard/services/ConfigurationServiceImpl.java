@@ -3,14 +3,13 @@ package com.payline.payment.paysafecard.services;
 import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
 import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
 import com.payline.payment.paysafecard.utils.*;
-import com.payline.pmapi.bean.configuration.*;
+import com.payline.pmapi.bean.configuration.ReleaseInformation;
 import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
 import com.payline.pmapi.bean.configuration.parameter.impl.InputParameter;
 import com.payline.pmapi.bean.configuration.parameter.impl.ListBoxParameter;
 import com.payline.pmapi.bean.configuration.parameter.impl.PasswordParameter;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.service.ConfigurationService;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -65,7 +64,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         settlementKey.setKey(PaySafeCardConstants.SETTLEMENT_KEY);
         settlementKey.setLabel(localization.getSafeLocalizedString("contract.settlementKey.label", locale));
         settlementKey.setDescription(localization.getSafeLocalizedString("contract.settlementKey.description", locale));
-        settlementKey.setRequired(true);
+        settlementKey.setRequired(false);
 
         parameters.add(settlementKey);
 
@@ -114,22 +113,17 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         String minAge = contractParametersCheckRequest.getContractConfiguration().getProperty(PaySafeCardConstants.MINAGE_KEY).getValue();
         String countryRestriction = contractParametersCheckRequest.getContractConfiguration().getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY).getValue();
 
-        // verify minAge is a number between 1 and 99
-        if (minAge != null) {
-            if (!StringUtils.isNumeric(minAge)){
-                errors.put(PaySafeCardConstants.MINAGE_KEY, localization.getSafeLocalizedString("contract.errors.minAgeNotNumeric", locale) );
-            }
-            else if( Integer.parseInt(minAge) <1 || Integer.parseInt(minAge) >99){
-                errors.put(PaySafeCardConstants.MINAGE_KEY, localization.getSafeLocalizedString("contract.errors.minAgeWrongRange", locale) );
-            }
+        // verify fields
+        try {
+            PaySafePaymentRequest.verifyMinAge(minAge);
+        } catch (BadFieldException e) {
+            errors.put(e.getField(), localization.getSafeLocalizedString( e.getMessage(), locale));
         }
 
-        // verify country restriction is ISO-3166
-        if (countryRestriction != null) {
-            countryRestriction = countryRestriction.toUpperCase();
-            if (!PaySafePaymentRequest.isISO3166(countryRestriction)) {
-                errors.put(PaySafeCardConstants.COUNTRYRESTRICTION_KEY, localization.getSafeLocalizedString("contract.errors.countryNotISO", locale) );
-            }
+        try {
+            PaySafePaymentRequest.verifyCountryRestriction(countryRestriction);
+        } catch (BadFieldException e) {
+            errors.put(e.getField(), localization.getSafeLocalizedString( e.getMessage(), locale));
         }
 
         // if there is some errors, stop the process and return them

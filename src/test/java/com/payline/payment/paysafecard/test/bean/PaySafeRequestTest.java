@@ -2,7 +2,9 @@ package com.payline.payment.paysafecard.test.bean;
 
 import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
 import com.payline.payment.paysafecard.test.Utils;
+import com.payline.payment.paysafecard.utils.BadFieldException;
 import com.payline.payment.paysafecard.utils.InvalidRequestException;
+import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.pmapi.bean.common.Amount;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
@@ -77,25 +79,37 @@ public class PaySafeRequestTest {
         new PaySafePaymentRequest(paymentRequest);
     }
 
-    @Test(expected = InvalidRequestException.class)
+    @Test
     public void createPaySafeRequestWithWrongCountryCode() throws InvalidRequestException {
         ContractConfiguration configuration = Utils.createContractConfiguration(null, null, "foo", Utils.AUTHORISATION_VAL);
         PaymentRequest paymentRequest = Utils.createCompletePaymentBuilder().withContractConfiguration(configuration).build();
-        new PaySafePaymentRequest(paymentRequest);
+        try {
+            new PaySafePaymentRequest(paymentRequest);
+        }catch (BadFieldException e){
+            Assert.assertEquals( PaySafeCardConstants.COUNTRYRESTRICTION_KEY, e.getField());
+        }
     }
 
-    @Test(expected = InvalidRequestException.class)
+    @Test
     public void createPaySafeRequestWithBadMinAge() throws InvalidRequestException {
         ContractConfiguration configuration = Utils.createContractConfiguration(null, "a", null, Utils.AUTHORISATION_VAL);
         PaymentRequest paymentRequest = Utils.createCompletePaymentBuilder().withContractConfiguration(configuration).build();
-        new PaySafePaymentRequest(paymentRequest);
+        try {
+            new PaySafePaymentRequest(paymentRequest);
+        } catch (BadFieldException e) {
+            Assert.assertEquals(  PaySafeCardConstants.MINAGE_KEY, e.getField());
+        }
     }
 
-    @Test(expected = InvalidRequestException.class)
+    @Test
     public void createPaySafeRequestWithOutOfRangeMinAge() throws InvalidRequestException {
         ContractConfiguration configuration = Utils.createContractConfiguration(null, "10000", null, Utils.AUTHORISATION_VAL);
         PaymentRequest paymentRequest = Utils.createCompletePaymentBuilder().withContractConfiguration(configuration).build();
-        new PaySafePaymentRequest(paymentRequest);
+        try {
+            new PaySafePaymentRequest(paymentRequest);
+        } catch (BadFieldException e) {
+            Assert.assertEquals(  PaySafeCardConstants.MINAGE_KEY, e.getField());
+        }
     }
 
     @Test
@@ -108,13 +122,12 @@ public class PaySafeRequestTest {
     }
 
     @Test
-    public void encode(){
+    public void encode() {
         String s = "hello world";
         String s2 = "aGVsbG8gd29ybGQ=";
         Assert.assertEquals(s2, PaySafePaymentRequest.encodeToBase64(s));
         Assert.assertEquals("", PaySafePaymentRequest.encodeToBase64(""));
         Assert.assertEquals("", PaySafePaymentRequest.encodeToBase64(null));
-
 
 
     }
