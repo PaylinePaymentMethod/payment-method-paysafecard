@@ -115,13 +115,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
         // verify fields
         try {
-            PaySafePaymentRequest.verifyMinAge(minAge);
+            DataChecker.verifyMinAge(minAge);
         } catch (BadFieldException e) {
             errors.put(e.getField(), localization.getSafeLocalizedString( e.getMessage(), locale));
         }
 
         try {
-            PaySafePaymentRequest.verifyCountryRestriction(countryRestriction);
+            DataChecker.verifyCountryRestriction(countryRestriction);
         } catch (BadFieldException e) {
             errors.put(e.getField(), localization.getSafeLocalizedString( e.getMessage(), locale));
         }
