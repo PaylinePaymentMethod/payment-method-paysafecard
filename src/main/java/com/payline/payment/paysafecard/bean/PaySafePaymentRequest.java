@@ -2,7 +2,7 @@ package com.payline.payment.paysafecard.bean;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.payline.payment.paysafecard.utils.BadFieldException;
+import com.payline.payment.paysafecard.utils.DataChecker;
 import com.payline.payment.paysafecard.utils.InvalidRequestException;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.pmapi.bean.common.Amount;
@@ -12,16 +12,11 @@ import com.payline.pmapi.bean.payment.ContractConfiguration;
 import com.payline.pmapi.bean.payment.PaylineEnvironment;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
-import org.apache.commons.lang.StringUtils;
 
-import java.util.Arrays;
-import java.util.Locale;
-
-import static com.payline.payment.paysafecard.utils.DataChecker.verifyCountryRestriction;
-import static com.payline.payment.paysafecard.utils.DataChecker.verifyMinAge;
 
 public class PaySafePaymentRequest extends PaySafeRequest {
-    private final String type = "PAYSAFECARD";
+    @SerializedName("TYPE")
+    private static final String TYPE = "PAYSAFECARD";
     private String amount;
     private String currency;
     private Redirect redirect;
@@ -111,8 +106,8 @@ public class PaySafePaymentRequest extends PaySafeRequest {
         String countryRestriction = config.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY) != null ? config.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY).getValue() : null;
 
         // verify fields
-        verifyMinAge(minAge);
-        verifyCountryRestriction(countryRestriction);
+        DataChecker.verifyMinAge(minAge);
+        DataChecker.verifyCountryRestriction(countryRestriction);
         this.customer = new Customer(id, minAge, kycLevel, countryRestriction);
     }
 
