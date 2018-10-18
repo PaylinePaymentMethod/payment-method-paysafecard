@@ -3,7 +3,7 @@ package com.payline.payment.paysafecard.services;
 import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
 import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
 import com.payline.payment.paysafecard.utils.*;
-import com.payline.pmapi.bean.configuration.*;
+import com.payline.pmapi.bean.configuration.ReleaseInformation;
 import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
 import com.payline.pmapi.bean.configuration.parameter.impl.InputParameter;
 import com.payline.pmapi.bean.configuration.parameter.impl.ListBoxParameter;
@@ -32,14 +32,50 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     public List<AbstractParameter> getParameters(Locale locale) {
         List<AbstractParameter> parameters = new ArrayList<>();
 
+        // Merchant name
+        final InputParameter merchantName = new InputParameter();
+        merchantName.setKey(PaySafeCardConstants.MERCHANT_NAME_KEY);
+        merchantName.setLabel(localization.getSafeLocalizedString("contract.merchantName.label", locale));
+        merchantName.setDescription(localization.getSafeLocalizedString("contract.merchantName.description", locale));
+        merchantName.setRequired(true);
+
+        parameters.add(merchantName);
+
+        // Mid
+        final InputParameter merchantId = new InputParameter();
+        merchantId.setKey(PaySafeCardConstants.MERCHANT_ID_KEY);
+        merchantId.setLabel(localization.getSafeLocalizedString("contract.merchantId.label", locale));
+        merchantId.setDescription(localization.getSafeLocalizedString("contract.merchantId.description", locale));
+        merchantId.setRequired(true);
+
+        parameters.add(merchantId);
+
         // authorisation key
         final PasswordParameter authorisationKey = new PasswordParameter();
         authorisationKey.setKey(PaySafeCardConstants.AUTHORISATIONKEY_KEY);
         authorisationKey.setLabel(localization.getSafeLocalizedString("contract.authorisationKey.label", locale));
         authorisationKey.setDescription(localization.getSafeLocalizedString("contract.authorisationKey.description", locale));
-        authorisationKey.setRequired(false);
+        authorisationKey.setRequired(true);
 
         parameters.add(authorisationKey);
+
+        //settlement key
+        final PasswordParameter settlementKey = new PasswordParameter();
+        settlementKey.setKey(PaySafeCardConstants.SETTLEMENT_KEY);
+        settlementKey.setLabel(localization.getSafeLocalizedString("contract.settlementKey.label", locale));
+        settlementKey.setDescription(localization.getSafeLocalizedString("contract.settlementKey.description", locale));
+        settlementKey.setRequired(false);
+
+        parameters.add(settlementKey);
+
+        // age limit
+        final InputParameter minAge = new InputParameter();
+        minAge.setKey(PaySafeCardConstants.MINAGE_KEY);
+        minAge.setLabel(localization.getSafeLocalizedString("contract.minAge.label", locale));
+        minAge.setDescription(localization.getSafeLocalizedString("contract.minAge.description", locale));
+        minAge.setRequired(false);
+
+        parameters.add(minAge);
 
         // kyc level
         Map<String, String> kycLevelMap = new HashMap<>();
@@ -51,18 +87,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         kycLevel.setLabel(localization.getSafeLocalizedString("contract.kycLevel.label", locale));
         kycLevel.setDescription(localization.getSafeLocalizedString("contract.kycLevel.description", locale));
         kycLevel.setList(kycLevelMap);
-        kycLevel.setRequired(true);
+        kycLevel.setRequired(false);
 
         parameters.add(kycLevel);
-
-        // age limit
-        final InputParameter minAge = new InputParameter();
-        minAge.setKey(PaySafeCardConstants.MINAGE_KEY);
-        minAge.setLabel(localization.getSafeLocalizedString("contract.minAge.label", locale));
-        minAge.setDescription(localization.getSafeLocalizedString("contract.minAge.description", locale));
-        minAge.setRequired(false);
-
-        parameters.add(minAge);
 
         // country restriction
         final InputParameter countryRestriction = new InputParameter();
@@ -73,16 +100,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
         parameters.add(countryRestriction);
 
-        //settlement key
-        final PasswordParameter settlementKey = new PasswordParameter();
-        settlementKey.setKey(PaySafeCardConstants.SETTLEMENT_KEY);
-        settlementKey.setLabel(localization.getSafeLocalizedString("contract.settlementKey.label", locale));
-        settlementKey.setDescription(localization.getSafeLocalizedString("contract.settlementKey.description", locale));
-        settlementKey.setRequired(false);
-
-        parameters.add(settlementKey);
-
-
 
         return parameters;
     }
@@ -90,6 +107,29 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     public Map<String, String> check(ContractParametersCheckRequest contractParametersCheckRequest) {
         Map<String, String> errors = new HashMap<>();
+        Locale locale = contractParametersCheckRequest.getLocale();
+
+        // verify configuration fields
+        String minAge = contractParametersCheckRequest.getContractConfiguration().getProperty(PaySafeCardConstants.MINAGE_KEY).getValue();
+        String countryRestriction = contractParametersCheckRequest.getContractConfiguration().getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY).getValue();
+
+        // verify fields
+        try {
+            DataChecker.verifyMinAge(minAge);
+        } catch (BadFieldException e) {
+            errors.put(e.getField(), localization.getSafeLocalizedString( e.getMessage(), locale));
+        }
+
+        try {
+            DataChecker.verifyCountryRestriction(countryRestriction);
+        } catch (BadFieldException e) {
+            errors.put(e.getField(), localization.getSafeLocalizedString( e.getMessage(), locale));
+        }
+
+        // if there is some errors, stop the process and return them
+        if (errors.size()>0){
+            return errors;
+        }
 
         try {
             // create a CheckRequest

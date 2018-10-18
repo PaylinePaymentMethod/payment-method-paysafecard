@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 public class ConfigurationServiceImplTest {
     private String goodKycLevel = "FULL";
     private String goodMinAge = "18";
-    private String goodCountryRestriction = "EU";
+    private String goodCountryRestriction = "FR";
     private String goodAuthorisation = "cHNjX1I3T1NQNmp2dUpZUmpKNUpIekdxdXVLbTlmOFBMSFo=";
 
     private Locale locale = Locale.FRENCH;
@@ -43,7 +43,7 @@ public class ConfigurationServiceImplTest {
     @Test
     public void getParameters() {
         List<AbstractParameter> parameters = service.getParameters(locale);
-        Assert.assertEquals(5, parameters.size());
+        Assert.assertEquals(7, parameters.size());
     }
 
     @Test
@@ -64,6 +64,28 @@ public class ConfigurationServiceImplTest {
         Map<String, String> errors = service.check(request);
 
         Assert.assertEquals(1, errors.size());
+    }
+
+    @Test
+    public void checkBadMinAge() throws IOException, URISyntaxException {
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createBadPaySafeResponse());
+
+        ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(goodKycLevel, "a", goodCountryRestriction, goodAuthorisation);
+        Map<String, String> errors = service.check(request);
+
+        Assert.assertEquals(1, errors.size());
+        Assert.assertTrue(errors.containsKey(PaySafeCardConstants.MINAGE_KEY));
+    }
+
+    @Test
+    public void checkBadCountryRestriction() throws IOException, URISyntaxException {
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createBadPaySafeResponse());
+
+        ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest(goodKycLevel, goodMinAge, "foo", goodAuthorisation);
+        Map<String, String> errors = service.check(request);
+
+        Assert.assertEquals(1, errors.size());
+        Assert.assertTrue(errors.containsKey(PaySafeCardConstants.COUNTRYRESTRICTION_KEY));
     }
 
     @Test
