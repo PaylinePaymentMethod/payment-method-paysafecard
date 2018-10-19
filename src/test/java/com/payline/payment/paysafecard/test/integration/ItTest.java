@@ -1,13 +1,16 @@
 package com.payline.payment.paysafecard.test.integration;
 
+import com.payline.payment.paysafecard.services.ConfigurationServiceImpl;
 import com.payline.payment.paysafecard.services.PaymentServiceImpl;
 import com.payline.payment.paysafecard.services.PaymentWithRedirectionServiceImpl;
 import com.payline.payment.paysafecard.test.Utils;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
+import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.ContractProperty;
 import com.payline.pmapi.bean.payment.PaymentFormContext;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.integration.AbstractPaymentIntegration;
+import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -15,7 +18,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -69,6 +71,26 @@ public class ItTest extends AbstractPaymentIntegration {
         return null;
     }
 
+    @Test
+    public void checkMinAgeEmpty() {
+        ConfigurationServiceImpl service = new ConfigurationServiceImpl();
+
+        ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest("SIMPLE", "", "FR", Utils.AUTHORISATION_VAL);
+        Map<String, String> errors = service.check(request);
+
+        Assert.assertEquals(0, errors.size());
+    }
+
+
+    @Test
+    public void checkCountryRestrictionEmpty() {
+        ConfigurationServiceImpl service = new ConfigurationServiceImpl();
+
+        ContractParametersCheckRequest request = Utils.createContractParametersCheckRequest("SIMPLE", "18", "",  Utils.AUTHORISATION_VAL);
+        Map<String, String> errors = service.check(request);
+
+        Assert.assertEquals(0, errors.size());
+    }
 
     @Test
     public void fullPaymentTest() {

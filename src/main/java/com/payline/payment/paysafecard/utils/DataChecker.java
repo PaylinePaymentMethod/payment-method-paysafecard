@@ -1,6 +1,5 @@
 package com.payline.payment.paysafecard.utils;
 
-import org.apache.commons.lang.StringUtils;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -13,8 +12,8 @@ public class DataChecker {
      * @throws BadFieldException
      */
     public static void verifyMinAge(String minAge) throws BadFieldException {
-        if (minAge != null) {
-            if (!StringUtils.isNumeric(minAge)) {
+        if (!isEmpty(minAge)) {
+            if (!isNumeric(minAge)) {
                 throw new BadFieldException(PaySafeCardConstants.MINAGE_KEY, "contract.errors.minAgeNotNumeric");
             }
             else if (Integer.parseInt(minAge) < 1 || Integer.parseInt(minAge) > 99) {
@@ -29,7 +28,7 @@ public class DataChecker {
      * @throws BadFieldException
      */
     public static void verifyCountryRestriction(String countryRestriction) throws BadFieldException {
-        if (countryRestriction != null) {
+        if (!isEmpty(countryRestriction )) {
             countryRestriction = countryRestriction.toUpperCase();
             if (!isISO3166(countryRestriction)) {
                 throw new BadFieldException(PaySafeCardConstants.COUNTRYRESTRICTION_KEY , "contract.errors.countryNotISO");
@@ -44,6 +43,36 @@ public class DataChecker {
      */
     public static boolean isISO3166(String countryCode) {
         return Arrays.asList(Locale.getISOCountries()).contains(countryCode);
+    }
+
+    /**
+     * check if a string is a number
+     * @param str
+     * @return
+     */
+    public static boolean isNumeric(String str) {
+        if (str == null) {
+            return false;
+        } else {
+            int sz = str.length();
+
+            for(int i = 0; i < sz; ++i) {
+                if (!Character.isDigit(str.charAt(i))) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    /**
+     * check if a String is null or empty
+     * @param str
+     * @return
+     */
+    public static boolean isEmpty(String str) {
+        return str == null || str.length() == 0;
     }
 
 }
