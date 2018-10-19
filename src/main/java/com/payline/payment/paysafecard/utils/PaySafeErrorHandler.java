@@ -60,6 +60,12 @@ public class PaySafeErrorHandler {
                 .withErrorCode(errorCode).build();
     }
 
+    public static PaymentResponseFailure getPaymentResponseFailure( final FailureCause failureCause) {
+        return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
+                .withFailureCause(failureCause)
+                .build();
+    }
+
     public static RefundResponse findRefundError(PaySafePaymentResponse response, String transactionId) {
         FailureCause cause;
         if (response.getCode() == null) {
