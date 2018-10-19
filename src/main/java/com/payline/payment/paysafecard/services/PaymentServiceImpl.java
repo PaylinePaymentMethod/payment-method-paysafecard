@@ -57,7 +57,7 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
         } catch (IOException | URISyntaxException | InvalidRequestException e) {
-            return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.INTERNAL_ERROR);
+            return PaySafeErrorHandler.getPaymentResponseFailure( FailureCause.INTERNAL_ERROR);
         }
     }
 }
