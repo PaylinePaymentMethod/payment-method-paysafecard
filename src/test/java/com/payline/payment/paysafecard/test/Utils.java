@@ -22,7 +22,6 @@ public class Utils {
     public static final String AUTH_URL = "http://authenticationurl.com/";
 
     public static final String AUTHORISATION_VAL = "psc_lPfXVyiPh2YI8mhEPN9V9Y5uXWKEEmC";
-//    public static final String AUTHORISATION_VAL = "cHNjX1I3T1NQNmp2dUpZUmpKNUpIekdxdXVLbTlmOFBMSFo=";
     public static final String PAYMENT_TOKEN = "10000009016901270";    // big token but not unlimited
 
 
@@ -218,6 +217,9 @@ public class Utils {
     public static ContractConfiguration createDefaultContractConfiguration() {
         final ContractConfiguration contractConfiguration = new ContractConfiguration("", new HashMap<>());
         contractConfiguration.getContractProperties().put(PaySafeCardConstants.AUTHORISATIONKEY_KEY, new ContractProperty(AUTHORISATION_VAL));
+        contractConfiguration.getContractProperties().put(PaySafeCardConstants.MINAGE_KEY, new ContractProperty(""));
+        contractConfiguration.getContractProperties().put(PaySafeCardConstants.KYCLEVEL_KEY, new ContractProperty(""));
+        contractConfiguration.getContractProperties().put(PaySafeCardConstants.COUNTRYRESTRICTION_KEY, new ContractProperty(""));
 
         return contractConfiguration;
     }
