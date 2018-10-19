@@ -15,8 +15,7 @@ import com.payline.pmapi.bean.refund.request.RefundRequest;
 
 
 public class PaySafePaymentRequest extends PaySafeRequest {
-    @SerializedName("TYPE")
-    private static final String TYPE = "PAYSAFECARD";
+    private String type = "PAYSAFECARD";
     private String amount;
     private String currency;
     private Redirect redirect;
@@ -38,7 +37,6 @@ public class PaySafePaymentRequest extends PaySafeRequest {
         this.amount = "0.01";
         this.currency = "EUR";
 
-        setUrls(request.getPaylineEnvironment());
         setCustomer("dumbId", request.getContractConfiguration());
     }
 
@@ -101,9 +99,20 @@ public class PaySafePaymentRequest extends PaySafeRequest {
     }
 
     private void setCustomer(String id, ContractConfiguration config) throws InvalidRequestException {
-        String minAge = config.getProperty(PaySafeCardConstants.MINAGE_KEY) != null ? config.getProperty(PaySafeCardConstants.MINAGE_KEY).getValue() : null;
-        String kycLevel = config.getProperty(PaySafeCardConstants.KYCLEVEL_KEY) != null ? config.getProperty(PaySafeCardConstants.KYCLEVEL_KEY).getValue() : null;
-        String countryRestriction = config.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY) != null ? config.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY).getValue() : null;
+        String minAge = config.getProperty(PaySafeCardConstants.MINAGE_KEY).getValue();
+        if (DataChecker.isEmpty(minAge)) {
+            minAge = null;
+        }
+
+        String kycLevel = config.getProperty(PaySafeCardConstants.KYCLEVEL_KEY).getValue();
+        if (DataChecker.isEmpty(kycLevel)) {
+            kycLevel = null;
+        }
+
+        String countryRestriction = config.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY).getValue();
+        if (DataChecker.isEmpty(countryRestriction)) {
+            countryRestriction = null;
+        }
 
         // verify fields
         DataChecker.verifyMinAge(minAge);
