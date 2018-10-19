@@ -42,7 +42,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
             }
 
         } catch (InvalidRequestException e) {
-            return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.INTERNAL_ERROR);
+            return PaySafeErrorHandler.getPaymentResponseFailure( FailureCause.INTERNAL_ERROR);
         }
     }
 
@@ -54,7 +54,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
             return validatePayment(request, isSandbox);
         } catch (InvalidRequestException e) {
-            return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.INVALID_DATA);
+            return PaySafeErrorHandler.getPaymentResponseFailure( FailureCause.INVALID_DATA);
         }
     }
 
@@ -81,13 +81,13 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
     private PaymentResponse getErrorFromStatus(String status) {
         switch (status) {
             case PaySafeCardConstants.STATUS_CANCELED_CUSTOMER:
-                return PaySafeErrorHandler.getPaymentResponseFailure("canceledByCustomer", FailureCause.CANCEL);
+                return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.CANCEL);
             case PaySafeCardConstants.STATUS_CANCELED_MERCHANT:
-                return PaySafeErrorHandler.getPaymentResponseFailure("canceledByMerchant", FailureCause.CANCEL);
+                return PaySafeErrorHandler.getPaymentResponseFailure( FailureCause.CANCEL);
             case PaySafeCardConstants.STATUS_EXPIRED:
-                return PaySafeErrorHandler.getPaymentResponseFailure("sessionExpired", FailureCause.SESSION_EXPIRED);
+                return PaySafeErrorHandler.getPaymentResponseFailure( FailureCause.SESSION_EXPIRED);
             default:
-                return PaySafeErrorHandler.getPaymentResponseFailure("unknown", FailureCause.PARTNER_UNKNOWN_ERROR);
+                return PaySafeErrorHandler.getPaymentResponseFailure( FailureCause.PARTNER_UNKNOWN_ERROR);
         }
     }
 
@@ -131,7 +131,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                 }
             }
         } catch (IOException | URISyntaxException e) {
-            return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.COMMUNICATION_ERROR);
+            return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.COMMUNICATION_ERROR);
         }
     }
 }
