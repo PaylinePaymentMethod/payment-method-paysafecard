@@ -1,6 +1,7 @@
 package com.payline.payment.paysafecard.bean;
 
 import com.google.gson.annotations.SerializedName;
+import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 
 public class Customer {
     private String id;
@@ -17,7 +18,8 @@ public class Customer {
     public Customer(String id, String minAge, String kycLevel, String countryRestriction) {
         this.id = id;
         this.minAge = minAge;
-        this.kycLevel = kycLevel;
+        // set to null if kyc_level is "SIMPLE"
+        this.kycLevel = PaySafeCardConstants.KYCLEVEL_SIMPLE.equals(kycLevel) ? kycLevel : null;
         this.countryRestriction = countryRestriction;
     }
 
