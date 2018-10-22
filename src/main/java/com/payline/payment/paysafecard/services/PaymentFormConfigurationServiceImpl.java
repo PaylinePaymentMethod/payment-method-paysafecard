@@ -27,7 +27,7 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
     private static final int LOGO_WIDTH = 141;
     private static final boolean DISPLAY_PAYMENT_BUTTON = true;
 
-    private static final Logger logger = LogManager.getLogger( PaymentFormConfigurationServiceImpl.class );
+    private static final Logger logger = LogManager.getLogger(PaymentFormConfigurationServiceImpl.class);
 
     private LocalizationService localization;
 
@@ -43,16 +43,16 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
      */
     @Override
     public PaymentFormConfigurationResponse getPaymentFormConfiguration(PaymentFormConfigurationRequest paymentFormConfigurationRequest) {
-        NoFieldForm noFieldForm =  NoFieldForm.NoFieldFormBuilder.aNoFieldForm()
-                       .withDisplayButton(DISPLAY_PAYMENT_BUTTON)
-                       .withButtonText(localization.getSafeLocalizedString("form.button.paySafeCard.text", paymentFormConfigurationRequest.getLocale()))
-                       .withDescription(localization.getSafeLocalizedString("form.button.paySafeCard.description", paymentFormConfigurationRequest.getLocale()))
-                       .build();
+        NoFieldForm noFieldForm = NoFieldForm.NoFieldFormBuilder.aNoFieldForm()
+                .withDisplayButton(DISPLAY_PAYMENT_BUTTON)
+                .withButtonText(localization.getSafeLocalizedString("form.button.paySafeCard.text", paymentFormConfigurationRequest.getLocale()))
+                .withDescription(localization.getSafeLocalizedString("form.button.paySafeCard.description", paymentFormConfigurationRequest.getLocale()))
+                .build();
 
         return PaymentFormConfigurationResponseSpecific.PaymentFormConfigurationResponseSpecificBuilder.aPaymentFormConfigurationResponseSpecific()
                 .withPaymentForm(noFieldForm)
                 .build();
-         }
+    }
 
     @Override
     public PaymentFormLogoResponse getPaymentFormLogo(PaymentFormLogoRequest paymentFormLogoRequest) {
@@ -66,29 +66,23 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
 
     @Override
     public PaymentFormLogo getLogo(String paymentMethodIdentifier, Locale locale) {
-        // Read logo file
-        InputStream input = PaymentFormConfigurationServiceImpl.class.getClassLoader().getResourceAsStream("paysafecard.png");
-        BufferedImage logo = null;
         try {
-            logo = ImageIO.read(input);
-        } catch (IOException e) {
-            logger.error(e.getMessage() );
-            throw new RuntimeException("Unable to read logo");
-        }
+            // Read logo file
+            InputStream input = PaymentFormConfigurationServiceImpl.class.getClassLoader().getResourceAsStream("paysafecard.png");
+            BufferedImage logo = ImageIO.read(input);
 
-        // Recover byte array from image
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
+            // Recover byte array from image
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(logo, "png", baos);
+
+            return PaymentFormLogo.PaymentFormLogoBuilder.aPaymentFormLogo()
+                    .withFile(baos.toByteArray())
+                    .withContentType(LOGO_CONTENT_TYPE)
+                    .build();
+
         } catch (IOException e) {
-            logger.error( e.getMessage() );
-            throw new RuntimeException("Unable to recover logo");
-
-
+            logger.error("unable to load the logo: " + e.getMessage(), e);
+            throw new RuntimeException("Unable to load logo");
         }
-        return PaymentFormLogo.PaymentFormLogoBuilder.aPaymentFormLogo()
-                .withFile(baos.toByteArray())
-                .withContentType(LOGO_CONTENT_TYPE)
-                .build();
     }
 }

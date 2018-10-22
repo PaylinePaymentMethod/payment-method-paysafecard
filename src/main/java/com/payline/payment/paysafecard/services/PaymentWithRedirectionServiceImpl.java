@@ -14,12 +14,16 @@ import com.payline.pmapi.bean.payment.response.buyerpaymentidentifier.Card;
 import com.payline.pmapi.bean.payment.response.buyerpaymentidentifier.impl.CardPayment;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseSuccess;
 import com.payline.pmapi.service.PaymentWithRedirectionService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.YearMonth;
 
 public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirectionService {
+    private static final Logger logger = LogManager.getLogger(PaymentWithRedirectionServiceImpl.class);
+
     private PaySafeHttpClient httpClient;
 
     public PaymentWithRedirectionServiceImpl() {
@@ -34,15 +38,16 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
             // first try
             PaymentResponse response = validatePayment(request, isSandbox);
-            if (PaymentResponseSuccess.class.equals(response.getClass())){
+            if (PaymentResponseSuccess.class.equals(response.getClass())) {
                 return response;
-            }else{
+            } else {
                 // second try
                 return validatePayment(request, isSandbox);
             }
 
         } catch (InvalidRequestException e) {
-            return PaySafeErrorHandler.getPaymentResponseFailure( FailureCause.INTERNAL_ERROR);
+            logger.error("unable to finalize the payment:" + e.getMessage(), e);
+            return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.INTERNAL_ERROR);
         }
     }
 
@@ -54,12 +59,14 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
             return validatePayment(request, isSandbox);
         } catch (InvalidRequestException e) {
-            return PaySafeErrorHandler.getPaymentResponseFailure( FailureCause.INVALID_DATA);
+            logger.error("unable to handle the session expiration:" + e.getMessage(), e);
+            return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.INVALID_DATA);
         }
     }
 
     /**
      * Used for test (mocking)
+     *
      * @param transactionStatusRequest
      * @return
      * @throws InvalidRequestException
@@ -70,6 +77,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
     /**
      * Used for test (mocking)
+     *
      * @param redirectionPaymentRequest
      * @return
      * @throws InvalidRequestException
@@ -83,11 +91,11 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
             case PaySafeCardConstants.STATUS_CANCELED_CUSTOMER:
                 return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.CANCEL);
             case PaySafeCardConstants.STATUS_CANCELED_MERCHANT:
-                return PaySafeErrorHandler.getPaymentResponseFailure( FailureCause.CANCEL);
+                return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.CANCEL);
             case PaySafeCardConstants.STATUS_EXPIRED:
-                return PaySafeErrorHandler.getPaymentResponseFailure( FailureCause.SESSION_EXPIRED);
+                return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.SESSION_EXPIRED);
             default:
-                return PaySafeErrorHandler.getPaymentResponseFailure( FailureCause.PARTNER_UNKNOWN_ERROR);
+                return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.PARTNER_UNKNOWN_ERROR);
         }
     }
 
@@ -108,15 +116,15 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                 .build();
     }
 
-    private PaymentResponse validatePayment(PaySafeCaptureRequest request, boolean isSandbox){
+    private PaymentResponse validatePayment(PaySafeCaptureRequest request, boolean isSandbox) {
         try {
             // retrieve payment data
             PaySafePaymentResponse response = httpClient.retrievePaymentData(request, isSandbox);
             if (response.getCode() != null) {
                 return PaySafeErrorHandler.findError(response);
-            } else{
+            } else {
                 // check if the payment has to be captured
-                if (PaySafeCardConstants.STATUS_AUTHORIZED.equals(response.getStatus())){
+                if (PaySafeCardConstants.STATUS_AUTHORIZED.equals(response.getStatus())) {
                     response = httpClient.capture(request, isSandbox);
                 }
 
@@ -124,13 +132,14 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                     return PaySafeErrorHandler.findError(response);
                 }
                 // check if the payment is well captured
-                if (PaySafeCardConstants.STATUS_SUCCESS.equals(response.getStatus())){
+                if (PaySafeCardConstants.STATUS_SUCCESS.equals(response.getStatus())) {
                     return createResponseSuccess(response);
                 } else {
                     return getErrorFromStatus(response.getStatus());
                 }
             }
         } catch (IOException | URISyntaxException e) {
+            logger.error("unable to validate the payment:" + e.getMessage(), e);
             return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.COMMUNICATION_ERROR);
         }
     }

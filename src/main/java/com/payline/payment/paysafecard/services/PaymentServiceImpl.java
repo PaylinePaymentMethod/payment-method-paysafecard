@@ -1,10 +1,10 @@
 package com.payline.payment.paysafecard.services;
 
+import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
+import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
 import com.payline.payment.paysafecard.utils.InvalidRequestException;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.payment.paysafecard.utils.PaySafeErrorHandler;
-import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
-import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
 import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.RequestContext;
@@ -12,6 +12,8 @@ import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseRedirect;
 import com.payline.pmapi.service.PaymentService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -20,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PaymentServiceImpl implements PaymentService {
+    private static final Logger logger = LogManager.getLogger(PaymentServiceImpl.class);
+
     private PaySafeHttpClient httpClient = new PaySafeHttpClient();
 
     @Override
@@ -42,8 +46,8 @@ public class PaymentServiceImpl implements PaymentService {
                         .withUrl(redirectURL);
 
                 PaymentResponseRedirect.RedirectionRequest redirectionRequest = new PaymentResponseRedirect.RedirectionRequest(responseRedirectURL);
-                Map <String,String> paySafeCardContext = new HashMap<>();
-                paySafeCardContext.put(PaySafeCardConstants.PSC_ID,response.getId());
+                Map<String, String> paySafeCardContext = new HashMap<>();
+                paySafeCardContext.put(PaySafeCardConstants.PSC_ID, response.getId());
                 RequestContext requestContext = RequestContext.RequestContextBuilder.aRequestContext()
                         .withRequestContext(paySafeCardContext)
                         .build();
@@ -57,7 +61,8 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
         } catch (IOException | URISyntaxException | InvalidRequestException e) {
-            return PaySafeErrorHandler.getPaymentResponseFailure( FailureCause.INTERNAL_ERROR);
+            logger.error("unable init the payment: " + e.getMessage(), e);
+            return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.INTERNAL_ERROR);
         }
     }
 }

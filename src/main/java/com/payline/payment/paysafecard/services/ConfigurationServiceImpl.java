@@ -10,6 +10,8 @@ import com.payline.pmapi.bean.configuration.parameter.impl.ListBoxParameter;
 import com.payline.pmapi.bean.configuration.parameter.impl.PasswordParameter;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.service.ConfigurationService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -18,6 +20,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class ConfigurationServiceImpl implements ConfigurationService {
+    private static final Logger logger = LogManager.getLogger(ConfigurationServiceImpl.class);
+
     private static final String VERSION = "1.1";
     private static final String RELEASE_DATE = "20/09/2018";
 
@@ -117,17 +121,17 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         try {
             DataChecker.verifyMinAge(minAge);
         } catch (BadFieldException e) {
-            errors.put(e.getField(), localization.getSafeLocalizedString( e.getMessage(), locale));
+            errors.put(e.getField(), localization.getSafeLocalizedString(e.getMessage(), locale));
         }
 
         try {
             DataChecker.verifyCountryRestriction(countryRestriction);
         } catch (BadFieldException e) {
-            errors.put(e.getField(), localization.getSafeLocalizedString( e.getMessage(), locale));
+            errors.put(e.getField(), localization.getSafeLocalizedString(e.getMessage(), locale));
         }
 
         // if there is some errors, stop the process and return them
-        if (errors.size()>0){
+        if (errors.size() > 0) {
             return errors;
         }
 
@@ -145,6 +149,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             }
 
         } catch (IOException | URISyntaxException | InvalidRequestException e) {
+            logger.error("unable to check the connection:" + e.getMessage(), e);
             errors.put(ContractParametersCheckRequest.GENERIC_ERROR, e.getMessage());
         }
 
