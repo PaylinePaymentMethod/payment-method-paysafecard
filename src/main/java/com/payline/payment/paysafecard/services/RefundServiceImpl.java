@@ -11,11 +11,15 @@ import com.payline.pmapi.bean.refund.request.RefundRequest;
 import com.payline.pmapi.bean.refund.response.RefundResponse;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseSuccess;
 import com.payline.pmapi.service.RefundService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class RefundServiceImpl implements RefundService {
+    private static final Logger logger = LogManager.getLogger(RefundServiceImpl.class);
+
     private PaySafeHttpClient client;
 
     public RefundServiceImpl() {
@@ -54,6 +58,7 @@ public class RefundServiceImpl implements RefundService {
 
 
         } catch (InvalidRequestException | URISyntaxException | IOException e) {
+            logger.error("unable to refund the payment:" + e.getMessage(), e);
             return PaySafeErrorHandler.getRefundResponseFailure(e.getMessage(), FailureCause.CANCEL, transactionId);
         }
     }
@@ -62,7 +67,7 @@ public class RefundServiceImpl implements RefundService {
         return new PaySafePaymentRequest(refundRequest);
     }
 
-    public void updateRequest(PaySafePaymentRequest request){
+    public void updateRequest(PaySafePaymentRequest request) {
         request.setCapture(true);
     }
 
