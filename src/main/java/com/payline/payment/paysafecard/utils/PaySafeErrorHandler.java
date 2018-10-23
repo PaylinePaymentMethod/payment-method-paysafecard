@@ -116,12 +116,19 @@ public class PaySafeErrorHandler {
                     break;
             }
         }
-        return getRefundResponseFailure(response.getCode(), cause, transactionId);
+        return getRefundResponseFailure(response.getCode().substring(0,50), cause, transactionId);
     }
 
     public static RefundResponseFailure getRefundResponseFailure(String errorCode, final FailureCause failureCause, String transactionId) {
         return RefundResponseFailure.RefundResponseFailureBuilder.aRefundResponseFailure()
                 .withErrorCode(errorCode)
+                .withFailureCause(failureCause)
+                .withTransactionId(transactionId)
+                .build();
+    }
+
+    public static RefundResponseFailure getRefundResponseFailure(final FailureCause failureCause, String transactionId) {
+        return RefundResponseFailure.RefundResponseFailureBuilder.aRefundResponseFailure()
                 .withFailureCause(failureCause)
                 .withTransactionId(transactionId)
                 .build();

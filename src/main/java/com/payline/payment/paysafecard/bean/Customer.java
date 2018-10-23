@@ -19,7 +19,7 @@ public class Customer {
         this.id = id;
         this.minAge = minAge;
         // set to null if kyc_level is "SIMPLE"
-        this.kycLevel = PaySafeCardConstants.KYCLEVEL_SIMPLE.equals(kycLevel) ? kycLevel : null;
+        this.kycLevel = PaySafeCardConstants.KYCLEVEL_SIMPLE.equals(kycLevel) ? null : kycLevel;
         this.countryRestriction = countryRestriction;
     }
 

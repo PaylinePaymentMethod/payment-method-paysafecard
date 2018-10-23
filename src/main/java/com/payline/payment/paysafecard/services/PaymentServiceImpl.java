@@ -61,7 +61,7 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
         } catch (IOException | URISyntaxException | InvalidRequestException e) {
-            logger.error("unable init the payment: " + e.getMessage(), e);
+            logger.error("unable init the payment: ", e.getMessage(), e);
             return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.INTERNAL_ERROR);
         }
     }
