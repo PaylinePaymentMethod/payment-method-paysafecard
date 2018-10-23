@@ -99,17 +99,17 @@ public class PaySafePaymentRequest extends PaySafeRequest {
     }
 
     private void setCustomer(String id, ContractConfiguration config) throws InvalidRequestException {
-        String minAge = config.getProperty(PaySafeCardConstants.MINAGE_KEY).getValue();
+        String minAge = config.getProperty(PaySafeCardConstants.MINAGE_KEY) != null ? config.getProperty(PaySafeCardConstants.MINAGE_KEY).getValue() : null;
         if (DataChecker.isEmpty(minAge)) {
             minAge = null;
         }
 
-        String kycLevel = config.getProperty(PaySafeCardConstants.KYCLEVEL_KEY).getValue();
+        String kycLevel = config.getProperty(PaySafeCardConstants.KYCLEVEL_KEY) != null ? config.getProperty(PaySafeCardConstants.KYCLEVEL_KEY).getValue() : null;
         if (DataChecker.isEmpty(kycLevel)) {
             kycLevel = null;
         }
 
-        String countryRestriction = config.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY).getValue();
+        String countryRestriction = config.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY) != null ? config.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY).getValue() : null;
         if (DataChecker.isEmpty(countryRestriction)) {
             countryRestriction = null;
         }

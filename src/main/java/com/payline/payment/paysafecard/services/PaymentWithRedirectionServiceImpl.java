@@ -46,7 +46,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
             }
 
         } catch (InvalidRequestException e) {
-            logger.error("unable to finalize the payment:" + e.getMessage(), e);
+            logger.error("unable to finalize the payment:", e.getMessage(), e);
             return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.INTERNAL_ERROR);
         }
     }
@@ -59,7 +59,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
             return validatePayment(request, isSandbox);
         } catch (InvalidRequestException e) {
-            logger.error("unable to handle the session expiration:" + e.getMessage(), e);
+            logger.error("unable to handle the session expiration:", e.getMessage(), e);
             return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.INVALID_DATA);
         }
     }
@@ -139,7 +139,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                 }
             }
         } catch (IOException | URISyntaxException e) {
-            logger.error("unable to validate the payment:" + e.getMessage(), e);
+            logger.error("unable to validate the payment:", e.getMessage(), e);
             return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.COMMUNICATION_ERROR);
         }
     }

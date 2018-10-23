@@ -38,7 +38,7 @@ public class RefundServiceImpl implements RefundService {
             if (response.getCode() != null) {
                 return PaySafeErrorHandler.findRefundError(response, transactionId);
             } else if (!PaySafeCardConstants.STATUS_REFUND_SUCCESS.equals(response.getStatus())) {
-                return PaySafeErrorHandler.getRefundResponseFailure("unknown", FailureCause.PARTNER_UNKNOWN_ERROR, transactionId);
+                return PaySafeErrorHandler.getRefundResponseFailure(FailureCause.PARTNER_UNKNOWN_ERROR, transactionId);
             }
 
             updateRequest(request);
@@ -47,7 +47,7 @@ public class RefundServiceImpl implements RefundService {
             if (response.getCode() != null) {
                 return PaySafeErrorHandler.findRefundError(response, transactionId);
             } else if (!PaySafeCardConstants.STATUS_REFUND_SUCCESS.equals(response.getStatus())) {
-                return PaySafeErrorHandler.getRefundResponseFailure("unknown", FailureCause.PARTNER_UNKNOWN_ERROR, transactionId);
+                return PaySafeErrorHandler.getRefundResponseFailure(FailureCause.PARTNER_UNKNOWN_ERROR, transactionId);
             }
 
             // refund Success
@@ -58,8 +58,8 @@ public class RefundServiceImpl implements RefundService {
 
 
         } catch (InvalidRequestException | URISyntaxException | IOException e) {
-            logger.error("unable to refund the payment:" + e.getMessage(), e);
-            return PaySafeErrorHandler.getRefundResponseFailure(e.getMessage(), FailureCause.CANCEL, transactionId);
+            logger.error("unable to refund the payment:" , e.getMessage(), e);
+            return PaySafeErrorHandler.getRefundResponseFailure(FailureCause.CANCEL, transactionId);
         }
     }
 

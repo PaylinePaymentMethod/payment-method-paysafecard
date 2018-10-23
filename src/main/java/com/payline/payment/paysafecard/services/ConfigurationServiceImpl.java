@@ -149,7 +149,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             }
 
         } catch (IOException | URISyntaxException | InvalidRequestException e) {
-            logger.error("unable to check the connection:" + e.getMessage(), e);
+            logger.error("unable to check the connection:", e.getMessage(), e);
             errors.put(ContractParametersCheckRequest.GENERIC_ERROR, e.getMessage());
         }
 

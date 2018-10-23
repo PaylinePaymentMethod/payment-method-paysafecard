@@ -81,7 +81,7 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
                     .build();
 
         } catch (IOException e) {
-            logger.error("unable to load the logo: " + e.getMessage(), e);
+            logger.error("unable to load the logo: ", e.getMessage(), e);
             throw new RuntimeException("Unable to load logo");
         }
     }
