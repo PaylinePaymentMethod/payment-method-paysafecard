@@ -23,7 +23,12 @@ public class Utils {
 
     public static final String AUTHORISATION_VAL = "psc_lPfXVyiPh2YI8mhEPN9V9Y5uXWKEEmC";
     public static final String PAYMENT_TOKEN = "10000009016901270";    // big token but not unlimited
+    public static final String PAYMENT_TOKEN_AUTHENTICATED = "7444503979151258";
 
+    public static final String CUSTOMER_ID = "776551327175";
+    public static final String CUSTOMER_NAME ="monextrefund_TBqVTNc";
+    public static final String CUSTOMER_PASSWORD ="Password1";
+    public static final String CUSTOMER_MAIL = "psc.test+mypins_monextrefund_TBqVTNc@paysafecard.com";
 
     private static final Gson parser = new Gson();
 
@@ -161,6 +166,7 @@ public class Utils {
                 .withLocale(locale)
                 .withTransactionId(transactionID)
                 .withSoftDescriptor(softDescriptor)
+                .withPartnerConfiguration(new PartnerConfiguration(new HashMap<>(), new HashMap<>()))
                 .withBuyer(buyer);
     }
 
@@ -239,11 +245,11 @@ public class Utils {
 
     private static Buyer createBuyer(Map<Buyer.PhoneNumberType, String> phoneNumbers, Map<Buyer.AddressType, Buyer.Address> addresses, Buyer.FullName fullName) {
         return Buyer.BuyerBuilder.aBuyer()
-                .withCustomerIdentifier("customerId")
-                .withEmail("foo@bar.baz")
+                .withCustomerIdentifier(CUSTOMER_ID)
+                .withEmail(CUSTOMER_MAIL)
                 .withPhoneNumbers(phoneNumbers)
                 .withAddresses(addresses)
-                .withFullName(fullName)
+//                .withFullName(fullName)
                 .build();
     }
 

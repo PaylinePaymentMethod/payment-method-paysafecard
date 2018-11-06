@@ -59,6 +59,8 @@ public class PaySafePaymentRequest extends PaySafeRequest {
 
     public PaySafePaymentRequest(RefundRequest request) throws InvalidRequestException {
         super(request.getContractConfiguration());
+
+        this.paymentId= request.getPartnerTransactionId();
         this.capture = false;
 
         setAmount(request.getAmount());
@@ -66,7 +68,7 @@ public class PaySafePaymentRequest extends PaySafeRequest {
         setUrls(request.getPaylineEnvironment());
 
         Buyer buyer = request.getBuyer();
-        if (buyer == null || buyer.getCustomerIdentifier() == null) {
+        if (buyer == null || buyer.getCustomerIdentifier() == null || buyer.getEmail() == null) {
             throw new InvalidRequestException("PaySafeRequest must have a customerId key when created");
         } else {
             this.customer = new Customer(buyer.getCustomerIdentifier(), buyer.getEmail());

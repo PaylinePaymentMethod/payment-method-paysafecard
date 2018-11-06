@@ -46,7 +46,7 @@ public class RefundServiceImpl implements RefundService {
 
             if (response.getCode() != null) {
                 return PaySafeErrorHandler.findRefundError(response, transactionId);
-            } else if (!PaySafeCardConstants.STATUS_REFUND_SUCCESS.equals(response.getStatus())) {
+            } else if (!PaySafeCardConstants.STATUS_SUCCESS.equals(response.getStatus())) {
                 return PaySafeErrorHandler.getRefundResponseFailure(FailureCause.PARTNER_UNKNOWN_ERROR, transactionId);
             }
 

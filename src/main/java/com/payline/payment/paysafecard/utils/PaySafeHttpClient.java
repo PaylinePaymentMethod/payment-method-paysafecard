@@ -120,8 +120,11 @@ public class PaySafeHttpClient {
         String host = getHost(isSandbox);
         String path = createPath(PaySafeCardConstants.PATH_VERSION, PaySafeCardConstants.PATH, request.getPaymentId());
         Header[] headers = createHeaders(request.getAuthenticationHeader());
+
         // do the request
         HttpResponse response = doGet(PaySafeCardConstants.SCHEME, host, path, headers);
+
+        // create object from PaySafeCard response
         String responseString = EntityUtils.toString(response.getEntity(), DEFAULT_CHARSET);
         return parser.fromJson(responseString, PaySafePaymentResponse.class);
     }
@@ -151,7 +154,8 @@ public class PaySafeHttpClient {
         HttpResponse response = doPost(PaySafeCardConstants.SCHEME, host, path, headers, jsonBody);
 
         // create object from PaySafeCard response
-        return parser.fromJson(response.getEntity().toString(), PaySafePaymentResponse.class);
+        String responseString = EntityUtils.toString(response.getEntity(), DEFAULT_CHARSET);
+        return parser.fromJson(responseString, PaySafePaymentResponse.class);
     }
 
 }
