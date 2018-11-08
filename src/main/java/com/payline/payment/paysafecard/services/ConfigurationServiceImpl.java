@@ -22,8 +22,8 @@ import java.util.*;
 public class ConfigurationServiceImpl implements ConfigurationService {
     private static final Logger logger = LogManager.getLogger(ConfigurationServiceImpl.class);
 
-    private static final String VERSION = "1.0";
-    private static final String RELEASE_DATE = "24/10/2018";
+    private static final String VERSION = "1.1";
+    private static final String RELEASE_DATE = "20/09/2018";
 
     private PaySafeHttpClient httpClient = new PaySafeHttpClient();
     private final LocalizationService localization;
@@ -149,7 +149,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             }
 
         } catch (IOException | URISyntaxException | InvalidRequestException e) {
-            logger.error("unable to check the connection: {}", e.getMessage(), e);
+            logger.error("unable to check the connection:", e.getMessage(), e);
             errors.put(ContractParametersCheckRequest.GENERIC_ERROR, e.getMessage());
         }
 
