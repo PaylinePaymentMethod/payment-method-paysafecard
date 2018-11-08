@@ -98,8 +98,8 @@ public class PaymentServiceImplTest {
     @Test
     public void paymentRequestWithError2001() throws IOException, URISyntaxException  {
         String json = "{" +
-                "    \"code\": \"duplicate_transaction_id\"," +
-                "    \"number\": 2001" +
+                "    code: duplicate_transaction_id," +
+                "    number: 2001" +
                 "}";
 
         when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
@@ -115,8 +115,8 @@ public class PaymentServiceImplTest {
     @Test
     public void paymentRequestWithError2017() throws IOException, URISyntaxException  {
         String json = "{" +
-                "    \"code\": \"duplicate_transaction_id\"," +
-                "    \"number\": 2017" +
+                "    code: duplicate_transaction_id," +
+                "    number: 2017" +
                 "}";
 
         when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));

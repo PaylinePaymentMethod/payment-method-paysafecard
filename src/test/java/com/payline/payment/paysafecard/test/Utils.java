@@ -132,14 +132,14 @@ public class Utils {
         accountInfo.put(PaySafeCardConstants.AUTHORISATIONKEY_KEY, authorisation);
 
         ContractConfiguration configuration = createContractConfiguration(kycLevel, minAge, countryRestriction, authorisation);
-        PaylineEnvironment environment = new PaylineEnvironment("http://notificationURL.com", "http://redirectionURL.com", "http://redirectionCancelURL.com", true);
+        Environment environment = new Environment("http://notificationURL.com", "http://redirectionURL.com", "http://redirectionCancelURL.com", true);
 //        PartnerConfiguration partnerConfiguration = new PartnerConfiguration(new HashMap<>());
 
         return ContractParametersCheckRequest.CheckRequestBuilder.aCheckRequest()
                 .withAccountInfo(accountInfo)
                 .withLocale(locale)
                 .withContractConfiguration(configuration)
-                .withPaylineEnvironment(environment)
+                .withEnvironment(environment)
 //                .withPartnerConfiguration(partnerConfiguration)
                 .build();
 
@@ -149,7 +149,7 @@ public class Utils {
         final Amount amount = createAmount("EUR");
         final ContractConfiguration contractConfiguration = createDefaultContractConfiguration();
 
-        final PaylineEnvironment paylineEnvironment = new PaylineEnvironment(NOTIFICATION_URL, SUCCESS_URL, FAILURE_URL, true);
+        final Environment Environment = new Environment(NOTIFICATION_URL, SUCCESS_URL, FAILURE_URL, true);
         final String transactionID = createTransactionId();
         final Order order = createOrder(transactionID);
         final String softDescriptor = "softDescriptor";
@@ -161,7 +161,7 @@ public class Utils {
                 .withAmount(amount)
                 .withBrowser(new Browser("", Locale.FRANCE))
                 .withContractConfiguration(contractConfiguration)
-                .withPaylineEnvironment(paylineEnvironment)
+                .withEnvironment(Environment)
                 .withOrder(order)
                 .withLocale(locale)
                 .withTransactionId(transactionID)
@@ -257,8 +257,8 @@ public class Utils {
         return createBuyer(createDefaultPhoneNumbers(), createDefaultAddresses(), createFullName());
     }
 
-    public  static PaylineEnvironment createDefaultPaylineEnvironment(){
-        return  new PaylineEnvironment("http://notificationURL.com", "http://redirectionURL.com", "http://redirectionCancelURL.com", true);
+    public  static Environment createDefaultEnvironment(){
+        return  new Environment("http://notificationURL.com", "http://redirectionURL.com", "http://redirectionCancelURL.com", true);
     }
 
     public static PartnerConfiguration createDefaultPartnerConfiguration(){
@@ -272,7 +272,7 @@ public class Utils {
                 .withAmount(new Amount(null, Currency.getInstance("EUR")))
                 .withContractConfiguration(createDefaultContractConfiguration())
                 .withOrder(createOrder("007"))
-                .withPaylineEnvironment(createDefaultPaylineEnvironment())
+                .withEnvironment(createDefaultEnvironment())
                 .withPartnerConfiguration(createDefaultPartnerConfiguration())
                 .build();
     }

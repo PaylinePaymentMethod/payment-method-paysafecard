@@ -7,7 +7,7 @@ import com.payline.payment.paysafecard.test.Utils;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
 import com.payline.pmapi.bean.payment.ContractProperty;
-import com.payline.pmapi.bean.payment.PaylineEnvironment;
+import com.payline.pmapi.bean.payment.Environment;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
@@ -82,7 +82,7 @@ public class ItRefundTest {
                 .withOrder(request.getOrder())
                 .withBuyer(request.getBuyer())
                 .withContractConfiguration(request.getContractConfiguration())
-                .withPaylineEnvironment(request.getPaylineEnvironment())
+                .withEnvironment(request.getEnvironment())
                 .withTransactionId(request.getTransactionId())
                 .withPartnerTransactionId(partnerTransactionId)
                 .withSoftDescriptor(request.getSoftDescriptor())
@@ -99,19 +99,19 @@ public class ItRefundTest {
         String partnerUrl = paymentResponseRedirect.getRedirectionRequest().getUrl().toString();
         String redirectionUrl = this.payOnPartnerWebsite(partnerUrl);
         Assertions.assertEquals("https://succesurl.com/", redirectionUrl);
-        String partnerTransactionId = paymentResponseRedirect.getTransactionIdentifier();
+        String partnerTransactionId = paymentResponseRedirect.getPartnerTransactionId();
         PaymentResponse paymentResponseFromFinalize = this.handlePartnerResponse(paymentWithRedirectionService, paymentRequest, paymentResponseRedirect);
         PaymentResponseSuccess paymentResponseSuccess = (PaymentResponseSuccess) paymentResponseFromFinalize;
         Assertions.assertNotNull(paymentResponseSuccess.getTransactionDetails());
-        Assertions.assertEquals(partnerTransactionId, paymentResponseSuccess.getTransactionIdentifier());
+        Assertions.assertEquals(partnerTransactionId, paymentResponseSuccess.getPartnerTransactionId());
 
         return partnerTransactionId;
     }
 
     private PaymentResponse handlePartnerResponse(PaymentWithRedirectionService paymentWithRedirectionService, PaymentRequest paymentRequest, PaymentResponseRedirect paymentResponseRedirect) {
         ContractConfiguration contractConfiguration = new ContractConfiguration("", this.generateParameterContract());
-        PaylineEnvironment paylineEnvironment = new PaylineEnvironment("http://google.com/", SUCCESS_URL, CANCEL_URL, true);
-        RedirectionPaymentRequest redirectionPaymentRequest = RedirectionPaymentRequest.builder().withContractConfiguration(contractConfiguration).withPaymentFormContext(null).withPaylineEnvironment(paylineEnvironment).withTransactionId(paymentRequest.getTransactionId()).withRequestContext(paymentResponseRedirect.getRequestContext()).withAmount(paymentRequest.getAmount()).build();
+        Environment Environment = new Environment("http://google.com/", SUCCESS_URL, CANCEL_URL, true);
+        RedirectionPaymentRequest redirectionPaymentRequest = RedirectionPaymentRequest.builder().withContractConfiguration(contractConfiguration).withPaymentFormContext(null).withEnvironment(Environment).withTransactionId(paymentRequest.getTransactionId()).withRequestContext(paymentResponseRedirect.getRequestContext()).withAmount(paymentRequest.getAmount()).build();
         return paymentWithRedirectionService.finalizeRedirectionPayment(redirectionPaymentRequest);
     }
 

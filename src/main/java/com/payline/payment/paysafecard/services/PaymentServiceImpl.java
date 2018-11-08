@@ -32,7 +32,7 @@ public class PaymentServiceImpl implements PaymentService {
             // create the PaySAfeCard payment request
             PaySafePaymentRequest request = new PaySafePaymentRequest(paymentRequest);
 
-            Boolean isSandbox = paymentRequest.getPaylineEnvironment().isSandbox();
+            Boolean isSandbox = paymentRequest.getEnvironment().isSandbox();
             PaySafePaymentResponse response = httpClient.initiate(request, isSandbox);
 
             // check response object
@@ -49,12 +49,12 @@ public class PaymentServiceImpl implements PaymentService {
                 Map<String, String> paySafeCardContext = new HashMap<>();
                 paySafeCardContext.put(PaySafeCardConstants.PSC_ID, response.getId());
                 RequestContext requestContext = RequestContext.RequestContextBuilder.aRequestContext()
-                        .withRequestContext(paySafeCardContext)
+                        .withRequestData(paySafeCardContext)
                         .build();
 
                 return PaymentResponseRedirect.PaymentResponseRedirectBuilder.aPaymentResponseRedirect()
                         .withRedirectionRequest(redirectionRequest)
-                        .withTransactionIdentifier(response.getId())
+                        .withPartnerTransactionId(response.getId())
                         .withStatusCode(response.getStatus())
                         .withRequestContext(requestContext)
                         .build();

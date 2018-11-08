@@ -28,4 +28,8 @@ public class PaySafeCardConstants {
     public static final String STATUS_EXPIRED = "EXPIRED";
 
     public static final String SETTLEMENT_KEY = "SETTLEMENT_KEY";
+
+    private PaySafeCardConstants(){
+        //ras
+    }
 }

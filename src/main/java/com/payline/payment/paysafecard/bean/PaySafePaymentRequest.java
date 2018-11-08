@@ -9,7 +9,7 @@ import com.payline.pmapi.bean.common.Amount;
 import com.payline.pmapi.bean.common.Buyer;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
-import com.payline.pmapi.bean.payment.PaylineEnvironment;
+import com.payline.pmapi.bean.payment.Environment;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 
@@ -45,7 +45,7 @@ public class PaySafePaymentRequest extends PaySafeRequest {
 
         setAmount(request.getAmount());
         setCurrency(request.getAmount());
-        setUrls(request.getPaylineEnvironment());
+        setUrls(request.getEnvironment());
 
         Buyer buyer = request.getBuyer();
         ContractConfiguration configuration = request.getContractConfiguration();
@@ -65,7 +65,7 @@ public class PaySafePaymentRequest extends PaySafeRequest {
 
         setAmount(request.getAmount());
         setCurrency(request.getAmount());
-        setUrls(request.getPaylineEnvironment());
+        setUrls(request.getEnvironment());
 
         Buyer buyer = request.getBuyer();
         if (buyer == null || buyer.getCustomerIdentifier() == null || buyer.getEmail() == null) {
@@ -91,7 +91,7 @@ public class PaySafePaymentRequest extends PaySafeRequest {
         }
     }
 
-    private void setUrls(PaylineEnvironment environment) throws InvalidRequestException {
+    private void setUrls(Environment environment) throws InvalidRequestException {
         if (environment == null) {
             throw new InvalidRequestException("PaySafeRequest must have a redirect key when created");
         } else {

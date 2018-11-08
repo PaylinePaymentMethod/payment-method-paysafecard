@@ -30,7 +30,7 @@ public class RefundServiceImpl implements RefundService {
     public RefundResponse refundRequest(RefundRequest refundRequest) {
         String transactionId = refundRequest.getTransactionId();
         try {
-            boolean isSandbox = refundRequest.getPaylineEnvironment().isSandbox();
+            boolean isSandbox = refundRequest.getEnvironment().isSandbox();
             PaySafePaymentRequest request = createRequest(refundRequest);
 
             PaySafePaymentResponse response = client.refund(request, isSandbox);
@@ -53,7 +53,7 @@ public class RefundServiceImpl implements RefundService {
             // refund Success
             return RefundResponseSuccess.RefundResponseSuccessBuilder.aRefundResponseSuccess()
                     .withStatusCode("0")
-                    .withTransactionId(transactionId)
+                    .withPartnerTransactionId(transactionId)
                     .build();
 
 

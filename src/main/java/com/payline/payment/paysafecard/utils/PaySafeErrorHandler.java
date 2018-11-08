@@ -7,6 +7,11 @@ import com.payline.pmapi.bean.refund.response.RefundResponse;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;
 
 public class PaySafeErrorHandler {
+
+    private PaySafeErrorHandler() {
+        // ras.
+    }
+
     public static PaymentResponseFailure findError(PaySafePaymentResponse response) {
         FailureCause cause;
         if (response.getNumber() == null) {
@@ -125,14 +130,14 @@ public class PaySafeErrorHandler {
         return RefundResponseFailure.RefundResponseFailureBuilder.aRefundResponseFailure()
                 .withErrorCode(errorCode)
                 .withFailureCause(failureCause)
-                .withTransactionId(transactionId)
+                .withPartnerTransactionId(transactionId)
                 .build();
     }
 
     public static RefundResponseFailure getRefundResponseFailure(final FailureCause failureCause, String transactionId) {
         return RefundResponseFailure.RefundResponseFailureBuilder.aRefundResponseFailure()
                 .withFailureCause(failureCause)
-                .withTransactionId(transactionId)
+                .withPartnerTransactionId(transactionId)
                 .build();
     }
 }

@@ -22,7 +22,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -203,11 +202,11 @@ public class RefundServiceImplTest {
 
     @Test
     public void canMultiple() {
-        Assert.assertNotNull(service.canMultiple());
+        Assert.assertFalse(service.canMultiple());
     }
 
     @Test
     public void canPartial() {
-        Assert.assertNotNull(service.canPartial());
+        Assert.assertFalse(service.canPartial());
     }
 }

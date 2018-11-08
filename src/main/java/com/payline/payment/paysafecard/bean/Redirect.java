@@ -2,7 +2,7 @@ package com.payline.payment.paysafecard.bean;
 
 import com.google.gson.annotations.SerializedName;
 import com.payline.payment.paysafecard.utils.InvalidRequestException;
-import com.payline.pmapi.bean.payment.PaylineEnvironment;
+import com.payline.pmapi.bean.payment.Environment;
 
 public class Redirect {
     @SerializedName("success_url")
@@ -12,7 +12,7 @@ public class Redirect {
     @SerializedName("auth_url")
     private String authUrl;
 
-    Redirect(PaylineEnvironment environment) throws InvalidRequestException {
+    Redirect(Environment environment) throws InvalidRequestException {
         if (environment.getRedirectionReturnURL() == null) {
             throw new InvalidRequestException("PaySafeRequest must have a success url when created");
         }
