@@ -121,7 +121,9 @@ public class PaySafeErrorHandler {
                     break;
             }
         }
-        return getRefundResponseFailure(response.getCode().substring(0,50), cause, transactionId);
+        // the code length must be under 50
+        String errorCode = response.getCode().length() > 50 ? response.getCode().substring(0, 50) : response.getCode();
+        return getRefundResponseFailure(errorCode, cause, transactionId);
     }
 
     public static RefundResponseFailure getRefundResponseFailure(String errorCode, final FailureCause failureCause, String transactionId) {

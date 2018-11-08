@@ -58,7 +58,7 @@ public class RefundServiceImpl implements RefundService {
 
 
         } catch (InvalidRequestException | URISyntaxException | IOException e) {
-            logger.error("unable to refund the payment:" , e.getMessage(), e);
+            logger.error("unable to refund the payment: {}" , e.getMessage(), e);
             return PaySafeErrorHandler.getRefundResponseFailure(FailureCause.CANCEL, transactionId);
         }
     }
