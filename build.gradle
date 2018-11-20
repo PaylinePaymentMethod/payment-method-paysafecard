@@ -17,6 +17,10 @@ targetCompatibility = 1.8
 
 compileJava.options.encoding = 'UTF-8'
 
+configurations {
+    fatJarTest
+}
+
 ext {
     paymentMethodVersion = '1.0-RC3'
     powerMockVersion = '1.7.0'
@@ -48,6 +52,13 @@ dependencies {
     testImplementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.0'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.0.3'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.0.3'
+
+    fatJarTest "junit:junit:4.11"
+    fatJarTest "org.mockito:mockito-core:1.+"
+    fatJarTest group: 'org.seleniumhq.selenium', name: 'selenium-server', version: '3.13.0'
+    fatJarTest group: 'org.seleniumhq.selenium', name: 'selenium-support', version: '3.13.0'
+    fatJarTest group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.0.3'
+    fatJarTest group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.0.3'
 }
 
 assemble.dependsOn shadowJar
@@ -76,6 +87,14 @@ task printVersion {
     doLast {
         println version
     }
+}
+
+// To create a JAR including test classes and dependencies
+task testJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+    dependsOn 'shadowJar', 'testClasses'
+    classifier = 'tests'
+    from sourceSets.test.output.classesDirs + shadowJar
+    configurations = [project.configurations.fatJarTest]
 }
 
 test.exclude '**/test/integration/*'
