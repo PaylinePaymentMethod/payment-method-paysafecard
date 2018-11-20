@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class RefundServiceImpl implements RefundService {
-    private static final Logger logger = LogManager.getLogger(RefundServiceImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger(RefundServiceImpl.class);
 
     private PaySafeHttpClient client;
 
@@ -58,7 +58,7 @@ public class RefundServiceImpl implements RefundService {
 
 
         } catch (InvalidRequestException | URISyntaxException | IOException e) {
-            logger.error("unable to refund the payment: {}" , e.getMessage(), e);
+            LOGGER.error("unable to refund the payment: {}" , e.getMessage(), e);
             return PaySafeErrorHandler.getRefundResponseFailure(FailureCause.CANCEL, transactionId);
         }
     }

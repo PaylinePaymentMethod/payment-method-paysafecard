@@ -116,7 +116,5 @@ public class PaySafeRequestTest {
         Assert.assertEquals(s2, PaySafePaymentRequest.encodeToBase64(s));
         Assert.assertEquals("", PaySafePaymentRequest.encodeToBase64(""));
         Assert.assertEquals("", PaySafePaymentRequest.encodeToBase64(null));
-
-
     }
 }

@@ -27,7 +27,7 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
     private static final int LOGO_WIDTH = 141;
     private static final boolean DISPLAY_PAYMENT_BUTTON = true;
 
-    private static final Logger logger = LogManager.getLogger(PaymentFormConfigurationServiceImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger(PaymentFormConfigurationServiceImpl.class);
 
     private LocalizationService localization;
 
@@ -81,7 +81,7 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
                     .build();
 
         } catch (IOException e) {
-            logger.error("unable to load the logo: {}", e.getMessage(), e);
+            LOGGER.error("unable to load the logo: {}", e.getMessage(), e);
             throw new RuntimeException("Unable to load logo");
         }
     }
