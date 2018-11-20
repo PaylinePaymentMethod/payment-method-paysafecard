@@ -34,7 +34,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
     public PaymentResponse finalizeRedirectionPayment(RedirectionPaymentRequest redirectionPaymentRequest) {
         try {
             PaySafeCaptureRequest request = createRequest(redirectionPaymentRequest);
-            boolean isSandbox = redirectionPaymentRequest.getPaylineEnvironment().isSandbox();
+            boolean isSandbox = redirectionPaymentRequest.getEnvironment().isSandbox();
 
             // first try
             PaymentResponse response = validatePayment(request, isSandbox);
@@ -55,7 +55,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
     public PaymentResponse handleSessionExpired(TransactionStatusRequest transactionStatusRequest) {
         try {
             PaySafeCaptureRequest request = createRequest(transactionStatusRequest);
-            boolean isSandbox = transactionStatusRequest.getPaylineEnvironment().isSandbox();
+            boolean isSandbox = transactionStatusRequest.getEnvironment().isSandbox();
 
             return validatePayment(request, isSandbox);
         } catch (InvalidRequestException e) {
@@ -111,7 +111,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
         return PaymentResponseSuccess.PaymentResponseSuccessBuilder.aPaymentResponseSuccess()
                 .withStatusCode("0")
-                .withTransactionIdentifier(response.getId())
+                .withPartnerTransactionId(response.getId())
                 .withTransactionDetails(cardPayment)
                 .build();
     }

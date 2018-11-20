@@ -11,7 +11,7 @@ public class PaySafeCaptureRequest extends PaySafeRequest {
 
     public PaySafeCaptureRequest(RedirectionPaymentRequest request) throws InvalidRequestException {
         super(request.getContractConfiguration());
-        this.paymentId= request.getRequestContext().getRequestContext().get(PaySafeCardConstants.PSC_ID);
+        this.paymentId= request.getRequestContext().getRequestData().get(PaySafeCardConstants.PSC_ID);
     }
 
     public PaySafeCaptureRequest(String paymentId, ContractConfiguration configuration) throws InvalidRequestException {
@@ -21,7 +21,7 @@ public class PaySafeCaptureRequest extends PaySafeRequest {
 
     public PaySafeCaptureRequest(TransactionStatusRequest request) throws InvalidRequestException {
         super(request.getContractConfiguration());
-        this.paymentId = request.getTransactionIdentifier();
+        this.paymentId = request.getTransactionId();
     }
 
     public String getPaymentId() {

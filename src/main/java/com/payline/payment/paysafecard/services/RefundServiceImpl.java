@@ -30,7 +30,7 @@ public class RefundServiceImpl implements RefundService {
     public RefundResponse refundRequest(RefundRequest refundRequest) {
         String transactionId = refundRequest.getTransactionId();
         try {
-            boolean isSandbox = refundRequest.getPaylineEnvironment().isSandbox();
+            boolean isSandbox = refundRequest.getEnvironment().isSandbox();
             PaySafePaymentRequest request = createRequest(refundRequest);
 
             PaySafePaymentResponse response = client.refund(request, isSandbox);
@@ -46,14 +46,14 @@ public class RefundServiceImpl implements RefundService {
 
             if (response.getCode() != null) {
                 return PaySafeErrorHandler.findRefundError(response, transactionId);
-            } else if (!PaySafeCardConstants.STATUS_REFUND_SUCCESS.equals(response.getStatus())) {
+            } else if (!PaySafeCardConstants.STATUS_SUCCESS.equals(response.getStatus())) {
                 return PaySafeErrorHandler.getRefundResponseFailure(FailureCause.PARTNER_UNKNOWN_ERROR, transactionId);
             }
 
             // refund Success
             return RefundResponseSuccess.RefundResponseSuccessBuilder.aRefundResponseSuccess()
                     .withStatusCode("0")
-                    .withTransactionId(transactionId)
+                    .withPartnerTransactionId(transactionId)
                     .build();
 
 

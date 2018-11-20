@@ -22,7 +22,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -46,15 +45,40 @@ public class RefundServiceImplTest {
 
     @Test
     public void refundRequest() throws IOException, URISyntaxException {
-        String json = "{" +
-                "  'object': 'refund'," +
-                "  'id': 'ref_1000000007_2838fhsd6dashsdkfsd_EUR'," +
-                "  'created': 1430137532383, 'updated': 1430137532383," +
-                "  'currency': 'EUR', 'amount': '10.00'," +
-                "  'customer': { 'id': 'merchantclientid5HzDvoZSodKDJ7X7VQKrtestAutomation', 'email': 'valid@email.com' }," +
-                "  'status': 'SUCCESSFULEUpdated'" +
+        String json1 = "{" +
+                "    object: REFUND," +
+                "    id: ref_1090000152_WjJr6XHp2CeKPepTQRXVV6Ne6ZIoRPDX_EUR," +
+                "    created: 1541511018217," +
+                "    updated: 1541511018691," +
+                "    currency: EUR," +
+                "    amount: 0.01," +
+                "    customer: {" +
+                "        id: 776551327175," +
+                "        email: valid@email.com" +
+                "    }," +
+                "    status: VALIDATION_SUCCESSFUL," +
+                "    customer_currency: EUR," +
+                "    customer_amount: 0.01" +
                 "}";
-        when(httpClient.refund(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
+
+        String json2 = "{" +
+                "    object: REFUND," +
+                "    id: ref_1090000152_TfCMEiojeVl8rsOOHjLCqFKtladkigk7_EUR," +
+                "    created: 1541512583385," +
+                "    updated: 1541512586504," +
+                "    currency: EUR," +
+                "    amount: 0.1," +
+                "    customer: {" +
+                "        id: 776551327175," +
+                "        email: valid@email.com" +
+                "    }," +
+                "    status: SUCCESS," +
+                "    customer_currency: EUR," +
+                "    customer_amount: 0.1" +
+                "}";
+
+
+        when(httpClient.refund(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json1), Utils.createPaySafeResponse(json2));
 
         RefundResponse response = service.refundRequest(request);
 
@@ -176,14 +200,13 @@ public class RefundServiceImplTest {
     }
 
 
-
     @Test
     public void canMultiple() {
-        Assert.assertNotNull(service.canMultiple());
+        Assert.assertFalse(service.canMultiple());
     }
 
     @Test
     public void canPartial() {
-        Assert.assertNotNull(service.canPartial());
+        Assert.assertFalse(service.canPartial());
     }
 }

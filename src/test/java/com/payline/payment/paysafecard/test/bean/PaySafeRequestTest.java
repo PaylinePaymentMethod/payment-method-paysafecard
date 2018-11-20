@@ -8,7 +8,7 @@ import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.pmapi.bean.common.Amount;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
-import com.payline.pmapi.bean.payment.PaylineEnvironment;
+import com.payline.pmapi.bean.payment.Environment;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,28 +47,16 @@ public class PaySafeRequestTest {
     }
 
     @Test(expected = InvalidRequestException.class)
-    public void createPaySafeRequestWithoutCustomerId() throws InvalidRequestException {
-        PaymentRequest paymentRequest = Utils.createCompletePaymentBuilder().withBuyer(null).build();
-        new PaySafePaymentRequest(paymentRequest);
-    }
-
-    @Test(expected = InvalidRequestException.class)
-    public void createPaySafeRequestWithoutUrls() throws InvalidRequestException {
-        PaymentRequest paymentRequest = Utils.createCompletePaymentBuilder().withPaylineEnvironment(null).build();
-        new PaySafePaymentRequest(paymentRequest);
-    }
-
-    @Test(expected = InvalidRequestException.class)
     public void createPaySafeRequestWithNullSuccessUrl() throws InvalidRequestException {
-        PaylineEnvironment environment = new PaylineEnvironment(Utils.NOTIFICATION_URL, null, Utils.FAILURE_URL, true);
-        PaymentRequest paymentRequest = Utils.createCompletePaymentBuilder().withPaylineEnvironment(environment).build();
+        Environment environment = new Environment(Utils.NOTIFICATION_URL, null, Utils.FAILURE_URL, true);
+        PaymentRequest paymentRequest = Utils.createCompletePaymentBuilder().withEnvironment(environment).build();
         new PaySafePaymentRequest(paymentRequest);
     }
 
     @Test(expected = InvalidRequestException.class)
     public void createPaySafeRequestWithNullFailureUrl() throws InvalidRequestException {
-        PaylineEnvironment environment = new PaylineEnvironment(Utils.NOTIFICATION_URL, Utils.SUCCESS_URL, null, true);
-        PaymentRequest paymentRequest = Utils.createCompletePaymentBuilder().withPaylineEnvironment(environment).build();
+        Environment environment = new Environment(Utils.NOTIFICATION_URL, Utils.SUCCESS_URL, null, true);
+        PaymentRequest paymentRequest = Utils.createCompletePaymentBuilder().withEnvironment(environment).build();
         new PaySafePaymentRequest(paymentRequest);
     }
 

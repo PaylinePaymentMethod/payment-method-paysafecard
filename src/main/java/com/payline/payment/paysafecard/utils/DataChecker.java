@@ -6,6 +6,10 @@ import java.util.Locale;
 
 public class DataChecker {
 
+    private DataChecker(){
+        // ras.
+    }
+
     /**
      * verify minAge is a number between 1 and 99
      * @param minAge
