@@ -81,16 +81,22 @@ pipeline {
                     }
                 }
                 stage('SonarQube') {
-                    when { not { branch 'master' } }
+                  //  when { not { branch 'master' } }
                     steps {
                         withSonarQubeEnv('SonarMonext') {
                             script {
-                                if (BRANCH_NAME == 'develop') {
-                                    sh './gradlew sonarqube -Dsonar.branch.name=${BRANCH_NAME}  --info --stacktrace'
-                                }
-                                if (BRANCH_NAME != 'develop') {
-                                    sh './gradlew sonarqube  -Dsonar.branch.name=${BRANCH_NAME} -Dsonar.branch.target=develop --info --stacktrace'
-                                }
+				     sh './gradlew sonarqube -Dsonar.branch.name=${BRANCH_NAME}  --info --stacktrace'
+			 //    if (BRANCH_NAME == 'master') {
+                          ////          sh './gradlew sonarqube -Dsonar.branch.name=${BRANCH_NAME}  --info --stacktrace'
+                          //      }
+                          //      if (BRANCH_NAME == 'develop') {
+                           //         sh './gradlew sonarqube -Dsonar.branch.name=${BRANCH_NAME}  --info --stacktrace'
+                           //     }
+                            //    if (BRANCH_NAME != 'develop') {
+                            //        sh './gradlew sonarqube  -Dsonar.branch.name=${BRANCH_NAME} -Dsonar.branch.target=develop --info --stacktrace'
+                            //    }
+				    
+				    
                             }
                         }
                     }
