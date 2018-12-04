@@ -13,7 +13,6 @@ import com.payline.pmapi.bean.payment.Environment;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 
-
 public class PaySafePaymentRequest extends PaySafeRequest {
     private String type = "PAYSAFECARD";
     private String amount;
