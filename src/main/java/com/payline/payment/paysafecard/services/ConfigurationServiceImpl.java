@@ -19,11 +19,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static com.payline.payment.paysafecard.utils.PaySafeCardConstants.*;
+
 public class ConfigurationServiceImpl implements ConfigurationService {
     private static final Logger logger = LogManager.getLogger(ConfigurationServiceImpl.class);
-
-    private static final String VERSION = "1.0";
-    private static final String RELEASE_DATE = "24/10/2018";
 
     private PaySafeHttpClient httpClient = new PaySafeHttpClient();
     private final LocalizationService localization;
@@ -158,8 +157,20 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public ReleaseInformation getReleaseInformation() {
-        LocalDate date = LocalDate.parse(RELEASE_DATE, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        return ReleaseInformation.ReleaseBuilder.aRelease().withDate(date).withVersion(VERSION).build();
+        Properties props = new Properties();
+        try {
+            props.load(ConfigurationServiceImpl.class.getClassLoader().getResourceAsStream(RELEASE_PROPERTIES));
+        } catch (IOException e) {
+            logger.error("An error occurred reading the file: " + RELEASE_PROPERTIES);
+            props.setProperty(RELEASE_VERSION, "unknown");
+            props.setProperty(RELEASE_DATE, "01/01/1900");
+        }
+
+        LocalDate date = LocalDate.parse(props.getProperty(RELEASE_DATE), DateTimeFormatter.ofPattern(RELEASE_DATE_FORMAT));
+        return ReleaseInformation.ReleaseBuilder.aRelease()
+                .withDate(date)
+                .withVersion(props.getProperty(RELEASE_VERSION))
+                .build();
     }
 
     @Override

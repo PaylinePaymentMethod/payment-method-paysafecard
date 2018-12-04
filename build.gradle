@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
     id "com.github.johnrengelman.shadow" version "2.0.1"
     id "org.sonarqube" version "2.6.1"
@@ -70,6 +72,14 @@ task buildToLocal(type: Copy) {
     dependsOn shadowJar
     from shadowJar
     into "${releaseDirectoryPath}"
+}
+
+/* Replace tokens in resources files after compilation */
+processResources {
+    filter ReplaceTokens, tokens: [
+            "version": project.version.replace("-SNAPSHOT", ""),
+            "date"   : new Date().format("dd/MM/yyyy")
+    ]
 }
 
 task printVersion {

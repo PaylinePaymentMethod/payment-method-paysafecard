@@ -28,8 +28,12 @@ public class PaySafeCardConstants {
     public static final String STATUS_EXPIRED = "EXPIRED";
 
     public static final String SETTLEMENT_KEY = "SETTLEMENT_KEY";
+    public static final String RELEASE_DATE_FORMAT = "dd/MM/yyyy";
+    public static final String RELEASE_PROPERTIES = "release.properties";
+    public static final String RELEASE_VERSION = "release.version";
+    public static final String RELEASE_DATE = "release.date";
 
-    private PaySafeCardConstants(){
+    private PaySafeCardConstants() {
         //ras
     }
 }
