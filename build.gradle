@@ -87,15 +87,11 @@ task buildToLocal(type: Copy) {
 
 /* Replace tokens in resources files after compilation */
 processResources {
-    filter ReplaceTokens, tokens: [
-            "version": project.version.replace("-SNAPSHOT", ""),
-            "date"   : new Date().format("dd/MM/yyyy")
-    ]
-}
-
-task printVersion {
-    doLast {
-        println version
+    filesMatching('release.properties') {
+        filter( ReplaceTokens, tokens:[
+                'version': project.version.replaceFirst("-.*", ""),
+                'date': new Date().format("dd/MM/yyyy")
+        ])
     }
 }
 
@@ -105,6 +101,12 @@ task testJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
     classifier = 'tests'
     from sourceSets.test.output.classesDirs + shadowJar
     configurations = [project.configurations.fatJarTest]
+}
+
+task printVersion {
+    doLast {
+        println version
+    }
 }
 
 test.exclude '**/test/integration/*'
