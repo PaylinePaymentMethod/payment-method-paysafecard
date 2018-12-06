@@ -39,7 +39,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         final InputParameter merchantName = new InputParameter();
         merchantName.setKey(PaySafeCardConstants.MERCHANT_NAME_KEY);
         merchantName.setLabel(localization.getSafeLocalizedString("contract.merchantName.label", locale));
-        merchantName.setDescription(localization.getSafeLocalizedString("contract.merchantName.description", locale));
         merchantName.setRequired(true);
 
         parameters.add(merchantName);
@@ -48,7 +47,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         final InputParameter merchantId = new InputParameter();
         merchantId.setKey(PaySafeCardConstants.MERCHANT_ID_KEY);
         merchantId.setLabel(localization.getSafeLocalizedString("contract.merchantId.label", locale));
-        merchantId.setDescription(localization.getSafeLocalizedString("contract.merchantId.description", locale));
         merchantId.setRequired(true);
 
         parameters.add(merchantId);
@@ -66,7 +64,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         final PasswordParameter settlementKey = new PasswordParameter();
         settlementKey.setKey(PaySafeCardConstants.SETTLEMENT_KEY);
         settlementKey.setLabel(localization.getSafeLocalizedString("contract.settlementKey.label", locale));
-        settlementKey.setDescription(localization.getSafeLocalizedString("contract.settlementKey.description", locale));
         settlementKey.setRequired(false);
 
         parameters.add(settlementKey);
@@ -75,7 +72,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         final InputParameter minAge = new InputParameter();
         minAge.setKey(PaySafeCardConstants.MINAGE_KEY);
         minAge.setLabel(localization.getSafeLocalizedString("contract.minAge.label", locale));
-        minAge.setDescription(localization.getSafeLocalizedString("contract.minAge.description", locale));
         minAge.setRequired(false);
 
         parameters.add(minAge);
@@ -88,7 +84,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         final ListBoxParameter kycLevel = new ListBoxParameter();
         kycLevel.setKey(PaySafeCardConstants.KYCLEVEL_KEY);
         kycLevel.setLabel(localization.getSafeLocalizedString("contract.kycLevel.label", locale));
-        kycLevel.setDescription(localization.getSafeLocalizedString("contract.kycLevel.description", locale));
         kycLevel.setList(kycLevelMap);
         kycLevel.setRequired(false);
 
@@ -102,7 +97,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         countryRestriction.setRequired(false);
 
         parameters.add(countryRestriction);
-
 
         return parameters;
     }
