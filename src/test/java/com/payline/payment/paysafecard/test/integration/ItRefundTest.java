@@ -5,6 +5,7 @@ import com.payline.payment.paysafecard.services.PaymentWithRedirectionServiceImp
 import com.payline.payment.paysafecard.services.RefundServiceImpl;
 import com.payline.payment.paysafecard.test.Utils;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
+import com.payline.pmapi.bean.common.Amount;
 import com.payline.pmapi.bean.payment.Browser;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
 import com.payline.pmapi.bean.payment.ContractProperty;
@@ -28,6 +29,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -86,21 +88,9 @@ public class ItRefundTest {
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
         String partnerTransactionId = fullRedirectionPayment(request, paymentService, paymentWithRedirectionService);
 
-        // create the refund request from previous request
-        RefundRequest refund = RefundRequest.RefundRequestBuilder.aRefundRequest()
-                .withAmount(request.getAmount())
-                .withOrder(request.getOrder())
-                .withBuyer(request.getBuyer())
-                .withContractConfiguration(request.getContractConfiguration())
-                .withEnvironment(request.getEnvironment())
-                .withTransactionId(request.getTransactionId())
-                .withPartnerTransactionId(partnerTransactionId)
-                .withSoftDescriptor(request.getSoftDescriptor())
-                .withPartnerConfiguration(request.getPartnerConfiguration())
-                .build();
+        refund(request, partnerTransactionId);
+        refund(request, partnerTransactionId);
 
-        RefundResponse refundResponse = refundService.refundRequest(refund);
-        Assert.assertEquals(RefundResponseSuccess.class, refundResponse.getClass());
     }
 
     private String fullRedirectionPayment(PaymentRequest paymentRequest, PaymentService paymentService, PaymentWithRedirectionService paymentWithRedirectionService) {
@@ -136,4 +126,23 @@ public class ItRefundTest {
         return paymentWithRedirectionService.finalizeRedirectionPayment(redirectionPaymentRequest);
     }
 
+
+    private void refund(PaymentRequest request, String partnerTransactionId){
+        // create the refund request from previous request
+        Amount amount = new Amount(BigInteger.valueOf(request.getAmount().getAmountInSmallestUnit().intValue()/2), request.getAmount().getCurrency());
+        RefundRequest refund = RefundRequest.RefundRequestBuilder.aRefundRequest()
+                .withAmount(amount)
+                .withOrder(request.getOrder())
+                .withBuyer(request.getBuyer())
+                .withContractConfiguration(request.getContractConfiguration())
+                .withEnvironment(request.getEnvironment())
+                .withTransactionId(request.getTransactionId())
+                .withPartnerTransactionId(partnerTransactionId)
+                .withSoftDescriptor(request.getSoftDescriptor())
+                .withPartnerConfiguration(request.getPartnerConfiguration())
+                .build();
+
+        RefundResponse refundResponse = refundService.refundRequest(refund);
+        Assert.assertEquals(RefundResponseSuccess.class, refundResponse.getClass());
+    }
 }
