@@ -5,6 +5,7 @@ import com.payline.payment.paysafecard.services.PaymentWithRedirectionServiceImp
 import com.payline.payment.paysafecard.services.RefundServiceImpl;
 import com.payline.payment.paysafecard.test.Utils;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
+import com.payline.pmapi.bean.payment.Browser;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
 import com.payline.pmapi.bean.payment.ContractProperty;
 import com.payline.pmapi.bean.payment.Environment;
@@ -28,6 +29,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -50,19 +52,27 @@ public class ItRefundTest {
         // Start browser
         WebDriver driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        WebDriverWait wait = new WebDriverWait(driver, 30);
         try {
             // Go to partner's website
             driver.get(partnerUrl);
-            driver.findElement(By.id("classicPin-addPinField")).sendKeys(Utils.PAYMENT_TOKEN);
 
-            // accept CGU
-            driver.findElement(By.xpath("/html/body/section[1]/section[1]/div[1]/div/div/article/div[1]/div[4]/div[1]/div/div[1]/label")).click();
+            driver.findElement(By.xpath("/html/body/section[1]/section[1]/div[1]/div/div/article/div[2]/a")).click();
 
-            // validate payment
-            driver.findElement(By.xpath("//*[@id='payBtn']")).click();
+            // write login & password
+            driver.findElement(By.xpath("//*[@id=\"mypaysafecardUsername-inputText\"]")).sendKeys(Utils.CUSTOMER_NAME);
+            driver.findElement(By.xpath("//*[@id=\"mypaysafecardPassword-inputText\"]")).sendKeys(Utils.CUSTOMER_PASSWORD);
+
+            // connect
+            driver.findElement(By.xpath("//*[@id=\"loginBtn\"]")).click();
+
+            // wait
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"payBtnMyPins\"]")));
+
+            // pay
+            driver.findElement(By.xpath("//*[@id=\"payBtnMyPins\"]")).click();
 
             // Wait for redirection to success or cancel url
-            WebDriverWait wait = new WebDriverWait(driver, 30);
             wait.until(ExpectedConditions.or(ExpectedConditions.urlToBe(SUCCESS_URL), ExpectedConditions.urlToBe(CANCEL_URL)));
             return driver.getCurrentUrl();
         } finally {
@@ -111,7 +121,18 @@ public class ItRefundTest {
     private PaymentResponse handlePartnerResponse(PaymentWithRedirectionService paymentWithRedirectionService, PaymentRequest paymentRequest, PaymentResponseRedirect paymentResponseRedirect) {
         ContractConfiguration contractConfiguration = new ContractConfiguration("", this.generateParameterContract());
         Environment Environment = new Environment("http://google.com/", SUCCESS_URL, CANCEL_URL, true);
-        RedirectionPaymentRequest redirectionPaymentRequest = RedirectionPaymentRequest.builder().withContractConfiguration(contractConfiguration).withPaymentFormContext(null).withEnvironment(Environment).withTransactionId(paymentRequest.getTransactionId()).withRequestContext(paymentResponseRedirect.getRequestContext()).withAmount(paymentRequest.getAmount()).build();
+        RedirectionPaymentRequest redirectionPaymentRequest = RedirectionPaymentRequest.builder()
+                .withContractConfiguration(contractConfiguration)
+                .withPaymentFormContext(null)
+                .withEnvironment(Environment)
+                .withTransactionId(paymentRequest.getTransactionId())
+                .withRequestContext(paymentResponseRedirect.getRequestContext())
+                .withAmount(paymentRequest.getAmount())
+                .withOrder(paymentRequest.getOrder())
+                .withBuyer(paymentRequest.getBuyer())
+                .withBrowser(new Browser("chrome", Locale.FRENCH))
+                .withPartnerConfiguration(Utils.createDefaultPartnerConfiguration())
+                .build();
         return paymentWithRedirectionService.finalizeRedirectionPayment(redirectionPaymentRequest);
     }
 
