@@ -29,8 +29,8 @@ ext {
     releaseDirectoryPath = 'D:/build'
 }
 
-apply from: "monext.gradle"
-//apply from: "external.gradle"
+//apply from: "monext.gradle"
+apply from: "external.gradle"
 
 dependencies {
     compile "com.payline:payment-method-api:${paymentMethodVersion}"

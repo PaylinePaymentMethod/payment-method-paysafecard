@@ -33,6 +33,8 @@ public class PaySafeCardConstants {
     public static final String RELEASE_VERSION = "release.version";
     public static final String RELEASE_DATE = "release.date";
 
+    public static final String DEFAULT_EMAIL = "no.email.provided@client.unlogged";
+
     private PaySafeCardConstants() {
         //ras
     }
