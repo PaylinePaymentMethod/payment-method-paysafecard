@@ -24,7 +24,7 @@ import java.util.Map;
 public class PaymentServiceImpl implements PaymentService {
     private static final Logger logger = LogManager.getLogger(PaymentServiceImpl.class);
 
-    private PaySafeHttpClient httpClient = new PaySafeHttpClient();
+    private PaySafeHttpClient httpClient = PaySafeHttpClient.getInstance();
 
     @Override
     public PaymentResponse paymentRequest(PaymentRequest paymentRequest) {
