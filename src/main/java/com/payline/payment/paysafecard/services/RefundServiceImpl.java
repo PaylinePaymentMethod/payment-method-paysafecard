@@ -20,11 +20,7 @@ import java.net.URISyntaxException;
 public class RefundServiceImpl implements RefundService {
     private static final Logger LOGGER = LogManager.getLogger(RefundServiceImpl.class);
 
-    private PaySafeHttpClient client;
-
-    public RefundServiceImpl() {
-        this.client = new PaySafeHttpClient();
-    }
+    private PaySafeHttpClient httpClient = PaySafeHttpClient.getInstance();
 
     @Override
     public RefundResponse refundRequest(RefundRequest refundRequest) {
@@ -33,7 +29,7 @@ public class RefundServiceImpl implements RefundService {
             boolean isSandbox = refundRequest.getEnvironment().isSandbox();
             PaySafePaymentRequest request = createRequest(refundRequest);
 
-            PaySafePaymentResponse response = client.refund(request, isSandbox);
+            PaySafePaymentResponse response = httpClient.refund(request, isSandbox);
 
             if (response.getCode() != null) {
                 return PaySafeErrorHandler.findRefundError(response, transactionId);
@@ -42,7 +38,7 @@ public class RefundServiceImpl implements RefundService {
             }
 
             updateRequest(request);
-            response = client.refund(request, isSandbox);
+            response = httpClient.refund(request, isSandbox);
 
             if (response.getCode() != null) {
                 return PaySafeErrorHandler.findRefundError(response, transactionId);

@@ -24,11 +24,7 @@ import java.time.YearMonth;
 public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirectionService {
     private static final Logger logger = LogManager.getLogger(PaymentWithRedirectionServiceImpl.class);
 
-    private PaySafeHttpClient httpClient;
-
-    public PaymentWithRedirectionServiceImpl() {
-        httpClient = new PaySafeHttpClient();
-    }
+    private PaySafeHttpClient httpClient = PaySafeHttpClient.getInstance();
 
     @Override
     public PaymentResponse finalizeRedirectionPayment(RedirectionPaymentRequest redirectionPaymentRequest) {

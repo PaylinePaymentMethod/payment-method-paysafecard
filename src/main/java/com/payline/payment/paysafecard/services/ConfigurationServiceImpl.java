@@ -25,7 +25,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final String VERSION = "1.0";
     private static final String RELEASE_DATE = "24/10/2018";
 
-    private PaySafeHttpClient httpClient = new PaySafeHttpClient();
+    private PaySafeHttpClient httpClient = PaySafeHttpClient.getInstance();
     private final LocalizationService localization;
 
     public ConfigurationServiceImpl() {
