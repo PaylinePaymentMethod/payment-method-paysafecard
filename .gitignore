@@ -1,4 +1,6 @@
 out/
 build/
 .idea/
+.gradle/
 gradle.properties
+*.iml

@@ -15,6 +15,10 @@ public class Customer {
     // field used for refund
     private String email;
 
+    public String getEmail() {
+        return email;
+    }
+
     public Customer(String id, String minAge, String kycLevel, String countryRestriction) {
         this.id = id;
         this.minAge = minAge;

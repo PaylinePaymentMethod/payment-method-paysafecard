@@ -19,11 +19,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class ConfigurationServiceImpl implements ConfigurationService {
-    private static final Logger logger = LogManager.getLogger(ConfigurationServiceImpl.class);
+import static com.payline.payment.paysafecard.utils.PaySafeCardConstants.*;
 
-    private static final String VERSION = "1.0";
-    private static final String RELEASE_DATE = "24/10/2018";
+public class ConfigurationServiceImpl implements ConfigurationService {
+    private static final Logger LOGGER = LogManager.getLogger(ConfigurationServiceImpl.class);
 
     private PaySafeHttpClient httpClient = PaySafeHttpClient.getInstance();
     private final LocalizationService localization;
@@ -40,7 +39,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         final InputParameter merchantName = new InputParameter();
         merchantName.setKey(PaySafeCardConstants.MERCHANT_NAME_KEY);
         merchantName.setLabel(localization.getSafeLocalizedString("contract.merchantName.label", locale));
-        merchantName.setDescription(localization.getSafeLocalizedString("contract.merchantName.description", locale));
         merchantName.setRequired(true);
 
         parameters.add(merchantName);
@@ -49,7 +47,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         final InputParameter merchantId = new InputParameter();
         merchantId.setKey(PaySafeCardConstants.MERCHANT_ID_KEY);
         merchantId.setLabel(localization.getSafeLocalizedString("contract.merchantId.label", locale));
-        merchantId.setDescription(localization.getSafeLocalizedString("contract.merchantId.description", locale));
         merchantId.setRequired(true);
 
         parameters.add(merchantId);
@@ -67,7 +64,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         final PasswordParameter settlementKey = new PasswordParameter();
         settlementKey.setKey(PaySafeCardConstants.SETTLEMENT_KEY);
         settlementKey.setLabel(localization.getSafeLocalizedString("contract.settlementKey.label", locale));
-        settlementKey.setDescription(localization.getSafeLocalizedString("contract.settlementKey.description", locale));
         settlementKey.setRequired(false);
 
         parameters.add(settlementKey);
@@ -76,7 +72,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         final InputParameter minAge = new InputParameter();
         minAge.setKey(PaySafeCardConstants.MINAGE_KEY);
         minAge.setLabel(localization.getSafeLocalizedString("contract.minAge.label", locale));
-        minAge.setDescription(localization.getSafeLocalizedString("contract.minAge.description", locale));
         minAge.setRequired(false);
 
         parameters.add(minAge);
@@ -89,7 +84,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         final ListBoxParameter kycLevel = new ListBoxParameter();
         kycLevel.setKey(PaySafeCardConstants.KYCLEVEL_KEY);
         kycLevel.setLabel(localization.getSafeLocalizedString("contract.kycLevel.label", locale));
-        kycLevel.setDescription(localization.getSafeLocalizedString("contract.kycLevel.description", locale));
         kycLevel.setList(kycLevelMap);
         kycLevel.setRequired(false);
 
@@ -103,7 +97,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         countryRestriction.setRequired(false);
 
         parameters.add(countryRestriction);
-
 
         return parameters;
     }
@@ -149,7 +142,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             }
 
         } catch (IOException | URISyntaxException | InvalidRequestException e) {
-            logger.error("unable to check the connection: {}", e.getMessage(), e);
+            LOGGER.error("unable to check the connection", e);
             errors.put(ContractParametersCheckRequest.GENERIC_ERROR, e.getMessage());
         }
 
@@ -158,8 +151,20 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public ReleaseInformation getReleaseInformation() {
-        LocalDate date = LocalDate.parse(RELEASE_DATE, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        return ReleaseInformation.ReleaseBuilder.aRelease().withDate(date).withVersion(VERSION).build();
+        Properties props = new Properties();
+        try {
+            props.load(ConfigurationServiceImpl.class.getClassLoader().getResourceAsStream(RELEASE_PROPERTIES));
+        } catch (IOException e) {
+            final String message = "An error occurred reading the file: release.properties";
+            LOGGER.error(message);
+            throw new RuntimeException(message, e);
+        }
+
+        final LocalDate date = LocalDate.parse(props.getProperty(RELEASE_DATE), DateTimeFormatter.ofPattern(RELEASE_DATE_FORMAT));
+        return ReleaseInformation.ReleaseBuilder.aRelease()
+                .withDate(date)
+                .withVersion(props.getProperty(RELEASE_VERSION))
+                .build();
     }
 
     @Override

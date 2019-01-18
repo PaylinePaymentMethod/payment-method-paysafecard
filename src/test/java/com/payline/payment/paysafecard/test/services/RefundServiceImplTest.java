@@ -1,6 +1,7 @@
 package com.payline.payment.paysafecard.test.services;
 
 import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
+import com.payline.payment.paysafecard.bean.PaySafeRefundRequest;
 import com.payline.payment.paysafecard.services.RefundServiceImpl;
 import com.payline.payment.paysafecard.test.Utils;
 import com.payline.payment.paysafecard.utils.InvalidRequestException;
@@ -38,7 +39,7 @@ public class RefundServiceImplTest {
     public void init() throws InvalidRequestException {
         PaySafePaymentRequest paymentRequest = null;
         doReturn(paymentRequest).when(service).createRequest(any(RefundRequest.class));
-        doNothing().when(service).updateRequest(any(PaySafePaymentRequest.class));
+        doNothing().when(service).updateRequest(any(PaySafeRefundRequest.class));
         request = Mockito.mock(RefundRequest.class, Mockito.RETURNS_DEEP_STUBS);
 
     }

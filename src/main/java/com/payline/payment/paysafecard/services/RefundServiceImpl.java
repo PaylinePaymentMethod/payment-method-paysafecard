@@ -1,7 +1,7 @@
 package com.payline.payment.paysafecard.services;
 
-import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
 import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
+import com.payline.payment.paysafecard.bean.PaySafeRefundRequest;
 import com.payline.payment.paysafecard.utils.InvalidRequestException;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.payment.paysafecard.utils.PaySafeErrorHandler;
@@ -27,7 +27,7 @@ public class RefundServiceImpl implements RefundService {
         String transactionId = refundRequest.getTransactionId();
         try {
             boolean isSandbox = refundRequest.getEnvironment().isSandbox();
-            PaySafePaymentRequest request = createRequest(refundRequest);
+            PaySafeRefundRequest request = createRequest(refundRequest);
 
             PaySafePaymentResponse response = httpClient.refund(request, isSandbox);
 
@@ -54,16 +54,16 @@ public class RefundServiceImpl implements RefundService {
 
 
         } catch (InvalidRequestException | URISyntaxException | IOException e) {
-            LOGGER.error("unable to refund the payment: {}" , e.getMessage(), e);
+            LOGGER.error("unable to refund the payment", e);
             return PaySafeErrorHandler.getRefundResponseFailure(FailureCause.CANCEL, transactionId);
         }
     }
 
-    public PaySafePaymentRequest createRequest(RefundRequest refundRequest) throws InvalidRequestException {
-        return new PaySafePaymentRequest(refundRequest);
+    public PaySafeRefundRequest createRequest(RefundRequest refundRequest) throws InvalidRequestException {
+        return new PaySafeRefundRequest(refundRequest);
     }
 
-    public void updateRequest(PaySafePaymentRequest request) {
+    public void updateRequest(PaySafeRefundRequest request) {
         request.setCapture(true);
     }
 

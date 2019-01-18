@@ -5,6 +5,7 @@ import com.payline.payment.paysafecard.services.ConfigurationServiceImpl;
 import com.payline.payment.paysafecard.test.Utils;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
+import com.payline.pmapi.bean.configuration.ReleaseInformation;
 import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import org.junit.Assert;
@@ -164,7 +165,6 @@ public class ConfigurationServiceImplTest {
         Assert.assertTrue(errors.containsKey(PaySafeCardConstants.COUNTRYRESTRICTION_KEY));
     }
 
-
     @Test
     public void findErrorUnknownError() {
         Map<String, String> errors = new HashMap<>();
@@ -184,5 +184,26 @@ public class ConfigurationServiceImplTest {
         String name = service.getName(locale);
         Assert.assertNotNull(name);
         Assert.assertNotEquals(0, name.length());
+    }
+
+    @Test
+    public void testGetReleaseInformation_ok(){
+        // when: getReleaseInformation method is called
+        ReleaseInformation releaseInformation = service.getReleaseInformation();
+
+        // then: result is not null
+        Assert.assertNotNull( releaseInformation );
+        Assert.assertNotEquals( "unknown", releaseInformation.getVersion() );
+        Assert.assertNotEquals( 1900, releaseInformation.getDate().getYear() );
+    }
+
+    @Test
+    public void testGetReleaseInformation_versionFormat(){
+        // when: getReleaseInformation method is called
+        ReleaseInformation releaseInformation = service.getReleaseInformation();
+
+        // then: the version has a valid format
+        Assert.assertNotNull( releaseInformation );
+        Assert.assertTrue( releaseInformation.getVersion().matches( "^\\d\\.\\d(\\.\\d)?$" ) );
     }
 }
