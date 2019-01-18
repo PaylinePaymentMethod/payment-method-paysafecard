@@ -2,16 +2,12 @@ package com.payline.payment.paysafecard.services;
 
 import com.payline.payment.paysafecard.bean.PaySafeCaptureRequest;
 import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
-import com.payline.payment.paysafecard.utils.InvalidRequestException;
-import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
-import com.payline.payment.paysafecard.utils.PaySafeErrorHandler;
-import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
+import com.payline.payment.paysafecard.utils.*;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.RedirectionPaymentRequest;
 import com.payline.pmapi.bean.payment.request.TransactionStatusRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
-import com.payline.pmapi.bean.payment.response.buyerpaymentidentifier.Card;
-import com.payline.pmapi.bean.payment.response.buyerpaymentidentifier.impl.CardPayment;
+import com.payline.pmapi.bean.payment.response.buyerpaymentidentifier.impl.Email;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseSuccess;
 import com.payline.pmapi.service.PaymentWithRedirectionService;
 import org.apache.logging.log4j.LogManager;
@@ -19,10 +15,11 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.time.YearMonth;
+
+import static com.payline.payment.paysafecard.utils.PaySafeCardConstants.DEFAULT_EMAIL;
 
 public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirectionService {
-    private static final Logger logger = LogManager.getLogger(PaymentWithRedirectionServiceImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger(PaymentWithRedirectionServiceImpl.class);
 
     private PaySafeHttpClient httpClient = PaySafeHttpClient.getInstance();
 
@@ -42,7 +39,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
             }
 
         } catch (InvalidRequestException e) {
-            logger.error("unable to finalize the payment: {}", e.getMessage(), e);
+            LOGGER.error("unable to finalize the payment", e);
             return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.INTERNAL_ERROR);
         }
     }
@@ -55,7 +52,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
             return validatePayment(request, isSandbox);
         } catch (InvalidRequestException e) {
-            logger.error("unable to handle the session expiration: {}", e.getMessage(), e);
+            LOGGER.error("unable to handle the session expiration", e);
             return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.INVALID_DATA);
         }
     }
@@ -96,19 +93,15 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
     }
 
     private PaymentResponseSuccess createResponseSuccess(PaySafePaymentResponse response) {
-        Card card = Card.CardBuilder.aCard()
-                .withPan(response.getFirstCardDetails().getSerial())
-                .withExpirationDate(YearMonth.now())
-                .build();
-
-        CardPayment cardPayment = CardPayment.CardPaymentBuilder.aCardPayment()
-                .withCard(card)
-                .build();
+        String email = DEFAULT_EMAIL;
+        if (!DataChecker.isEmpty(response.getCustomer().getEmail())){
+            email = response.getCustomer().getEmail();
+        }
 
         return PaymentResponseSuccess.PaymentResponseSuccessBuilder.aPaymentResponseSuccess()
                 .withStatusCode("0")
                 .withPartnerTransactionId(response.getId())
-                .withTransactionDetails(cardPayment)
+                .withTransactionDetails(Email.EmailBuilder.anEmail().withEmail(email).build())
                 .build();
     }
 
@@ -135,7 +128,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                 }
             }
         } catch (IOException | URISyntaxException e) {
-            logger.error("unable to validate the payment: {}", e.getMessage(), e);
+            LOGGER.error("unable to validate the payment", e);
             return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.COMMUNICATION_ERROR);
         }
     }

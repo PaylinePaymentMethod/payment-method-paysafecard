@@ -28,7 +28,6 @@ public class PaySafePaymentRequest extends PaySafeRequest {
 
     @Expose(serialize = false, deserialize = false)
     private String paymentId;
-    private boolean capture;
 
 
     public PaySafePaymentRequest(ContractParametersCheckRequest request) throws InvalidRequestException {
@@ -56,11 +55,10 @@ public class PaySafePaymentRequest extends PaySafeRequest {
         }
     }
 
-    public PaySafePaymentRequest(RefundRequest request) throws InvalidRequestException {
+    PaySafePaymentRequest(RefundRequest request) throws InvalidRequestException {
         super(request.getContractConfiguration());
 
-        this.paymentId= request.getPartnerTransactionId();
-        this.capture = false;
+        this.paymentId = request.getPartnerTransactionId();
 
         setAmount(request.getAmount());
         setCurrency(request.getAmount());
@@ -144,8 +142,5 @@ public class PaySafePaymentRequest extends PaySafeRequest {
         return paymentId;
     }
 
-    public void setCapture(boolean capture) {
-        this.capture = capture;
-    }
 
 }
