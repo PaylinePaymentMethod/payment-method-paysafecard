@@ -24,7 +24,7 @@ configurations {
 }
 
 ext {
-    paymentMethodVersion = '1.0-RC3'
+    paymentMethodVersion = '1.1-SNAPSHOT'
     powerMockVersion = '1.7.0'
     releaseDirectoryPath = 'D:/build'
 }

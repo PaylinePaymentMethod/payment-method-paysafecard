@@ -5,7 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class PaySafeHttpClientTest {
-    private PaySafeHttpClient client = new PaySafeHttpClient();
+    private PaySafeHttpClient client = PaySafeHttpClient.getInstance();
 
     @Test
     public void getHost(){
