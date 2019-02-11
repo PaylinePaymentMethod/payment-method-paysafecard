@@ -1,3 +1,4 @@
+import org.apache.tools.ant.filters.EscapeUnicode
 import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
@@ -33,13 +34,12 @@ apply from: "monext.gradle"
 //apply from: "external.gradle"
 
 dependencies {
-    compile "com.payline:payment-method-api:${paymentMethodVersion}"
+    compileOnly "com.payline:payment-method-api:${paymentMethodVersion}"
 
     implementation group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.10'
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.6'
 
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
-
     implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.0'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
 
@@ -55,8 +55,8 @@ dependencies {
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.0.3'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.0.3'
 
-    fatJarTest "junit:junit:4.11"
-    fatJarTest "org.mockito:mockito-core:1.+"
+    fatJarTest "junit:junit:4.12"
+    fatJarTest "org.mockito:mockito-core:2.21.0"
     fatJarTest group: 'org.seleniumhq.selenium', name: 'selenium-server', version: '3.13.0'
     fatJarTest group: 'org.seleniumhq.selenium', name: 'selenium-support', version: '3.13.0'
     fatJarTest group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.0.3'
@@ -87,6 +87,9 @@ task buildToLocal(type: Copy) {
 
 /* Replace tokens in resources files after compilation */
 processResources {
+    filesMatching('messages_fr.properties') {
+        filter(EscapeUnicode)
+    }
     filesMatching('release.properties') {
         filter( ReplaceTokens, tokens:[
                 'version': project.version.replaceFirst("-.*", ""),

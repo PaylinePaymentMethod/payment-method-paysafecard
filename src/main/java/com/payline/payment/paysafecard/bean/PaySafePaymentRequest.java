@@ -13,6 +13,8 @@ import com.payline.pmapi.bean.payment.Environment;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 
+import java.util.Currency;
+
 public class PaySafePaymentRequest extends PaySafeRequest {
     private String type = "PAYSAFECARD";
     private String amount;
@@ -73,10 +75,10 @@ public class PaySafePaymentRequest extends PaySafeRequest {
     }
 
     private void setAmount(Amount amount) throws InvalidRequestException {
-        if (amount == null || amount.getAmountInSmallestUnit() == null) {
+        if (amount == null || amount.getAmountInSmallestUnit() == null || amount.getCurrency() == null) {
             throw new InvalidRequestException("PaySafeRequest must have an amount when created");
         } else {
-            this.amount = createAmount(amount.getAmountInSmallestUnit().intValue());
+            this.amount = createAmount(amount.getAmountInSmallestUnit().intValue(), amount.getCurrency());
         }
     }
 
@@ -109,9 +111,7 @@ public class PaySafePaymentRequest extends PaySafeRequest {
         }
 
         String countryRestriction = config.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY) != null ? config.getProperty(PaySafeCardConstants.COUNTRYRESTRICTION_KEY).getValue() : null;
-        if (DataChecker.isEmpty(countryRestriction)) {
-            countryRestriction = null;
-        }
+        DataChecker.verifyCountryRestriction(countryRestriction);
 
         // verify fields
         DataChecker.verifyMinAge(minAge);
@@ -126,7 +126,8 @@ public class PaySafePaymentRequest extends PaySafeRequest {
      * @param amount
      * @return a string under the form xx.xx
      */
-    public static String createAmount(int amount) {
+    public static String createAmount(int amount, Currency currency) {
+        int nbDigits = currency.getDefaultFractionDigits();
         StringBuilder sb = new StringBuilder();
         sb.append(amount);
 
@@ -134,7 +135,7 @@ public class PaySafePaymentRequest extends PaySafeRequest {
             sb.insert(0, "0");
         }
 
-        sb.insert(sb.length() - 2, ".");
+        sb.insert(sb.length() - nbDigits, ".");
         return sb.toString();
     }
 
