@@ -3,9 +3,6 @@ package com.payline.payment.paysafecard.services;
 import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
 import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
 import com.payline.payment.paysafecard.utils.*;
-import com.payline.payment.paysafecard.utils.i18n.I18nService;
-import com.payline.payment.paysafecard.utils.properties.constants.ConfigurationConstants;
-import com.payline.payment.paysafecard.utils.properties.service.ReleaseProperties;
 import com.payline.pmapi.bean.configuration.ReleaseInformation;
 import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
 import com.payline.pmapi.bean.configuration.parameter.impl.InputParameter;
@@ -23,17 +20,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.payline.payment.paysafecard.utils.PaySafeCardConstants.*;
-import static com.payline.payment.paysafecard.utils.properties.constants.ConfigurationConstants.PAYMENT_METHOD_NAME;
 
 public class ConfigurationServiceImpl implements ConfigurationService {
     private static final Logger LOGGER = LogManager.getLogger(ConfigurationServiceImpl.class);
 
-    private PaySafeHttpClient httpClient;
-    private final I18nService i18n;
+    private PaySafeHttpClient httpClient = PaySafeHttpClient.getInstance();
+    private final LocalizationService localization;
 
     public ConfigurationServiceImpl() {
-        this.httpClient = PaySafeHttpClient.getInstance();
-        i18n = I18nService.getInstance();
+        this.localization = LocalizationImpl.getInstance();
     }
 
     @Override
@@ -43,7 +38,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         // Merchant name
         final InputParameter merchantName = new InputParameter();
         merchantName.setKey(PaySafeCardConstants.MERCHANT_NAME_KEY);
-        merchantName.setLabel(i18n.getMessage(MERCHANT_NAME_LABEL, locale));
+        merchantName.setLabel(localization.getSafeLocalizedString("contract.merchantName.label", locale));
         merchantName.setRequired(true);
 
         parameters.add(merchantName);
@@ -51,7 +46,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         // Mid
         final InputParameter merchantId = new InputParameter();
         merchantId.setKey(PaySafeCardConstants.MERCHANT_ID_KEY);
-        merchantId.setLabel(i18n.getMessage(MERCHANT_ID_LABEL, locale));
+        merchantId.setLabel(localization.getSafeLocalizedString("contract.merchantId.label", locale));
         merchantId.setRequired(true);
 
         parameters.add(merchantId);
@@ -59,8 +54,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         // authorisation key
         final PasswordParameter authorisationKey = new PasswordParameter();
         authorisationKey.setKey(PaySafeCardConstants.AUTHORISATIONKEY_KEY);
-        authorisationKey.setLabel(i18n.getMessage(AUTHORISATIONKEY_LABEL, locale));
-        authorisationKey.setDescription(i18n.getMessage(AUTHORISATIONKEY_DESCRIPTION, locale));
+        authorisationKey.setLabel(localization.getSafeLocalizedString("contract.authorisationKey.label", locale));
+        authorisationKey.setDescription(localization.getSafeLocalizedString("contract.authorisationKey.description", locale));
         authorisationKey.setRequired(true);
 
         parameters.add(authorisationKey);
@@ -68,7 +63,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         //settlement key
         final PasswordParameter settlementKey = new PasswordParameter();
         settlementKey.setKey(PaySafeCardConstants.SETTLEMENT_KEY);
-        settlementKey.setLabel(i18n.getMessage(SETTLEMENT_LABEL, locale));
+        settlementKey.setLabel(localization.getSafeLocalizedString("contract.settlementKey.label", locale));
         settlementKey.setRequired(false);
 
         parameters.add(settlementKey);
@@ -76,19 +71,19 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         // age limit
         final InputParameter minAge = new InputParameter();
         minAge.setKey(PaySafeCardConstants.MINAGE_KEY);
-        minAge.setLabel(i18n.getMessage(MINAGE_LABEL, locale));
+        minAge.setLabel(localization.getSafeLocalizedString("contract.minAge.label", locale));
         minAge.setRequired(false);
 
         parameters.add(minAge);
 
         // kyc level
         Map<String, String> kycLevelMap = new HashMap<>();
-        kycLevelMap.put(PaySafeCardConstants.KYCLEVEL_SIMPLE_KEY, i18n.getMessage(KYCLEVEL_SIMPLE_VAL, locale));
-        kycLevelMap.put(PaySafeCardConstants.KYCLEVEL_FULL_KEY, i18n.getMessage(KYCLEVEL_FULL_VAL, locale));
+        kycLevelMap.put(PaySafeCardConstants.KYCLEVEL_SIMPLE, localization.getSafeLocalizedString("contract.kycLevel.simple", locale));
+        kycLevelMap.put(PaySafeCardConstants.KYCLEVEL_FULL, localization.getSafeLocalizedString("contract.kycLevel.full", locale));
 
         final ListBoxParameter kycLevel = new ListBoxParameter();
         kycLevel.setKey(PaySafeCardConstants.KYCLEVEL_KEY);
-        kycLevel.setLabel(i18n.getMessage(KYCLEVEL_LABEL, locale));
+        kycLevel.setLabel(localization.getSafeLocalizedString("contract.kycLevel.label", locale));
         kycLevel.setList(kycLevelMap);
         kycLevel.setRequired(false);
 
@@ -97,8 +92,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         // country restriction
         final InputParameter countryRestriction = new InputParameter();
         countryRestriction.setKey(PaySafeCardConstants.COUNTRYRESTRICTION_KEY);
-        countryRestriction.setLabel(i18n.getMessage(COUNTRYRESTRICTION_LABEL, locale));
-        countryRestriction.setDescription(i18n.getMessage(COUNTRYRESTRICTION_DESCRIPTION, locale));
+        countryRestriction.setLabel(localization.getSafeLocalizedString("contract.countryRestriction.label", locale));
+        countryRestriction.setLabel(localization.getSafeLocalizedString("contract.countryRestriction.description", locale));
         countryRestriction.setRequired(false);
 
         parameters.add(countryRestriction);
@@ -119,13 +114,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         try {
             DataChecker.verifyMinAge(minAge);
         } catch (BadFieldException e) {
-            errors.put(e.getField(), i18n.getMessage(e.getMessage(), locale));
+            errors.put(e.getField(), localization.getSafeLocalizedString(e.getMessage(), locale));
         }
 
         try {
             DataChecker.verifyCountryRestriction(countryRestriction);
         } catch (BadFieldException e) {
-            errors.put(e.getField(), i18n.getMessage(e.getMessage(), locale));
+            errors.put(e.getField(), localization.getSafeLocalizedString(e.getMessage(), locale));
         }
 
         // if there is some errors, stop the process and return them
@@ -156,17 +151,25 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public ReleaseInformation getReleaseInformation() {
-        LocalDate date = LocalDate.parse(ReleaseProperties.INSTANCE.get(ConfigurationConstants.RELEASE_DATE),
-                DateTimeFormatter.ofPattern(ConfigurationConstants.RELEASE_DATE_FORMAT));
+        Properties props = new Properties();
+        try {
+            props.load(ConfigurationServiceImpl.class.getClassLoader().getResourceAsStream(RELEASE_PROPERTIES));
+        } catch (IOException e) {
+            final String message = "An error occurred reading the file: release.properties";
+            LOGGER.error(message);
+            throw new RuntimeException(message, e);
+        }
+
+        final LocalDate date = LocalDate.parse(props.getProperty(RELEASE_DATE), DateTimeFormatter.ofPattern(RELEASE_DATE_FORMAT));
         return ReleaseInformation.ReleaseBuilder.aRelease()
                 .withDate(date)
-                .withVersion(ReleaseProperties.INSTANCE.get(ConfigurationConstants.RELEASE_VERSION))
+                .withVersion(props.getProperty(RELEASE_VERSION))
                 .build();
     }
 
     @Override
     public String getName(Locale locale) {
-        return i18n.getMessage(PAYMENT_METHOD_NAME, locale);
+        return localization.getSafeLocalizedString("project.name", locale);
     }
 
     public void findErrors(PaySafePaymentResponse message, Map<String, String> errors) {

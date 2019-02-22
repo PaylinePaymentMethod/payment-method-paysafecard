@@ -17,16 +17,11 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static com.payline.payment.paysafecard.utils.PaySafeCardConstants.DEFAULT_EMAIL;
-import static com.payline.payment.paysafecard.utils.PaySafeCardConstants.DEFAULT_SUCCESS_STATUS_CODE;
 
 public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirectionService {
     private static final Logger LOGGER = LogManager.getLogger(PaymentWithRedirectionServiceImpl.class);
 
-    private PaySafeHttpClient httpClient;
-
-    public PaymentWithRedirectionServiceImpl() {
-        httpClient = PaySafeHttpClient.getInstance();
-    }
+    private PaySafeHttpClient httpClient = PaySafeHttpClient.getInstance();
 
     @Override
     public PaymentResponse finalizeRedirectionPayment(RedirectionPaymentRequest redirectionPaymentRequest) {
@@ -45,7 +40,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
         } catch (InvalidRequestException e) {
             LOGGER.error("unable to finalize the payment", e);
-            return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(),FailureCause.INVALID_DATA);
+            return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.INTERNAL_ERROR);
         }
     }
 
@@ -58,7 +53,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
             return validatePayment(request, isSandbox);
         } catch (InvalidRequestException e) {
             LOGGER.error("unable to handle the session expiration", e);
-            return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.INVALID_DATA);
+            return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.INVALID_DATA);
         }
     }
 
@@ -104,7 +99,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
         }
 
         return PaymentResponseSuccess.PaymentResponseSuccessBuilder.aPaymentResponseSuccess()
-                .withStatusCode(DEFAULT_SUCCESS_STATUS_CODE)
+                .withStatusCode("0")
                 .withPartnerTransactionId(response.getId())
                 .withTransactionDetails(Email.EmailBuilder.anEmail().withEmail(email).build())
                 .build();
