@@ -102,12 +102,11 @@ public class PaySafeRequestTest {
 
     @Test
     public void createAmount() {
-        Currency currency = Currency.getInstance("EUR");
-        Assert.assertEquals("0.00", PaySafePaymentRequest.createAmount(0,currency ));
-        Assert.assertEquals("0.01", PaySafePaymentRequest.createAmount(1, currency));
-        Assert.assertEquals("1.00", PaySafePaymentRequest.createAmount(100, currency));
-        Assert.assertEquals("10.00", PaySafePaymentRequest.createAmount(1000, currency));
-        Assert.assertEquals("100.00", PaySafePaymentRequest.createAmount(10000, currency));
+        Assert.assertEquals("0.00", PaySafePaymentRequest.createAmount(0));
+        Assert.assertEquals("0.01", PaySafePaymentRequest.createAmount(1));
+        Assert.assertEquals("1.00", PaySafePaymentRequest.createAmount(100));
+        Assert.assertEquals("10.00", PaySafePaymentRequest.createAmount(1000));
+        Assert.assertEquals("100.00", PaySafePaymentRequest.createAmount(10000));
     }
 
     @Test

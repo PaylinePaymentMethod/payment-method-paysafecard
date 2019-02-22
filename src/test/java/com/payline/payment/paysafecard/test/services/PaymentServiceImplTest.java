@@ -220,6 +220,6 @@ public class PaymentServiceImplTest {
 
         PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
 
-        Assert.assertEquals(FailureCause.COMMUNICATION_ERROR, responseFailure.getFailureCause());
+        Assert.assertEquals(FailureCause.INTERNAL_ERROR, responseFailure.getFailureCause());
     }
 }
