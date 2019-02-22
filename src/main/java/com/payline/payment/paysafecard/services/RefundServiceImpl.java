@@ -17,10 +17,16 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import static com.payline.payment.paysafecard.utils.PaySafeCardConstants.DEFAULT_SUCCESS_STATUS_CODE;
+
 public class RefundServiceImpl implements RefundService {
     private static final Logger LOGGER = LogManager.getLogger(RefundServiceImpl.class);
 
-    private PaySafeHttpClient httpClient = PaySafeHttpClient.getInstance();
+    private PaySafeHttpClient httpClient;
+
+    public RefundServiceImpl() {
+        httpClient = PaySafeHttpClient.getInstance();
+    }
 
     @Override
     public RefundResponse refundRequest(RefundRequest refundRequest) {
@@ -48,7 +54,7 @@ public class RefundServiceImpl implements RefundService {
 
             // refund Success
             return RefundResponseSuccess.RefundResponseSuccessBuilder.aRefundResponseSuccess()
-                    .withStatusCode("0")
+                    .withStatusCode(DEFAULT_SUCCESS_STATUS_CODE)
                     .withPartnerTransactionId(transactionId)
                     .build();
 
