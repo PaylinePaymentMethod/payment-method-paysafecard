@@ -14,7 +14,7 @@ apply plugin: 'jacoco'
 
 description = 'payment-method-paysafecard'
 group 'com.payline.payment.paysafecard'
-version '1.0.0.1-SNAPSHOT'
+version '1.1-SNAPSHOT'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -25,7 +25,7 @@ configurations {
 }
 
 ext {
-    paymentMethodVersion = '1.0'
+    paymentMethodVersion = '1.1-SNAPSHOT'
     powerMockVersion = '1.7.0'
     releaseDirectoryPath = 'D:/build'
 }
