@@ -9,8 +9,8 @@ import com.payline.pmapi.bean.payment.request.TransactionStatusRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.buyerpaymentidentifier.impl.Email;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseSuccess;
-import com.payline.pmapi.service.PaymentWithRedirectionService;
 import com.payline.pmapi.logger.LogManager;
+import com.payline.pmapi.service.PaymentWithRedirectionService;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
@@ -45,7 +45,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
         } catch (InvalidRequestException e) {
             LOGGER.error("unable to finalize the payment", e);
-            return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(),FailureCause.INVALID_DATA);
+            return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.INVALID_DATA);
         }
     }
 
@@ -87,19 +87,19 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
     private PaymentResponse getErrorFromStatus(String status) {
         switch (status) {
             case PaySafeCardConstants.STATUS_CANCELED_CUSTOMER:
-                return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.CANCEL);
+                return PaySafeErrorHandler.getPaymentResponseFailure(status, FailureCause.CANCEL);
             case PaySafeCardConstants.STATUS_CANCELED_MERCHANT:
-                return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.CANCEL);
+                return PaySafeErrorHandler.getPaymentResponseFailure(status, FailureCause.CANCEL);
             case PaySafeCardConstants.STATUS_EXPIRED:
-                return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.SESSION_EXPIRED);
+                return PaySafeErrorHandler.getPaymentResponseFailure(status, FailureCause.SESSION_EXPIRED);
             default:
-                return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.PARTNER_UNKNOWN_ERROR);
+                return PaySafeErrorHandler.getPaymentResponseFailure(status, FailureCause.PARTNER_UNKNOWN_ERROR);
         }
     }
 
     private PaymentResponseSuccess createResponseSuccess(PaySafePaymentResponse response) {
         String email = DEFAULT_EMAIL;
-        if (!DataChecker.isEmpty(response.getCustomer().getEmail())){
+        if (!DataChecker.isEmpty(response.getCustomer().getEmail())) {
             email = response.getCustomer().getEmail();
         }
 
@@ -134,7 +134,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
             }
         } catch (IOException | URISyntaxException e) {
             LOGGER.error("unable to validate the payment", e);
-            return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.COMMUNICATION_ERROR);
+            return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.COMMUNICATION_ERROR);
         }
     }
 }
