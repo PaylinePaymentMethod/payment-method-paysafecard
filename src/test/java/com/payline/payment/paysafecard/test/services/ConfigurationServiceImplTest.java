@@ -204,6 +204,6 @@ public class ConfigurationServiceImplTest {
 
         // then: the version has a valid format
         Assert.assertNotNull( releaseInformation );
-        Assert.assertTrue( releaseInformation.getVersion().matches( "^\\d\\.\\d(\\.\\d)?$" ) );
+        Assert.assertTrue( releaseInformation.getVersion().matches( "^\\d\\.\\d(\\.\\d)?(\\.\\d)?$" ) );
     }
 }

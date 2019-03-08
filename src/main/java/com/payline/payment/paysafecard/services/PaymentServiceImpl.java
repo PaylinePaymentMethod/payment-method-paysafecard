@@ -24,7 +24,11 @@ import java.util.Map;
 public class PaymentServiceImpl implements PaymentService {
     private static final Logger LOGGER = LogManager.getLogger(PaymentServiceImpl.class);
 
-    private PaySafeHttpClient httpClient = PaySafeHttpClient.getInstance();
+    private PaySafeHttpClient httpClient;
+
+    public PaymentServiceImpl() {
+        this.httpClient = PaySafeHttpClient.getInstance();
+    }
 
     @Override
     public PaymentResponse paymentRequest(PaymentRequest paymentRequest) {
@@ -60,9 +64,13 @@ public class PaymentServiceImpl implements PaymentService {
                         .build();
             }
 
-        } catch (IOException | URISyntaxException | InvalidRequestException e) {
-            LOGGER.error("unable init the payment", e);
-            return PaySafeErrorHandler.getPaymentResponseFailure(FailureCause.INTERNAL_ERROR);
+        } catch (IOException |URISyntaxException e) {
+            String errorMessage = "Networks error when init the payment";
+            LOGGER.error(errorMessage, e);
+            return PaySafeErrorHandler.getPaymentResponseFailure(errorMessage, FailureCause.COMMUNICATION_ERROR);
+        } catch (InvalidRequestException e) {
+            LOGGER.error("wrong request when init the payment", e);
+            return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.INVALID_DATA);
         }
     }
 }
