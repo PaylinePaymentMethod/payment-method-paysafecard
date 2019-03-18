@@ -7,6 +7,7 @@ import com.payline.pmapi.bean.refund.response.RefundResponse;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;
 
 public class PaySafeErrorHandler {
+    private static final int ERROR_LENGTH = 50;
 
     private PaySafeErrorHandler() {
         // ras.
@@ -62,13 +63,7 @@ public class PaySafeErrorHandler {
     public static PaymentResponseFailure getPaymentResponseFailure(String errorCode, final FailureCause failureCause) {
         return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
                 .withFailureCause(failureCause)
-                .withErrorCode(errorCode).build();
-    }
-
-    public static PaymentResponseFailure getPaymentResponseFailure( final FailureCause failureCause) {
-        return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
-                .withFailureCause(failureCause)
-                .build();
+                .withErrorCode(truncate(errorCode, ERROR_LENGTH)).build();
     }
 
     public static RefundResponse findRefundError(PaySafePaymentResponse response, String transactionId) {
@@ -121,23 +116,19 @@ public class PaySafeErrorHandler {
                     break;
             }
         }
-        // the code length must be under 50
-        String errorCode = response.getCode().length() > 50 ? response.getCode().substring(0, 50) : response.getCode();
-        return getRefundResponseFailure(errorCode, cause, transactionId);
+        return getRefundResponseFailure(response.getCode(), cause, transactionId);
     }
 
     public static RefundResponseFailure getRefundResponseFailure(String errorCode, final FailureCause failureCause, String transactionId) {
         return RefundResponseFailure.RefundResponseFailureBuilder.aRefundResponseFailure()
-                .withErrorCode(errorCode)
+                .withErrorCode(truncate(errorCode, ERROR_LENGTH))
                 .withFailureCause(failureCause)
                 .withPartnerTransactionId(transactionId)
                 .build();
     }
 
-    public static RefundResponseFailure getRefundResponseFailure(final FailureCause failureCause, String transactionId) {
-        return RefundResponseFailure.RefundResponseFailureBuilder.aRefundResponseFailure()
-                .withFailureCause(failureCause)
-                .withPartnerTransactionId(transactionId)
-                .build();
+    public static String truncate(String message, int length){
+        if (message == null) return "";
+        return message.length() > length ? message.substring(0, length) : message;
     }
 }

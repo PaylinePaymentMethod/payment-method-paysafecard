@@ -1,0 +1,3 @@
+apmPipeline {
+    projectName = 'payment-method-paysafecard'
+}

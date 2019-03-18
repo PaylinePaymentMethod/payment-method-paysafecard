@@ -30,8 +30,12 @@ ext {
     releaseDirectoryPath = 'D:/build'
 }
 
-apply from: "monext.gradle"
-//apply from: "external.gradle"
+def externalFileName = "$projectDir/.external"
+if (file(externalFileName).exists()) {
+    apply from: "external.gradle"
+} else {
+    apply from: "monext.gradle"
+}
 
 dependencies {
     compileOnly "com.payline:payment-method-api:${paymentMethodVersion}"

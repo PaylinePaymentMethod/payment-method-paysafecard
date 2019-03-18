@@ -20,8 +20,8 @@ import java.util.Locale;
 
 import static com.payline.payment.paysafecard.utils.properties.constants.LogoConstants.*;
 
-public interface ThalesPaymentFormConfigurationService extends PaymentFormConfigurationService {
-    Logger LOGGER = LogManager.getLogger(ThalesPaymentFormConfigurationService.class);
+public interface DefaultPaymentFormConfigurationService extends PaymentFormConfigurationService {
+    Logger LOGGER = LogManager.getLogger(DefaultPaymentFormConfigurationService.class);
     I18nService i18n = I18nService.getInstance();
 
     @Override
