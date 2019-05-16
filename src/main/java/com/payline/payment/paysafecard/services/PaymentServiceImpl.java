@@ -69,7 +69,7 @@ public class PaymentServiceImpl implements PaymentService {
             LOGGER.error(errorMessage, e);
             return PaySafeErrorHandler.getPaymentResponseFailure(errorMessage, FailureCause.COMMUNICATION_ERROR);
         } catch (InvalidRequestException e) {
-            LOGGER.error("wrong request when init the payment", e);
+            LOGGER.info("wrong request when init the payment", e.getMessage());
             return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.INVALID_DATA);
         }
     }
