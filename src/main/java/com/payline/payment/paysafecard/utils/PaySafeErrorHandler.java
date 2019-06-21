@@ -52,6 +52,10 @@ public class PaySafeErrorHandler {
                     // submerchant_not_found
                     cause = FailureCause.INVALID_DATA;
                     break;
+                case "4003":
+                    // max_amount_exceeded (@see https://payline.atlassian.net/browse/PAYLAPMEXT-161)
+                    cause = FailureCause.INVALID_DATA;
+                    break;
                 default:
                     cause = FailureCause.PARTNER_UNKNOWN_ERROR;
                     break;
