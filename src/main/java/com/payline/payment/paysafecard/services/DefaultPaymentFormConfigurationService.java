@@ -26,13 +26,11 @@ public interface DefaultPaymentFormConfigurationService extends PaymentFormConfi
 
     @Override
     default PaymentFormLogoResponse getPaymentFormLogo(PaymentFormLogoRequest paymentFormLogoRequest) {
-        Locale locale = paymentFormLogoRequest.getLocale();
-
         return PaymentFormLogoResponseFile.PaymentFormLogoResponseFileBuilder.aPaymentFormLogoResponseFile()
-                .withHeight(Integer.valueOf(LogoProperties.INSTANCE.get(LOGO_HEIGHT)))
-                .withWidth(Integer.valueOf(LogoProperties.INSTANCE.get(LOGO_WIDTH)))
-                .withTitle(i18n.getMessage(LogoProperties.INSTANCE.get(LOGO_TITLE), locale))
-                .withAlt(i18n.getMessage(LogoProperties.INSTANCE.get(LOGO_ALT), locale))
+                .withHeight(Integer.parseInt(LogoProperties.INSTANCE.get(LOGO_HEIGHT)))
+                .withWidth(Integer.parseInt(LogoProperties.INSTANCE.get(LOGO_WIDTH)))
+                .withTitle(LogoProperties.INSTANCE.get(LOGO_TITLE))
+                .withAlt(LogoProperties.INSTANCE.get(LOGO_ALT))
                 .build();
     }
 
