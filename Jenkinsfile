@@ -54,11 +54,12 @@ pipeline {
             }
         }
         stage("Dependency Check") {
+            when { branch 'develop' }
             steps {
-                sh './gradlew dependencyCheckAnalyze --info'
-                dependencyCheckPublisher canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/build/reports/dependency-check-report.xml', unHealthy: ''
+                sh './gradlew dependencyCheckAggregate --info'
+                dependencyCheckPublisher pattern: '**/build/reports/dependency-check-report.xml'
             }
-         }
+        }
         stage ('Publication & Sonar') {
             parallel {
                 stage('Publication sur Nexus') {
@@ -81,19 +82,16 @@ pipeline {
                     }
                 }
                 stage('SonarQube') {
-                  //  when { not { branch 'master' } }
+                    when { not { branch 'master' } }
                     steps {
                         withSonarQubeEnv('SonarMonext') {
                             script {
-				if (BRANCH_NAME == 'master') {
-                                    sh './gradlew sonarqube --info --stacktrace'
-                              	}
                                 if (BRANCH_NAME == 'develop') {
-                                   sh './gradlew sonarqube -Dsonar.branch.name=develop -Dsonar.branch.target=master  --info --stacktrace'
-				}	
-				if (BRANCH_NAME != 'master' &&  BRANCH_NAME != 'develop') {
-                                   sh './gradlew sonarqube  -Dsonar.branch.name=${BRANCH_NAME} -Dsonar.branch.target=develop --info --stacktrace'
-                                }				   				    
+                                    sh './gradlew sonarqube -Dsonar.branch.name=${BRANCH_NAME} --info --stacktrace'
+                                }
+                                if (BRANCH_NAME != 'develop') {
+                                    sh './gradlew sonarqube  -Dsonar.branch.name=${BRANCH_NAME} -Dsonar.branch.target=develop --info --stacktrace'
+                                }
                             }
                         }
                     }
@@ -105,14 +103,14 @@ pipeline {
                 }
             }
         }
-        //stage ('Tag Git') {
-          // when {
-          //      anyOf { branch 'master'; branch 'develop'; branch "release/*" }
-           // }
-           // steps {
-           //     sh "git tag -f V${versionInGradle}"
-           //     sh "git push origin -f V${versionInGradle}"
-           // }
-        //}
+ //       stage ('Tag Git') {
+ //           when {
+   //             anyOf { branch 'master'; branch 'develop'; branch "release/*" }
+     //       }
+      //      steps {
+       //         sh "git tag -f V${versionInGradle}"
+       //         sh "git push origin -f V${versionInGradle}"
+       //     }
+     //   }
     }
 }
