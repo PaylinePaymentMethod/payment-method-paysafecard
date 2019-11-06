@@ -24,10 +24,6 @@ public class RefundServiceImpl implements RefundService {
 
     private PaySafeHttpClient httpClient;
 
-    public RefundServiceImpl() {
-        httpClient = PaySafeHttpClient.getInstance();
-    }
-
     @Override
     public RefundResponse refundRequest(RefundRequest refundRequest) {
         String transactionId = refundRequest.getTransactionId();
@@ -35,6 +31,7 @@ public class RefundServiceImpl implements RefundService {
             boolean isSandbox = refundRequest.getEnvironment().isSandbox();
             PaySafeRefundRequest request = createRequest(refundRequest);
 
+            httpClient = getHttpClient(refundRequest);
             PaySafePaymentResponse response = httpClient.refund(request, isSandbox);
 
             if (response.getCode() != null) {
@@ -66,6 +63,10 @@ public class RefundServiceImpl implements RefundService {
             LOGGER.info("unable to refund the payment", e.getMessage());
             return PaySafeErrorHandler.getRefundResponseFailure(e.getMessage(), FailureCause.CANCEL, transactionId);
         }
+    }
+
+    public PaySafeHttpClient getHttpClient(final RefundRequest refundRequest) {
+        return PaySafeHttpClient.getInstance(refundRequest.getPartnerConfiguration());
     }
 
     public PaySafeRefundRequest createRequest(RefundRequest refundRequest) throws InvalidRequestException {

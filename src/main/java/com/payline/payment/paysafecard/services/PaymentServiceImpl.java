@@ -26,9 +26,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     private PaySafeHttpClient httpClient;
 
-    public PaymentServiceImpl() {
-        this.httpClient = PaySafeHttpClient.getInstance();
-    }
 
     @Override
     public PaymentResponse paymentRequest(PaymentRequest paymentRequest) {
@@ -37,6 +34,7 @@ public class PaymentServiceImpl implements PaymentService {
             PaySafePaymentRequest request = new PaySafePaymentRequest(paymentRequest);
 
             Boolean isSandbox = paymentRequest.getEnvironment().isSandbox();
+            httpClient = PaySafeHttpClient.getInstance(paymentRequest.getPartnerConfiguration());
             PaySafePaymentResponse response = httpClient.initiate(request, isSandbox);
 
             // check response object

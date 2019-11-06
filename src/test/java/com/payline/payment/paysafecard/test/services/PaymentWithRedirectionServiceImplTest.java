@@ -35,7 +35,7 @@ public class PaymentWithRedirectionServiceImplTest {
 
     @Before
     public void init() throws InvalidRequestException {
-        PaySafeCaptureRequest captureRequest = new PaySafeCaptureRequest("dumbId", Utils.createContractConfiguration(null, null, null, Utils.AUTHORISATION_VAL));
+        PaySafeCaptureRequest captureRequest = new PaySafeCaptureRequest("dumbId", Utils.createContractConfiguration(null, null, null, Utils.AUTHORISATION_VAL), null);
         doReturn(captureRequest).when(service).createRequest(any(RedirectionPaymentRequest.class));
         doReturn(captureRequest).when(service).createRequest(any(TransactionStatusRequest.class));
     }

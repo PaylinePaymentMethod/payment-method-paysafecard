@@ -3,6 +3,7 @@ package com.payline.payment.paysafecard.test;
 import com.google.gson.Gson;
 import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
+import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
 import com.payline.pmapi.bean.common.Amount;
 import com.payline.pmapi.bean.common.Buyer;
 import com.payline.pmapi.bean.configuration.PartnerConfiguration;
@@ -133,16 +134,26 @@ public class Utils {
 
         ContractConfiguration configuration = createContractConfiguration(kycLevel, minAge, countryRestriction, authorisation);
         Environment environment = new Environment("http://notificationURL.com", "http://redirectionURL.com", "http://redirectionCancelURL.com", true);
-//        PartnerConfiguration partnerConfiguration = new PartnerConfiguration(new HashMap<>());
+
+        final PartnerConfiguration partnerConfiguration = getPartnerConfiguration();
 
         return ContractParametersCheckRequest.CheckRequestBuilder.aCheckRequest()
                 .withAccountInfo(accountInfo)
                 .withLocale(locale)
                 .withContractConfiguration(configuration)
                 .withEnvironment(environment)
-//                .withPartnerConfiguration(partnerConfiguration)
+                .withPartnerConfiguration(partnerConfiguration)
                 .build();
 
+    }
+
+    public static PartnerConfiguration getPartnerConfiguration() {
+        Map<String, String> partnerConfigurationMap = new HashMap<>();
+        partnerConfigurationMap.put(PaySafeHttpClient.KEY_CONNECT_TIMEOUT,"2000");
+        partnerConfigurationMap.put(PaySafeHttpClient.CONNECTION_REQUEST_TIMEOUT,"3000");
+        partnerConfigurationMap.put(PaySafeHttpClient.READ_SOCKET_TIMEOUT,"4000");
+
+        return new PartnerConfiguration(partnerConfigurationMap, new HashMap<>());
     }
 
     public static PaymentRequest.Builder createCompletePaymentBuilder() {

@@ -28,11 +28,10 @@ import static com.payline.payment.paysafecard.utils.properties.constants.Configu
 public class ConfigurationServiceImpl implements ConfigurationService {
     private static final Logger LOGGER = LogManager.getLogger(ConfigurationServiceImpl.class);
 
-    private PaySafeHttpClient httpClient;
     private final I18nService i18n;
+    private PaySafeHttpClient httpClient;
 
     public ConfigurationServiceImpl() {
-        this.httpClient = PaySafeHttpClient.getInstance();
         i18n = I18nService.getInstance();
     }
 
@@ -139,6 +138,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
             // do the request
             Boolean isSandbox = contractParametersCheckRequest.getEnvironment().isSandbox();
+            httpClient = PaySafeHttpClient.getInstance(contractParametersCheckRequest.getPartnerConfiguration());
             PaySafePaymentResponse response = httpClient.initiate(checkRequest, isSandbox);
 
             // check response object

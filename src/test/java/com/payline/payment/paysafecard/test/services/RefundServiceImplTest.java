@@ -7,6 +7,7 @@ import com.payline.payment.paysafecard.test.Utils;
 import com.payline.payment.paysafecard.utils.InvalidRequestException;
 import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
+import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 import com.payline.pmapi.bean.refund.response.RefundResponse;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;
@@ -41,7 +42,7 @@ public class RefundServiceImplTest {
         doReturn(paymentRequest).when(service).createRequest(any(RefundRequest.class));
         doNothing().when(service).updateRequest(any(PaySafeRefundRequest.class));
         request = Mockito.mock(RefundRequest.class, Mockito.RETURNS_DEEP_STUBS);
-
+        doReturn(httpClient).when(service).getHttpClient(Mockito.any());
     }
 
     @Test
@@ -80,7 +81,6 @@ public class RefundServiceImplTest {
 
 
         when(httpClient.refund(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json1), Utils.createPaySafeResponse(json2));
-
         RefundResponse response = service.refundRequest(request);
 
         Assert.assertNotNull(response);
