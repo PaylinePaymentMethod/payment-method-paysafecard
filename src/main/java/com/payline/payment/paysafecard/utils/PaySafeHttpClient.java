@@ -6,6 +6,7 @@ import com.payline.payment.paysafecard.bean.PaySafeCaptureRequest;
 import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
 import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;
 import com.payline.payment.paysafecard.bean.PaySafeRequest;
+import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import org.apache.http.Header;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -27,11 +28,15 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PaySafeHttpClient {
 
-    private static final Logger LOGGER = LogManager.getLogger(PaySafeHttpClient.class);
+    public static final String KEY_CONNECT_TIMEOUT = "connect.time.out";
+    public static final String CONNECTION_REQUEST_TIMEOUT = "connect.request.time.out";
+    public static final String READ_SOCKET_TIMEOUT = "read.time.out";
 
+    private static final Logger LOGGER = LogManager.getLogger(PaySafeHttpClient.class);
     private static final String DEFAULT_CHARSET = "UTF-8";
     private static final String CONTENT_TYPE_KEY = "Content-Type";
     private static final String AUTHENTICATION_KEY = "Authorization";
@@ -39,24 +44,28 @@ public class PaySafeHttpClient {
     private CloseableHttpClient client;
     private Gson parser;
 
-    private static class SingletonHolder {
-        private final static PaySafeHttpClient INSTANCE = new PaySafeHttpClient();
-    }
+    private static final AtomicBoolean isInit = new AtomicBoolean(false);
+
+    private static PaySafeHttpClient instance;
 
     /**
      * @return the singleton instance
      */
-    public static PaySafeHttpClient getInstance() {
-        return SingletonHolder.INSTANCE;
+    public static PaySafeHttpClient getInstance(final PartnerConfiguration partnerConfiguration) {
+        //On initialise le service avec les configurations du partenaire si c'est le premier appel.
+        if (!isInit.getAndSet(true)) {
+            LOGGER.info("Initialisation du service HTTP Client");
+            instance = new PaySafeHttpClient(partnerConfiguration);
+        }
+        return instance;
     }
 
-    private PaySafeHttpClient() {
+    private PaySafeHttpClient(final PartnerConfiguration partnerConfiguration) {
         this.parser = new GsonBuilder().create();
-
         final RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(2000)
-                .setConnectionRequestTimeout(3000)
-                .setSocketTimeout(4000).build();
+                .setConnectTimeout(Integer.parseInt(partnerConfiguration.getProperty(KEY_CONNECT_TIMEOUT)))
+                .setConnectionRequestTimeout(Integer.parseInt(partnerConfiguration.getProperty(CONNECTION_REQUEST_TIMEOUT)))
+                .setSocketTimeout(Integer.parseInt(partnerConfiguration.getProperty(READ_SOCKET_TIMEOUT))).build();
 
         final HttpClientBuilder builder = HttpClientBuilder.create();
         builder.useSystemProperties()

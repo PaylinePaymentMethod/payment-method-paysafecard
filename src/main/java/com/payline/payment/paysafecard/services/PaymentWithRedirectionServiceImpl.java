@@ -24,10 +24,6 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
 
     private PaySafeHttpClient httpClient;
 
-    public PaymentWithRedirectionServiceImpl() {
-        httpClient = PaySafeHttpClient.getInstance();
-    }
-
     @Override
     public PaymentResponse finalizeRedirectionPayment(RedirectionPaymentRequest redirectionPaymentRequest) {
         try {
@@ -113,6 +109,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
     private PaymentResponse validatePayment(PaySafeCaptureRequest request, boolean isSandbox) {
         try {
             // retrieve payment data
+            httpClient = PaySafeHttpClient.getInstance(request.getPartnerConfiguration());
             PaySafePaymentResponse response = httpClient.retrievePaymentData(request, isSandbox);
             if (response.getCode() != null) {
                 return PaySafeErrorHandler.findError(response);
