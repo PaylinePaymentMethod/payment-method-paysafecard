@@ -1,4 +1,4 @@
-package com.payline.payment.paysafecard.test.utils;
+package com.payline.payment.paysafecard.utils;
 
 import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
 import com.payline.pmapi.bean.configuration.PartnerConfiguration;
@@ -30,8 +30,6 @@ import java.util.HashMap;
 public class PaySafeHttpClientParallelTestIT {
 
     private static HashMap<String, String> partnerConfigurationMap;
-
-    private PaySafeHttpClient client;
 
     @Mock
     private Appender appender;
@@ -73,9 +71,9 @@ public class PaySafeHttpClientParallelTestIT {
         Thread.sleep(5000);
         // On capture la log
         Mockito.verify(appender, Mockito.atLeastOnce()).append(captor.capture());
-        // On vérifie le nombre attendu
+        // On vÃ©rifie le nombre attendu
         Assert.assertThat(captor.getAllValues().size(), CoreMatchers.is(1));
-        // On vérifie les messages formatés et leur niveau de log
+        // On vÃ©rifie les messages formatÃ©s et leur niveau de log
         Assert.assertThat(captor.getAllValues().get(0).getMessage().getFormattedMessage(),
                 CoreMatchers.is("Initialisation du service HTTP Client"));
         Assert.assertThat(captor.getAllValues().get(0).getLevel(), CoreMatchers.is(Level.INFO));

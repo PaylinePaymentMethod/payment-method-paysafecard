@@ -1,4 +1,4 @@
-package com.payline.payment.paysafecard.test;
+package com.payline.payment.paysafecard;
 
 import com.google.gson.Gson;
 import com.payline.payment.paysafecard.bean.PaySafePaymentResponse;

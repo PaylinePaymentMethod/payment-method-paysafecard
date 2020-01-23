@@ -1,4 +1,4 @@
-package com.payline.payment.paysafecard.test.utils.config;
+package com.payline.payment.paysafecard.utils.config;
 
 import com.payline.payment.paysafecard.utils.properties.service.ReleaseProperties;
 import org.junit.Test;

@@ -1,9 +1,9 @@
-package com.payline.payment.paysafecard.test.integration;
+package com.payline.payment.paysafecard.integration;
 
+import com.payline.payment.paysafecard.Utils;
 import com.payline.payment.paysafecard.services.ConfigurationServiceImpl;
 import com.payline.payment.paysafecard.services.PaymentServiceImpl;
 import com.payline.payment.paysafecard.services.PaymentWithRedirectionServiceImpl;
-import com.payline.payment.paysafecard.test.Utils;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.bean.payment.ContractProperty;

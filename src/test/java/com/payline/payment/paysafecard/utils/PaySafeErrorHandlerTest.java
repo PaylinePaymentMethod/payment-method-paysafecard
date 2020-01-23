@@ -1,4 +1,4 @@
-package com.payline.payment.paysafecard.test.utils;
+package com.payline.payment.paysafecard.utils;
 
 import com.payline.payment.paysafecard.utils.PaySafeErrorHandler;
 import org.junit.Test;

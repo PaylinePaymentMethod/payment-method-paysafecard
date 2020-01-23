@@ -1,9 +1,9 @@
-package com.payline.payment.paysafecard.test.integration;
+package com.payline.payment.paysafecard.integration;
 
+import com.payline.payment.paysafecard.Utils;
 import com.payline.payment.paysafecard.services.PaymentServiceImpl;
 import com.payline.payment.paysafecard.services.PaymentWithRedirectionServiceImpl;
 import com.payline.payment.paysafecard.services.RefundServiceImpl;
-import com.payline.payment.paysafecard.test.Utils;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.pmapi.bean.common.Amount;
 import com.payline.pmapi.bean.payment.Browser;
@@ -35,7 +35,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static com.payline.payment.paysafecard.test.Utils.SUCCESS_URL;
 import static com.payline.pmapi.integration.AbstractPaymentIntegration.CANCEL_URL;
 
 public class ItRefundTest {
@@ -75,7 +74,7 @@ public class ItRefundTest {
             driver.findElement(By.xpath("//*[@id=\"payBtnMyPins\"]")).click();
 
             // Wait for redirection to success or cancel url
-            wait.until(ExpectedConditions.or(ExpectedConditions.urlToBe(SUCCESS_URL), ExpectedConditions.urlToBe(CANCEL_URL)));
+            wait.until(ExpectedConditions.or(ExpectedConditions.urlToBe(Utils.SUCCESS_URL), ExpectedConditions.urlToBe(CANCEL_URL)));
             return driver.getCurrentUrl();
         } finally {
             driver.quit();
@@ -110,7 +109,7 @@ public class ItRefundTest {
 
     private PaymentResponse handlePartnerResponse(PaymentWithRedirectionService paymentWithRedirectionService, PaymentRequest paymentRequest, PaymentResponseRedirect paymentResponseRedirect) {
         ContractConfiguration contractConfiguration = new ContractConfiguration("", this.generateParameterContract());
-        Environment Environment = new Environment("http://google.com/", SUCCESS_URL, CANCEL_URL, true);
+        Environment Environment = new Environment("http://google.com/", Utils.SUCCESS_URL, CANCEL_URL, true);
         RedirectionPaymentRequest redirectionPaymentRequest = RedirectionPaymentRequest.builder()
                 .withContractConfiguration(contractConfiguration)
                 .withPaymentFormContext(null)

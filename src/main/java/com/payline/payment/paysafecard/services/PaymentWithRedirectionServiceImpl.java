@@ -22,8 +22,6 @@ import static com.payline.payment.paysafecard.utils.PaySafeCardConstants.DEFAULT
 public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirectionService {
     private static final Logger LOGGER = LogManager.getLogger(PaymentWithRedirectionServiceImpl.class);
 
-    private PaySafeHttpClient httpClient;
-
     @Override
     public PaymentResponse finalizeRedirectionPayment(RedirectionPaymentRequest redirectionPaymentRequest) {
         try {
@@ -109,7 +107,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
     private PaymentResponse validatePayment(PaySafeCaptureRequest request, boolean isSandbox) {
         try {
             // retrieve payment data
-            httpClient = PaySafeHttpClient.getInstance(request.getPartnerConfiguration());
+            final PaySafeHttpClient httpClient = getHttpClientInstance(request);
             PaySafePaymentResponse response = httpClient.retrievePaymentData(request, isSandbox);
             if (response.getCode() != null) {
                 return PaySafeErrorHandler.findError(response);
@@ -133,5 +131,9 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
             LOGGER.error("unable to validate the payment", e);
             return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.COMMUNICATION_ERROR);
         }
+    }
+
+    protected PaySafeHttpClient getHttpClientInstance(final PaySafeCaptureRequest request) {
+        return PaySafeHttpClient.getInstance(request.getPartnerConfiguration());
     }
 }

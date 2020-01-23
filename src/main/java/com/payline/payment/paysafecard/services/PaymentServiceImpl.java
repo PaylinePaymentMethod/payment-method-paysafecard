@@ -24,8 +24,6 @@ import java.util.Map;
 public class PaymentServiceImpl implements PaymentService {
     private static final Logger LOGGER = LogManager.getLogger(PaymentServiceImpl.class);
 
-    private PaySafeHttpClient httpClient;
-
 
     @Override
     public PaymentResponse paymentRequest(PaymentRequest paymentRequest) {
@@ -34,7 +32,7 @@ public class PaymentServiceImpl implements PaymentService {
             PaySafePaymentRequest request = new PaySafePaymentRequest(paymentRequest);
 
             Boolean isSandbox = paymentRequest.getEnvironment().isSandbox();
-            httpClient = PaySafeHttpClient.getInstance(paymentRequest.getPartnerConfiguration());
+            final PaySafeHttpClient httpClient = getNewHttpClientInstance(paymentRequest);
             PaySafePaymentResponse response = httpClient.initiate(request, isSandbox);
 
             // check response object
@@ -70,5 +68,9 @@ public class PaymentServiceImpl implements PaymentService {
             LOGGER.info("wrong request when init the payment", e.getMessage());
             return PaySafeErrorHandler.getPaymentResponseFailure(e.getMessage(), FailureCause.INVALID_DATA);
         }
+    }
+
+    protected PaySafeHttpClient getNewHttpClientInstance(final PaymentRequest paymentRequest) {
+        return PaySafeHttpClient.getInstance(paymentRequest.getPartnerConfiguration());
     }
 }

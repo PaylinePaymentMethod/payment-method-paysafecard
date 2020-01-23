@@ -1,18 +1,19 @@
-package com.payline.payment.paysafecard.test.services;
+package com.payline.payment.paysafecard.services;
 
 import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
-import com.payline.payment.paysafecard.services.ConfigurationServiceImpl;
-import com.payline.payment.paysafecard.test.Utils;
+import com.payline.payment.paysafecard.Utils;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
 import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
 import com.payline.pmapi.bean.configuration.ReleaseInformation;
 import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import java.util.Map;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 
@@ -35,11 +37,17 @@ public class ConfigurationServiceImplTest {
     private String goodAuthorisation = "cHNjX1I3T1NQNmp2dUpZUmpKNUpIekdxdXVLbTlmOFBMSFo=";
 
     private Locale locale = Locale.FRENCH;
+    @Spy
     @InjectMocks
     private ConfigurationServiceImpl service = new ConfigurationServiceImpl();
     @Mock
     private PaySafeHttpClient httpClient;
 
+
+    @Before
+    public void setUp() throws Exception {
+        doReturn(httpClient).when(service).getHttpClientInstance(any());
+    }
 
     @Test
     public void getParameters() {

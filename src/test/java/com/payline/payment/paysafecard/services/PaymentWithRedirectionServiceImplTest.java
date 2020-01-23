@@ -1,8 +1,7 @@
-package com.payline.payment.paysafecard.test.services;
+package com.payline.payment.paysafecard.services;
 
 import com.payline.payment.paysafecard.bean.PaySafeCaptureRequest;
-import com.payline.payment.paysafecard.services.PaymentWithRedirectionServiceImpl;
-import com.payline.payment.paysafecard.test.Utils;
+import com.payline.payment.paysafecard.Utils;
 import com.payline.payment.paysafecard.utils.InvalidRequestException;
 import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
@@ -18,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
@@ -27,8 +27,9 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentWithRedirectionServiceImplTest {
+    @Spy
     @InjectMocks
-    private PaymentWithRedirectionServiceImpl service = spy(new PaymentWithRedirectionServiceImpl());
+    private PaymentWithRedirectionServiceImpl service;
 
     @Mock
     private PaySafeHttpClient httpClient;
@@ -38,6 +39,7 @@ public class PaymentWithRedirectionServiceImplTest {
         PaySafeCaptureRequest captureRequest = new PaySafeCaptureRequest("dumbId", Utils.createContractConfiguration(null, null, null, Utils.AUTHORISATION_VAL), null);
         doReturn(captureRequest).when(service).createRequest(any(RedirectionPaymentRequest.class));
         doReturn(captureRequest).when(service).createRequest(any(TransactionStatusRequest.class));
+        doReturn(httpClient).when(service).getHttpClientInstance(any());
     }
 
     @Test

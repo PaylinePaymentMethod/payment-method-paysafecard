@@ -1,7 +1,6 @@
-package com.payline.payment.paysafecard.test.services;
+package com.payline.payment.paysafecard.services;
 
 
-import com.payline.payment.paysafecard.services.PaymentFormConfigurationServiceImpl;
 import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import com.payline.pmapi.bean.payment.ContractConfiguration;
 import com.payline.pmapi.bean.payment.Environment;
@@ -24,8 +23,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Locale;
 
-import static com.payline.payment.paysafecard.test.Utils.createDefaultContractConfiguration;
-import static com.payline.payment.paysafecard.test.Utils.createDefaultPaymentFormConfigurationRequest;
+import static com.payline.payment.paysafecard.Utils.createDefaultContractConfiguration;
+import static com.payline.payment.paysafecard.Utils.createDefaultPaymentFormConfigurationRequest;
 
 
 @RunWith(MockitoJUnitRunner.class)

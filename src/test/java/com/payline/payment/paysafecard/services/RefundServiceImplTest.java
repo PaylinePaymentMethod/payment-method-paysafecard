@@ -1,13 +1,11 @@
-package com.payline.payment.paysafecard.test.services;
+package com.payline.payment.paysafecard.services;
 
 import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
 import com.payline.payment.paysafecard.bean.PaySafeRefundRequest;
-import com.payline.payment.paysafecard.services.RefundServiceImpl;
-import com.payline.payment.paysafecard.test.Utils;
+import com.payline.payment.paysafecard.Utils;
 import com.payline.payment.paysafecard.utils.InvalidRequestException;
 import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
-import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 import com.payline.pmapi.bean.refund.response.RefundResponse;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;

@@ -29,7 +29,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private static final Logger LOGGER = LogManager.getLogger(ConfigurationServiceImpl.class);
 
     private final I18nService i18n;
-    private PaySafeHttpClient httpClient;
 
     public ConfigurationServiceImpl() {
         i18n = I18nService.getInstance();
@@ -138,7 +137,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
             // do the request
             Boolean isSandbox = contractParametersCheckRequest.getEnvironment().isSandbox();
-            httpClient = PaySafeHttpClient.getInstance(contractParametersCheckRequest.getPartnerConfiguration());
+            final PaySafeHttpClient httpClient = getHttpClientInstance(contractParametersCheckRequest);
             PaySafePaymentResponse response = httpClient.initiate(checkRequest, isSandbox);
 
             // check response object
@@ -195,5 +194,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                     errors.put(ContractParametersCheckRequest.GENERIC_ERROR, message.getMessage());
             }
         }
+    }
+
+    protected PaySafeHttpClient getHttpClientInstance(final ContractParametersCheckRequest contractParametersCheckRequest) {
+        return PaySafeHttpClient.getInstance(contractParametersCheckRequest.getPartnerConfiguration());
     }
 }

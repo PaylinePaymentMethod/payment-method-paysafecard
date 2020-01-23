@@ -1,8 +1,7 @@
-package com.payline.payment.paysafecard.test.services;
+package com.payline.payment.paysafecard.services;
 
+import com.payline.payment.paysafecard.Utils;
 import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
-import com.payline.payment.paysafecard.services.PaymentServiceImpl;
-import com.payline.payment.paysafecard.test.Utils;
 import com.payline.payment.paysafecard.utils.PaySafeHttpClient;
 import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
@@ -10,10 +9,12 @@ import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseRedirect;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
@@ -21,15 +22,22 @@ import java.net.URISyntaxException;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentServiceImplTest {
 
+    @Spy
     @InjectMocks
     private PaymentServiceImpl service = new PaymentServiceImpl();
     @Mock
     private PaySafeHttpClient httpClient;
+
+    @Before
+    public void setUp() throws Exception {
+        doReturn(httpClient).when(service).getNewHttpClientInstance(any());
+    }
 
     @Test
     public void paymentRequest() throws IOException, URISyntaxException {
@@ -51,7 +59,7 @@ public class PaymentServiceImplTest {
                 "    \"number\": 10007" +
                 "}";
 
-        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
+        doReturn(Utils.createPaySafeResponse(json)).when(httpClient).initiate(any(PaySafePaymentRequest.class), anyBoolean());
 
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
         PaymentResponse response = service.paymentRequest(request);

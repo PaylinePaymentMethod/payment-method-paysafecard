@@ -1,7 +1,6 @@
-package com.payline.payment.paysafecard.test.bean;
+package com.payline.payment.paysafecard.bean;
 
-import com.payline.payment.paysafecard.bean.PaySafePaymentRequest;
-import com.payline.payment.paysafecard.test.Utils;
+import com.payline.payment.paysafecard.Utils;
 import com.payline.payment.paysafecard.utils.BadFieldException;
 import com.payline.payment.paysafecard.utils.InvalidRequestException;
 import com.payline.payment.paysafecard.utils.PaySafeCardConstants;
