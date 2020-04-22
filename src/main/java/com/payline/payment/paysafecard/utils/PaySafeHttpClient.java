@@ -19,6 +19,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 import com.payline.pmapi.logger.LogManager;
@@ -28,6 +29,7 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PaySafeHttpClient {
@@ -35,12 +37,18 @@ public class PaySafeHttpClient {
     public static final String KEY_CONNECT_TIMEOUT = "connect.time.out";
     public static final String CONNECTION_REQUEST_TIMEOUT = "connect.request.time.out";
     public static final String READ_SOCKET_TIMEOUT = "read.time.out";
+    public static final String KEEP_ALIVE_DURATION = "keep.alive.duration";
+    public static final String POOL_VALIDATE_CONN_AFTER_INACTIVITY = "pool.validate.connection.after.inactivity";
+    public static final String POOL_MAX_SIZE_PER_ROUTE = "pool.max.size.per.route";
+    public static final String EVICT_IDLE_CONNECTION_TIMEOUT = "evict.idle.connection.timeout";
+    public static final String CONNECTION_TIME_TO_LIVE = "connection.time.to.live";
 
     private static final Logger LOGGER = LogManager.getLogger(PaySafeHttpClient.class);
     private static final String DEFAULT_CHARSET = "UTF-8";
     private static final String CONTENT_TYPE_KEY = "Content-Type";
     private static final String AUTHENTICATION_KEY = "Authorization";
     private static final String CONTENT_TYPE = "application/json";
+
     private CloseableHttpClient client;
     private Gson parser;
 
@@ -67,11 +75,7 @@ public class PaySafeHttpClient {
                 .setConnectionRequestTimeout(Integer.parseInt(partnerConfiguration.getProperty(CONNECTION_REQUEST_TIMEOUT)))
                 .setSocketTimeout(Integer.parseInt(partnerConfiguration.getProperty(READ_SOCKET_TIMEOUT))).build();
 
-        final HttpClientBuilder builder = HttpClientBuilder.create();
-        builder.useSystemProperties()
-                .setDefaultRequestConfig(requestConfig)
-                .setDefaultCredentialsProvider(new BasicCredentialsProvider())
-                .setSSLSocketFactory(new SSLConnectionSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory(), SSLConnectionSocketFactory.getDefaultHostnameVerifier()));
+        final HttpClientBuilder builder = getHttpClientBuilder(partnerConfiguration, requestConfig);
         this.client = builder.build();
     }
 
@@ -129,13 +133,13 @@ public class PaySafeHttpClient {
         int count = 0;
         String strResp = null;
         while (count < 3) {
-            try (CloseableHttpResponse httpResp = this.client.execute(request)) {
-
+            CloseableHttpResponse httpResp = null;
+            try {
+                httpResp = this.client.execute(request);
                 if (httpResp.getEntity() != null) {
                     LOGGER.info("Start partner call... [HOST: {}]", request.getURI().getHost());
                     strResp = EntityUtils.toString(httpResp.getEntity(), DEFAULT_CHARSET);
                 }
-
                 final long end = System.currentTimeMillis();
                 LOGGER.info("End partner call [T: {}ms] [CODE: {}]", end - start, httpResp.getStatusLine().getStatusCode());
                 return strResp;
@@ -144,6 +148,10 @@ public class PaySafeHttpClient {
                 LOGGER.error("Error while partner call [T: {}ms]", System.currentTimeMillis() - start, e);
             } finally {
                 count++;
+                if (httpResp != null) {
+                    EntityUtils.consumeQuietly(httpResp.getEntity());
+                    httpResp.close();
+                }
             }
         }
         throw new IOException("Partner response empty");
@@ -200,5 +208,50 @@ public class PaySafeHttpClient {
         // create object from PaySafeCard response
         return parser.fromJson(responseString, PaySafePaymentResponse.class);
     }
+
+    protected HttpClientBuilder getHttpClientBuilder(final PartnerConfiguration partnerConfiguration, final RequestConfig requestConfig) {
+        final HttpClientBuilder builder = HttpClientBuilder.create();
+        builder.useSystemProperties()
+                .setDefaultRequestConfig(requestConfig)
+                .setDefaultCredentialsProvider(new BasicCredentialsProvider())
+                .setSSLSocketFactory(new SSLConnectionSocketFactory(HttpsURLConnection.getDefaultSSLSocketFactory(), SSLConnectionSocketFactory.getDefaultHostnameVerifier()));
+
+        final String inactivityConnection = partnerConfiguration.getProperty(POOL_VALIDATE_CONN_AFTER_INACTIVITY);
+        final String maxSizePerRoute = partnerConfiguration.getProperty(POOL_MAX_SIZE_PER_ROUTE);
+
+        boolean hasInactivityConnexion = inactivityConnection != null && inactivityConnection.length() > 0;
+        boolean hasMaxPoolSizePerRoute = maxSizePerRoute != null && maxSizePerRoute.length() > 0;
+
+        // Si des paramètres concernant le pool ont été changé on définit
+        // un nouveau pool de connection.
+        if (hasInactivityConnexion || hasMaxPoolSizePerRoute) {
+            final PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
+            if (hasInactivityConnexion) {
+                connManager.setValidateAfterInactivity(Integer.parseInt(inactivityConnection));
+            }
+            if (hasMaxPoolSizePerRoute) {
+                connManager.setDefaultMaxPerRoute(Integer.parseInt(maxSizePerRoute));
+            }
+            builder.setConnectionManager(connManager);
+        }
+
+        final String keepAliveStrategy = partnerConfiguration.getProperty(KEEP_ALIVE_DURATION);
+        if (keepAliveStrategy != null && keepAliveStrategy.length() > 0) {
+            builder.setKeepAliveStrategy((response, context) -> Long.parseLong(keepAliveStrategy));
+        }
+
+        final String evictIdleConnection = partnerConfiguration.getProperty(EVICT_IDLE_CONNECTION_TIMEOUT);
+        if (evictIdleConnection != null && evictIdleConnection.length() > 0) {
+            builder.evictIdleConnections(Long.parseLong(evictIdleConnection), TimeUnit.MILLISECONDS);
+        }
+
+        final String connectionTimeToLive = partnerConfiguration.getProperty(CONNECTION_TIME_TO_LIVE);
+        if (connectionTimeToLive != null && connectionTimeToLive.length() > 0){
+            builder.setConnectionTimeToLive(Long.parseLong(connectionTimeToLive), TimeUnit.MILLISECONDS);
+        }
+        return builder;
+    }
+
+
 
 }
