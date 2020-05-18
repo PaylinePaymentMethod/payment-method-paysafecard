@@ -14,7 +14,7 @@ apply plugin: 'jacoco'
 
 description = 'payment-method-paysafecard'
 group 'com.payline.payment.paysafecard'
-version '1.4-SNAPSHOT'
+version '1.4'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
