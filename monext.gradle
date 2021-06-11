@@ -22,10 +22,10 @@ publishing {
         shadow(MavenPublication) { publication ->
             project.shadow.component(publication)
 
-            // For release only
-            //if (!project.version.contains('-')) {
-            //    artifact testJar
-            //}
+//            // For release only
+//            if (!project.version.contains('-')) {
+//                artifact testJar
+//            }
         }
     }
     repositories {
