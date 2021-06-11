@@ -138,7 +138,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             // do the request
             Boolean isSandbox = contractParametersCheckRequest.getEnvironment().isSandbox();
             final PaySafeHttpClient httpClient = getHttpClientInstance(contractParametersCheckRequest);
-            PaySafePaymentResponse response = httpClient.initiate(checkRequest, isSandbox);
+            PaySafePaymentResponse response = httpClient.initiate(checkRequest, isSandbox, null);
 
             // check response object
             if (response.getCode() != null) {
