@@ -33,7 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             Boolean isSandbox = paymentRequest.getEnvironment().isSandbox();
             final PaySafeHttpClient httpClient = getNewHttpClientInstance(paymentRequest);
-            PaySafePaymentResponse response = httpClient.initiate(request, isSandbox);
+            PaySafePaymentResponse response = httpClient.initiate(request, isSandbox, paymentRequest.getOrder().getReference());
 
             // check response object
             if (response.getCode() != null) {

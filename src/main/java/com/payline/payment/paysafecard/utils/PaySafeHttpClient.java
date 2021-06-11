@@ -29,6 +29,9 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -47,6 +50,7 @@ public class PaySafeHttpClient {
     private static final String DEFAULT_CHARSET = "UTF-8";
     private static final String CONTENT_TYPE_KEY = "Content-Type";
     private static final String AUTHENTICATION_KEY = "Authorization";
+    private static final String CORRELATION_ID = "Correlation-ID";
     private static final String CONTENT_TYPE = "application/json";
 
     private CloseableHttpClient client;
@@ -157,12 +161,16 @@ public class PaySafeHttpClient {
         throw new IOException("Partner response empty");
     }
 
-    public PaySafePaymentResponse initiate(PaySafeRequest request, boolean isSandbox) throws IOException, URISyntaxException {
+    public PaySafePaymentResponse initiate(PaySafeRequest request, boolean isSandbox, final String correlationId) throws IOException, URISyntaxException {
         String host = getHost(isSandbox);
         String path = createPath(PaySafeCardConstants.PATH_VERSION, PaySafeCardConstants.PATH);
         String jsonBody = parser.toJson(request);
-        Header[] headers = createHeaders(request.getAuthenticationHeader());
-
+        final Header[] headers = new Header[3];
+        headers[0] = new BasicHeader(CONTENT_TYPE_KEY, CONTENT_TYPE);
+        headers[1] = new BasicHeader(AUTHENTICATION_KEY, request.getAuthenticationHeader());
+        if (correlationId != null) {
+            headers[2] = new BasicHeader(CORRELATION_ID, correlationId);
+        }
         // do the request
         final String responseString = doPost(PaySafeCardConstants.SCHEME, host, path, headers, jsonBody);
 

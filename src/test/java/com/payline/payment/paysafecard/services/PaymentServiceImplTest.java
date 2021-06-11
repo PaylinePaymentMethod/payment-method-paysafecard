@@ -20,8 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -41,9 +40,9 @@ public class PaymentServiceImplTest {
 
     @Test
     public void paymentRequest() throws IOException, URISyntaxException {
-        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createInitiatedPaySafeResponse());
-
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean(), eq(request.getOrder().getReference()))).thenReturn(Utils.createInitiatedPaySafeResponse());
+
         PaymentResponse response = service.paymentRequest(request);
 
         PaymentResponseRedirect responseRedirect = (PaymentResponseRedirect) response;
@@ -51,17 +50,15 @@ public class PaymentServiceImplTest {
         Assert.assertEquals(Utils.AUTH_URL, responseRedirect.getRedirectionRequest().getUrl().toString());
     }
 
-
     @Test
     public void paymentRequestWithError10007() throws IOException, URISyntaxException  {
         String json = "{" +
                 "    \"code\": \"general_technical_error\"," +
                 "    \"number\": 10007" +
                 "}";
-
-        doReturn(Utils.createPaySafeResponse(json)).when(httpClient).initiate(any(PaySafePaymentRequest.class), anyBoolean());
-
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
+        doReturn(Utils.createPaySafeResponse(json)).when(httpClient).initiate(any(PaySafePaymentRequest.class), anyBoolean(), eq(request.getOrder().getReference()));
+
         PaymentResponse response = service.paymentRequest(request);
 
         PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
@@ -76,9 +73,9 @@ public class PaymentServiceImplTest {
                 "    \"number\": 10008" +
                 "}";
 
-        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
-
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean(), eq(request.getOrder().getReference()))).thenReturn(Utils.createPaySafeResponse(json));
+
         PaymentResponse response = service.paymentRequest(request);
 
         PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
@@ -93,9 +90,9 @@ public class PaymentServiceImplTest {
                 "    \"number\": 10028" +
                 "}";
 
-        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
-
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean(), eq(request.getOrder().getReference()))).thenReturn(Utils.createPaySafeResponse(json));
+
         PaymentResponse response = service.paymentRequest(request);
 
         PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
@@ -109,10 +106,9 @@ public class PaymentServiceImplTest {
                 "    code: duplicate_transaction_id," +
                 "    number: 2001" +
                 "}";
-
-        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
-
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean(), eq(request.getOrder().getReference()))).thenReturn(Utils.createPaySafeResponse(json));
+
         PaymentResponse response = service.paymentRequest(request);
 
         PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
@@ -127,9 +123,9 @@ public class PaymentServiceImplTest {
                 "    number: 2017" +
                 "}";
 
-        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
-
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean(), eq(request.getOrder().getReference()))).thenReturn(Utils.createPaySafeResponse(json));
+
         PaymentResponse response = service.paymentRequest(request);
 
         PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
@@ -144,9 +140,9 @@ public class PaymentServiceImplTest {
                 "    \"number\": 3001" +
                 "}";
 
-        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
-
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean(), eq(request.getOrder().getReference()))).thenReturn(Utils.createPaySafeResponse(json));
+
         PaymentResponse response = service.paymentRequest(request);
 
         PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
@@ -161,9 +157,9 @@ public class PaymentServiceImplTest {
                 "    \"number\": 3007" +
                 "}";
 
-        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
-
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean(), eq(request.getOrder().getReference()))).thenReturn(Utils.createPaySafeResponse(json));
+
         PaymentResponse response = service.paymentRequest(request);
 
         PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
@@ -178,9 +174,9 @@ public class PaymentServiceImplTest {
                 "    \"number\": 3014" +
                 "}";
 
-        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
-
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean(), eq(request.getOrder().getReference()))).thenReturn(Utils.createPaySafeResponse(json));
+
         PaymentResponse response = service.paymentRequest(request);
 
         PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
@@ -195,9 +191,9 @@ public class PaymentServiceImplTest {
                 "    \"number\": foo" +
                 "}";
 
-        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
-
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean(), eq(request.getOrder().getReference()))).thenReturn(Utils.createPaySafeResponse(json));
+
         PaymentResponse response = service.paymentRequest(request);
 
         PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
@@ -209,9 +205,9 @@ public class PaymentServiceImplTest {
     public void paymentRequestWithErrorNull() throws IOException, URISyntaxException  {
         String json = "{\"code\": \"this is a code\"}";
 
-        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenReturn(Utils.createPaySafeResponse(json));
-
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean(), eq(request.getOrder().getReference()))).thenReturn(Utils.createPaySafeResponse(json));
+
         PaymentResponse response = service.paymentRequest(request);
 
         PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;
@@ -221,9 +217,9 @@ public class PaymentServiceImplTest {
 
     @Test
     public void paymentRequestWithException() throws IOException, URISyntaxException  {
-        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean())).thenThrow(IOException.class);
-
         PaymentRequest request = Utils.createCompletePaymentBuilder().build();
+        when(httpClient.initiate(any(PaySafePaymentRequest.class), anyBoolean(), eq(request.getOrder().getReference()))).thenThrow(IOException.class);
+
         PaymentResponse response = service.paymentRequest(request);
 
         PaymentResponseFailure responseFailure = (PaymentResponseFailure) response;

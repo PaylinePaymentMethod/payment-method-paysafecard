@@ -101,6 +101,7 @@ public class PaymentWithRedirectionServiceImpl implements PaymentWithRedirection
                 .withStatusCode(DEFAULT_SUCCESS_STATUS_CODE)
                 .withPartnerTransactionId(response.getId())
                 .withTransactionDetails(Email.EmailBuilder.anEmail().withEmail(email).build())
+                .withTransactionAdditionalData(response.getId())
                 .build();
     }
 
