@@ -12,9 +12,9 @@ apply plugin: 'maven-publish'
 apply plugin: 'java-library'
 apply plugin: 'jacoco'
 
-description = 'payment-method-paysafecard'
-group 'com.payline.payment.paysafecard'
-version '1.5'
+description = 'payment-method-paysafecard2'
+group 'com.payline.payment.paysafecard2'
+version '1.6'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
