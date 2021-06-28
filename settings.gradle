@@ -1,4 +1,4 @@
-rootProject.name = 'payment-method-paysafecard'
+rootProject.name = 'payment-method-paysafecard2'
 
 if (file('../payline-payment-method-api').exists()) {
     includeBuild '../payline-payment-method-api'
